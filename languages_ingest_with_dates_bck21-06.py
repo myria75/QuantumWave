@@ -8,10 +8,10 @@ token = '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'
 
 #MongoDB
 db_link = 'mongodb://localhost:27017'
-db_name = 'repositories'
+db_name = 'repository'
 connection = MongoClient(db_link)
 dbGithub = connection[db_name]
-collRepo = dbGithub['documents']
+collRepo = dbGithub['document']
 
 #URL and headers
 search_repo_url = 'https://api.github.com/search/repositories?q={}+created:{}-01-01..{}-12-31&per_page=100&page={}'
@@ -49,12 +49,12 @@ def obtenerCodigo (language, extension):
     global contadorglobal
 
     for ano_repo in range(2015, (date.today().year)+1):
-        print(ano_repo)    
+        print("Año: {}, language: {}, extension:{}".format(ano_repo, language, extension))    
         pagina_repo=1
         
         while(1):
             if extension is None:
-                repo_url = search_repo_url.format('language:'+language, ano_repo, ano_repo, pagina_repo)
+                repo_url = search_repo_url.format('in:readme+in:name+in:description+in:topics+language:'+language, ano_repo, ano_repo, pagina_repo)
             else:
                 repo_url = search_repo_url.format('in:readme+in:name+in:description+in:topics+'+extension+'+language:'+language, ano_repo, ano_repo, pagina_repo)
             
@@ -92,6 +92,7 @@ def obtenerCodigo (language, extension):
                 repo_full_name = repo['full_name']
                 repo_name = repo['name']
                 repo_owner = repo['owner']['login']
+                repo_creation_date = repo['created_at']
                 print("Repo actual: ",repo_full_name," Pagina repos: ",pagina_repo-1)
                 pagina_codigo=1
                 
@@ -146,6 +147,9 @@ def obtenerCodigo (language, extension):
                                 respuesta = p.json()
                                 respuesta['repo_name'] = repo_name
                                 respuesta['repo_author'] = repo_owner
+                                respuesta['repo_creation_date'] = repo_creation_date
+                                respuesta['repo_language'] = language
+                                respuesta['repo_extension'] = extension
                                 sha = str(p.json()['sha'])
                             except Exception:
                                 contadorReintentosContent+=1
