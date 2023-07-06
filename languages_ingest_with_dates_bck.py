@@ -1,15 +1,8 @@
-
-"""Ingest content from every repos at MongoDB 
-"""
-
 from datetime import datetime, date
 from time import sleep
 import requests
 from pymongo import MongoClient
 from urllib.parse import quote
-
-__author__ = "Miriam Fernández Osuna"
-__version__ = "1.0"
 
 token = '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'
 
@@ -40,7 +33,9 @@ headers = {
 
 def rateLimit(resource) -> tuple[int, datetime]:
     "Returns remaining requests left and the time when they are reset"
-    r = requests.get(limit_url, headers=headers)
+    #r = requests.get(limit_url, headers=headers) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    r = peticion(limit_url, None)
     rateLimit = r.json()
     remaining = rateLimit['resources'][resource]['remaining']
     reset = rateLimit['resources'][resource]['reset']
@@ -56,6 +51,20 @@ def checkWaitRateLimit(resource):
         secondsToWait = (resetDate - datetime.now()).total_seconds()
         sleep(secondsToWait+10)
 
+def peticion(url, rateLimitType):
+    for intento in range(0, 31):
+        try:
+            if rateLimitType != None: checkWaitRateLimit(rateLimitType)
+            r = requests.get(url, headers=headers) #hacer peticion
+        except Exception as err:
+            if intento == 30:
+                raise err
+            else:
+                print("Intento:{}, rateLimit: {}".format(intento, rateLimitType))
+                continue
+        break
+    return r    
+
 def obtenerCodigo (language, extension):
     global contadorglobal
     plus_extension_clause = ''
@@ -65,28 +74,30 @@ def obtenerCodigo (language, extension):
         plus_extension_clause = '+'+extension
         extension_clause_plus = extension+'+'
 
-    for year in range(date.today().year, year_from-1, -1):  #iterate over years (to split search results under 1000 hits)
+#(day.today().year)
+    for year in range(2019, year_from-1, -1): #iterate over year (to split search results under 1000 hits)
         print("Año: {}, language: {}, extension:{}".format(year, language, extension))    
                 
-        for pagina_repo in range(1, max_search_pages+1):    #iterate over repositories by page results
+        for pagina_repo in range(1, max_search_pages+1): #iterate over repositories by page results
             repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, year, pagina_repo)
             
-            checkWaitRateLimit('search')
-            r = requests.get(repo_url, headers=headers)
+            #checkWaitRateLimit('search') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            #r = requests.get(repo_url, headers=headers) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            r = peticion(repo_url, 'search')
 
             search_dict = r.json()               
-            repos = None    #used to later store repositories which were returned
+            repos = None
 
-            if 'total_count' in search_dict and 'items' in search_dict: #way to know if the request returned as expected       
+            if 'total_count' in search_dict and 'items' in search_dict:         
                 totalRepos = search_dict['total_count']
                 repos = search_dict['items']
             
                 if len(repos)==0:
-                    break   #there are no more repo results, stop searching pages and continue years loop
+                    break   # there are no more repo results
             else:
-                break   #there is no more pages or any other gitHub API error, stop searching pages and continue years loop     
+                break  # there is no more pages or any other gitHub API error        
             
-            for repo in repos:  #iterate over every repository result
+            for repo in repos: #iterate over every repository result
                 repo_full_name = repo['full_name']
                 repo_name = repo['name']
                 repo_owner = repo['owner']['login']
@@ -99,38 +110,39 @@ def obtenerCodigo (language, extension):
 
                     code_url = search_code_url.format(extension_clause_plus+'+' + 'in:file+language:{}+repo:{}'.format(language,repo_full_name), pagina_codigo)                    
                     
-                    checkWaitRateLimit('code_search')
-                    c = requests.get(code_url, headers=headers)
+                    #checkWaitRateLimit('code_search') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    #c = requests.get(code_url, headers=headers) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    c = peticion(code_url, 'code_search')
                     code_dict = c.json()
                     
-                    if 'total_count' in code_dict and 'items' in code_dict:  #way to know if the request returned as expected  
+                    if 'total_count' in code_dict and 'items' in code_dict:
                         totalCodefiles = code_dict["total_count"]
                         codefiles = code_dict['items']
                     else:                    
-                        break   #there is no more code pages or any other gitHub API error, stop searching code pages and continue pages loop
+                        break
                         
-                    for code in codefiles:  #iterate over every code result
-                        code_path = quote(code['path']) #convert code path to URL-friendly
+                    for code in codefiles:
+                        code_path = quote(code['path'])
                         content_deep_url = content_url.format(repo_full_name, code_path)
                     
-                        checkWaitRateLimit('core')
-                        p = requests.get(content_deep_url, headers=headers)
+                        #checkWaitRateLimit('core') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        #p = requests.get(content_deep_url, headers=headers) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        p = peticion(content_deep_url, 'core')
                         respuesta = p.json()
-
-                        #Files attributes in MongoDB
                         respuesta['repo_name'] = repo_name
                         respuesta['repo_author'] = repo_owner
                         respuesta['repo_creation_date'] = repo_creation_date
                         respuesta['repo_language'] = language
                         respuesta['repo_extension'] = extension
                         sha = str(p.json()['sha'])
-                        
-                        if collRepo.find_one({'sha' : sha}) == None:    #Check if there are duplicate files
+                        if collRepo.find_one({'sha' : sha}) == None:
                             collRepo.insert_one(respuesta) #inserts the commits
                             contadorglobal+=1
 
 
-languages = [('openqasm', None), ('qsharp', None), ('Python', 'qiskit'), ('Python', 'cirq'), ('Python', 'pytket'), ('Python', 'pennylane'), ('Python', 'pyquil'), ('Python', 'dwave'), ('Python', 'acqdp'), ('Python', 'braket'), ('Python', 'qcl'), ('Python', 'qml'), ('Python', 'strawberryfields')]
+#languages = [('Python', 'cirq'), ('Python', 'pytket'), ('Python', 'pennylane'), ('Python', 'pyquil'), ('Python', 'dwave'), ('Python', 'acqdp'), ('Python', 'braket'), ('Python', 'qcl'), ('Python', 'qml'), ('Python', 'strawberryfields')]
 
+#('openqasm', None), ('qsharp', None), 
+languages = [('Python', 'qiskit')]
 for l in languages:
     obtenerCodigo(l[0], l[1])
