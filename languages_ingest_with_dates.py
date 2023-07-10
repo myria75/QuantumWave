@@ -7,6 +7,7 @@ from time import sleep
 import requests
 from pymongo import MongoClient
 from urllib.parse import quote
+import time
 
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
@@ -66,7 +67,7 @@ def obtenerCodigo (language, extension):
         extension_clause_plus = extension+'+'
 
     for year in range(date.today().year, year_from-1, -1):  #iterate over years (to split search results under 1000 hits)
-        print("Año: {}, language: {}, extension:{}".format(year, language, extension))    
+        print("Year: {}, language: {}, extension:{}".format(year, language, extension))    
                 
         for pagina_repo in range(1, max_search_pages+1):    #iterate over repositories by page results
             repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, year, pagina_repo)
@@ -91,7 +92,7 @@ def obtenerCodigo (language, extension):
                 repo_name = repo['name']
                 repo_owner = repo['owner']['login']
                 repo_creation_date = repo['created_at']
-                print("Repo actual: ",repo_full_name," Pagina repos: ",pagina_repo)
+                print("Actual repository: ",repo_full_name," Page repository: ",pagina_repo)
 
                 for pagina_codigo in range(1, max_search_pages+1):    #iterate by code page
                     if extension is not None:
@@ -115,22 +116,27 @@ def obtenerCodigo (language, extension):
                     
                         checkWaitRateLimit('core')
                         p = requests.get(content_deep_url, headers=headers)
-                        respuesta = p.json()
+                        answer = p.json()
 
                         #Files attributes in MongoDB
-                        respuesta['repo_name'] = repo_name
-                        respuesta['repo_author'] = repo_owner
-                        respuesta['repo_creation_date'] = repo_creation_date
-                        respuesta['repo_language'] = language
-                        respuesta['repo_extension'] = extension
+                        answer['repo_name'] = repo_name
+                        answer['repo_author'] = repo_owner
+                        answer['repo_creation_date'] = repo_creation_date
+                        answer['repo_language'] = language
+                        answer['repo_extension'] = extension
                         sha = str(p.json()['sha'])
                         
                         if collRepo.find_one({'sha' : sha}) == None:    #Check if there are duplicate files
-                            collRepo.insert_one(respuesta) #inserts the commits
+                            collRepo.insert_one(answer) #inserts the commits
                             contadorglobal+=1
 
 
 languages = [('openqasm', None), ('qsharp', None), ('Python', 'qiskit'), ('Python', 'cirq'), ('Python', 'pytket'), ('Python', 'pennylane'), ('Python', 'pyquil'), ('Python', 'dwave'), ('Python', 'acqdp'), ('Python', 'braket'), ('Python', 'qcl'), ('Python', 'qml'), ('Python', 'strawberryfields')]
 
 for l in languages:
+    initial_time = time.time()
     obtenerCodigo(l[0], l[1])
+    final_time = time.time()
+    total_time = (final_time-initial_time)/3600
+
+    print("Tiempo de ejecución: ",total_time, "horas")
