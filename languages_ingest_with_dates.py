@@ -2,12 +2,12 @@
 """Ingest content from every repos at MongoDB 
 """
 
-from datetime import datetime, date
+import time
+from datetime import date, datetime
 from time import sleep
+from urllib.parse import quote
 import requests
 from pymongo import MongoClient
-from urllib.parse import quote
-import time
 
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
@@ -57,7 +57,7 @@ def checkWaitRateLimit(resource):
         secondsToWait = (resetDate - datetime.now()).total_seconds()
         sleep(secondsToWait+10)
 
-def obtenerCodigo (language, extension):
+def getCode (language, extension):
     global contadorglobal
     plus_extension_clause = ''
     extension_clause_plus = ''
@@ -135,7 +135,7 @@ languages = [('openqasm', None), ('qsharp', None), ('Python', 'qiskit'), ('Pytho
 
 for l in languages:
     initial_time = time.time()
-    obtenerCodigo(l[0], l[1])
+    getCode(l[0], l[1])
     final_time = time.time()
     total_time = (final_time-initial_time)/3600
 
