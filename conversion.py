@@ -27,7 +27,7 @@ def getContent():
         file_path = file_path.replace("/",".")
         print(file_path)
 
-        #convierte content de base64
+        #convert content to base64
         content_b64 = r['content']
         content_b64bytes = content_b64.encode('utf-8')
         content_bytes = base64.b64decode(content_b64bytes)
@@ -35,20 +35,21 @@ def getContent():
         
         search_expression = "from qiskit|import qiskit|import qiskit.|from qiskit."
         search_result = re.search(search_expression, content)
+        max_path_length = 255
 
         if search_result is None:
-            #no ha encontrado, file_path apunta a la carpeta "qiskit_discard"
+            #no result? file_path points at "qiskit_discard"
             file_path = os.path.join('qiskit_discard', file_path)
         else:
             file_path = os.path.join('qiskit', file_path)
 
-        if len(file_path) >= 255:
-            file_path_format = "."+file_path.split(".")[-1] #coger el string del ultimo punto hasta la derecha (".py")
+        if len(file_path) >= max_path_length:
+            file_path_format = "."+file_path.split(".")[-1] #take the string from the last point til the right part of the string (".py")
             length_cut = 255 - len(file_path_format)
-            file_path = file_path[:length_cut] #recortar hasta (max length - contar los caracteres del string de arriba)
-            file_path = file_path+file_path_format #poner al final el string de arriba
+            file_path = file_path[:length_cut] #cut still (max length - count the characters of the top from the string)
+            file_path = file_path+file_path_format #put previous string at the last part
 
-        with codecs.open(file_path, 'w', 'utf-8') as f: #max length = 255, hay que sacar el .py del final
+        with codecs.open(file_path, 'w', 'utf-8') as f: #take .py from the last part
             f.write(content)
             
 def initializeDirs():
