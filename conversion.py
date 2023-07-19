@@ -7,6 +7,8 @@ import base64
 import os
 import re
 import codecs
+import shutil
+import uuid
 
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
@@ -17,15 +19,23 @@ db_name = 'repositories'
 connection = MongoClient(db_link)
 dbGithub = connection[db_name]
 collRepo = dbGithub['documents']
+collRepo_accepted = dbGithub['accepted_code']
+collRepo_discard = dbGithub['discarded_code']
+dir_code = "code"
+dir_code_discard = "code_discard"
 
 def getContent():
-    query = { "repo_extension":"qiskit" }
+    query = {
+        "$and": [
+            {"repo_language": {"$in": ["openqasm", "qsharp", "Python"]}},
+            {"repo_extension": {"$in": [None, "cirq", "qiskit"]}}
+        ]
+    }
     result = collRepo.find(query)
-
+    
     for r in result:
-        file_path:str = r['repo_language']+"_"+r['repo_extension']+"_"+r['repo_author']+"_"+r['repo_name']+"_"+r['path']
+        file_path:str = "{}_{}_{}_{}_{}".format(r['repo_language'], r['repo_extension'], r['repo_author'], r['repo_name'], r['path'])
         file_path = file_path.replace("/",".")
-        print(file_path)
 
         #convert content to base64
         content_b64 = r['content']
@@ -33,36 +43,76 @@ def getContent():
         content_bytes = base64.b64decode(content_b64bytes)
         content = content_bytes.decode('utf-8')
         
-        search_expression = "from qiskit|import qiskit|import qiskit.|from qiskit."
-        search_result = re.search(search_expression, content)
+        search_result = "n"
+
+        if r['repo_language'] == 'Python':
+            search_expression = "from qiskit|import qiskit|import qiskit.|from qiskit.|import cirq|from cirq"  
+            search_result = re.search(search_expression, content)
+        elif r['repo_language'] == 'qsharp':
+            search_expression = "operation"
+            search_result = re.search(search_expression, content)
+        
         max_path_length = 255
-
+        
         if search_result is None:
-            #no result? file_path points at "qiskit_discard"
-            file_path = os.path.join('qiskit_discard', file_path)
-        else:
-            file_path = os.path.join('qiskit', file_path)
+            dir_path = dir_code_discard
+            insert(r, content, file_path, True) #set if this doccument is going to be discarded
+        else: 
+            dir_path = dir_code
+            insert(r, content, file_path, False)
 
+        dir_path = os.path.join(dir_path, r['repo_language']) #hay que comprobar si esa carpeta existe
+
+        if r['repo_extension'] is not None:
+            dir_path = os.path.join(dir_path, r['repo_extension']) #hay que comprobar si esa carpeta existe
+        
+        os.makedirs(dir_path, exist_ok=True)
+        file_path = os.path.join(dir_path, file_path)
+        
         if len(file_path) >= max_path_length:
-            file_path_format = "."+file_path.split(".")[-1] #take the string from the last point til the right part of the string (".py")
+            file_path_format = "."+file_path.split(".")[-1] #get the text from the last point to the right part of the text (".py")
             length_cut = 255 - len(file_path_format)
-            file_path = file_path[:length_cut] #cut still (max length - count the characters of the top from the string)
-            file_path = file_path+file_path_format #put previous string at the last part
+            file_path = file_path[:length_cut] #cut to (max size - count the characters above the string
+            file_path = file_path+file_path_format #previously put the string in the last part
 
-        with codecs.open(file_path, 'w', 'utf-8') as f: #take .py from the last part
+        with codecs.open(file_path, 'w', 'utf-8') as f:
             f.write(content)
             
 def initializeDirs():
-    dirs = "qiskit", "qiskit_discard"
+    #empty and create code and code_discard directories
+    dirs = dir_code, dir_code_discard
 
     for d in dirs:
         if os.path.isdir(d) is True:
-            for f in os.listdir(d):
-                os.remove(os.path.join(d, f))
-            
-            os.rmdir(d)
-        
+            shutil.rmtree(d)
         os.mkdir(d)
+
+def insert(r, content, file_path, discard):
+    hybrid:bool = False
+    coll_to_insert = None
+
+    #checks if not discarded doccuments are hybrid
+    if discard is False: 
+        search_expression = "for|rand|if"
+        search_result = re.search(search_expression, content)
+        hybrid = False if (search_result is None) else True
+        coll_to_insert = collRepo_accepted  #chosen collection to ingest 
+    else:
+        coll_to_insert = collRepo_discard
+
+    # json to ingest at MongoDB
+    ingest = {
+        "id":str(uuid.uuid4()),
+        "language": r['repo_language'],
+        "extension": r['repo_extension'],
+        "author": r['repo_author'],
+        "name": r['repo_name'],
+        "path": file_path, 
+        "hybrid": hybrid, 
+        "content": content
+    }
+    
+    coll_to_insert.insert_one(ingest) #inserts the commits
 
 initializeDirs()
 getContent()
