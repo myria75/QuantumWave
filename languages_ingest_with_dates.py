@@ -2,6 +2,8 @@
 """Ingest content from every repos at MongoDB 
 """
 
+import ast
+import configparser
 import time
 from datetime import date, datetime
 from time import sleep
@@ -12,14 +14,19 @@ from pymongo import MongoClient
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
 
-token = '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'
+configuration_file = 'properties.ini'
+config = configparser.ConfigParser()
+config.read(configuration_file)
+
+token = eval(config.get('MongoDB', 'token'))
 
 #MongoDB
-db_link = 'mongodb://localhost:27017'
-db_name = 'repositories'
+db_link = eval(config.get('MongoDB', 'db_link'))
+db_name = eval(config.get('MongoDB', 'db_name'))
+db_coll = eval(config.get('MongoDB', 'db_coll'))
 connection = MongoClient(db_link)
 dbGithub = connection[db_name]
-collRepo = dbGithub['documents']
+collRepo = dbGithub[db_coll]
 
 #URL and headers
 search_repo_url = 'https://api.github.com/search/repositories?q={}+created:{}-01-01..{}-12-31&per_page=100&page={}'
@@ -38,6 +45,10 @@ headers = {
     'Authorization': "Bearer "+token,
     'X-Github-Api-Version': "2022-11-28"
 }
+
+def obtainConfiguration():
+
+    return token, db_link, db_name, db_coll
 
 def rateLimit(resource) -> tuple[int, datetime]:
     "Returns remaining requests left and the time when they are reset"
@@ -130,8 +141,8 @@ def getCode (language, extension):
                             collRepo.insert_one(answer) #inserts the commits
                             contadorglobal+=1
 
-
-languages = [('openqasm', None), ('qsharp', None), ('Python', 'qiskit'), ('Python', 'cirq'), ('Python', 'pytket'), ('Python', 'pennylane'), ('Python', 'pyquil'), ('Python', 'dwave'), ('Python', 'acqdp'), ('Python', 'braket'), ('Python', 'qcl'), ('Python', 'qml'), ('Python', 'strawberryfields')]
+languages = config.get('languages', 'languages')
+languages = ast.literal_eval(languages)
 
 for l in languages:
     initial_time = time.time()

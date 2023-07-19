@@ -2,25 +2,33 @@
 """Content conversion from base64 to natural language
 """
 
-from pymongo import MongoClient
+import configparser
 import base64
+import codecs
 import os
 import re
-import codecs
 import shutil
 import uuid
+from pymongo import MongoClient
 
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
 
+configuration_file = 'properties.ini'
+config = configparser.ConfigParser()
+config.read(configuration_file)
+
 #MongoDB
-db_link = 'mongodb://localhost:27017'
-db_name = 'repositories'
+db_link = eval(config.get('MongoDB', 'db_link'))
+db_name = eval(config.get('MongoDB', 'db_name'))
+db_coll = eval(config.get('MongoDB', 'db_coll'))
+db_coll_accepted = eval(config.get('MongoDB', 'db_coll_accepted'))
+db_coll_discarded = eval(config.get('MongoDB', 'db_coll_discarded'))
 connection = MongoClient(db_link)
 dbGithub = connection[db_name]
-collRepo = dbGithub['documents']
-collRepo_accepted = dbGithub['accepted_code']
-collRepo_discard = dbGithub['discarded_code']
+collRepo = dbGithub[db_coll]
+collRepo_accepted = dbGithub[db_coll_accepted]
+collRepo_discard = dbGithub[db_coll_discarded]
 dir_code = "code"
 dir_code_discard = "code_discard"
 
@@ -46,10 +54,10 @@ def getContent():
         search_result = "n"
 
         if r['repo_language'] == 'Python':
-            search_expression = "from qiskit|import qiskit|import qiskit.|from qiskit.|import cirq|from cirq"  
+            search_expression = eval(config.get('expression', 'search_python'))
             search_result = re.search(search_expression, content)
         elif r['repo_language'] == 'qsharp':
-            search_expression = "operation"
+            search_expression = eval(config.get('expression', 'search_qsharp'))
             search_result = re.search(search_expression, content)
         
         max_path_length = 255
@@ -93,7 +101,7 @@ def insert(r, content, file_path, discard):
 
     #checks if not discarded doccuments are hybrid
     if discard is False: 
-        search_expression = "for|rand|if"
+        search_expression = eval(config.get('expression', 'search_hybrid'))
         search_result = re.search(search_expression, content)
         hybrid = False if (search_result is None) else True
         coll_to_insert = collRepo_accepted  #chosen collection to ingest 
