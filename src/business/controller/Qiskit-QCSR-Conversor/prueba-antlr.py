@@ -15,7 +15,8 @@ def generateTree(input):
 
 def deepSearch(tree):
     visitor = PythonVisitor()
-    print(visitor.visit(tree))
+    visitor.visit(tree)
+    print(visitor.content)
 
 tree = generateTree("example\circuit.py")
 deepSearch(tree)
