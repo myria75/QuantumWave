@@ -23,7 +23,7 @@ def deepSearch(node:PythonParser.RootContext):
     if node.depth() != 1 and "import" in node.getText():
         return 
 
-    # Procesar el nodo actual (aquí puedes hacer lo que necesites con el nodo)
+    # Procesar el nodo actual
     print("Visitando nodo:", node.getText(), " ", node.depth())
     #node.getRuleContext().type()s
 
