@@ -4,6 +4,7 @@ from python_grammar.PythonLexer import PythonLexer
 from python_grammar.PythonParser import PythonParser
 from python_grammar.PythonVisitor import PythonVisitor
 from python_grammar.PythonVisitor import PythonParserVisitor
+import os
 
 def generateTree(input):
     input_stream = FileStream(input)
@@ -18,5 +19,8 @@ def deepSearch(tree):
     visitor.visit(tree)
     print(visitor.content)
 
-tree = generateTree("example\circuit.py")
+filePath = os.path.join("example", "circuit.py")
+tree = generateTree(os.path.join(os.path.dirname(__file__), filePath))
+
+#"C:\Users\Miriam\Desktop\Patrones\src\business\controller\Qiskit-QCSR-Conversor\example\circuit.py"
 deepSearch(tree)
