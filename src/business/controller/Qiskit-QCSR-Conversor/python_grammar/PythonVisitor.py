@@ -9,12 +9,13 @@ class PythonVisitor(PythonParserVisitor):
     def __init__(self):
         self.content = ""
 
+    #obtain number of qubits
     def visitName(self, ctx:PythonParser.NameContext):
         if ctx.getText() == "QuantumRegister":
             quantity = ctx.parentCtx.parentCtx
             if isinstance(quantity, PythonParser.ExprContext):
                 quantity = int(quantity.getChild(1).getChild(0).getChild(1).getChild(0).getChild(0).getText())
-                self.content = [[] for _ in range(quantity)]
+                self.content = [[] for _ in range(quantity)] #create empty qubit array
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by PythonParser#quantum_gates_definition.
