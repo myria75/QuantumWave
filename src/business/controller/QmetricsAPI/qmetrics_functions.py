@@ -42,11 +42,10 @@ def updateCircuit(quantum_circuit:dict):
 def calculateMetrics(quantum_circuit:dict):
     operation = 'circuit/calculateMetrics'
     r = requests.post(metrics_endpoint+operation, json=quantum_circuit)
-    r = r.json()
     return r        
 
 def getMetrics():
-    operation = 'circuit/calculateMetrics'
+    operation = 'circuit/getMetrics'
     qcsr_object = ''
     r = requests.get(metrics_endpoint+operation+qcsr_object)
     r = r.json()

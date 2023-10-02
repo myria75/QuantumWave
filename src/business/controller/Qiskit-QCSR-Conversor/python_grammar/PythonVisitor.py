@@ -55,6 +55,8 @@ class PythonVisitor(PythonParserVisitor):
                 for i in range(0, len(self.content)):
                     if i == qubit1:
                         self.content[i].append({"CONTROL":qubit2}) 
+                    elif i == qubit2:
+                        self.content[i].append("X")
                     else:
                         self.content[i].append("_")
                 
