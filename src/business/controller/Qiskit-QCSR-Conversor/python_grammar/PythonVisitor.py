@@ -35,11 +35,7 @@ class PythonVisitor(PythonParserVisitor):
         for key,value in single_qubit_gates.items():
             if value is not None: #checks if there's some single qubit gates
                 qubit = int(ctx.parentCtx.getChild(2).getChild(1).getChild(0).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
-                for i in range(0, len(self.content)):
-                    if i == qubit:
-                        self.content[i].append(key) 
-                    else:
-                        self.content[i].append("_")
+                self.content[qubit].append(key)
 
                 #print(f"{gate}({qubit})")
                 
@@ -51,14 +47,21 @@ class PythonVisitor(PythonParserVisitor):
                 both_qubits = ctx.parentCtx.getChild(2).getChild(1)
                 qubit1 = int(both_qubits.getChild(0).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
                 qubit2 = int(both_qubits.getChild(2).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
-                
-                for i in range(0, len(self.content)):
-                    if i == qubit1:
-                        self.content[i].append({"CONTROL":qubit2}) 
-                    elif i == qubit2:
-                        self.content[i].append("X")
-                    else:
-                        self.content[i].append("_")
+                index = 0
+
+                if len(self.content[qubit1]) > len(self.content[qubit2]):
+                    index = len(self.content[qubit1])
+                    
+                    while len(self.content[qubit2]) != index:
+                        self.content[qubit2].append("_")
+                else:
+                    index = len(self.content[qubit2])
+                    
+                    while len(self.content[qubit1]) != index:
+                        self.content[qubit1].append("_")
+
+                self.content[qubit1].append({"CONTROL":qubit2})
+                self.content[qubit2].append("X")
                 
                 #print(f"{gate}({qubit})")
                 found_gate = True
