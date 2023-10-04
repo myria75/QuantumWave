@@ -76,15 +76,19 @@ TRUE               : 'True';
 FALSE              : 'False';
 
 // Qiskit's Quantum Gates
-HADAMARD         : 'h';
+CONTROLLEDH      : 'ch';
 CONTROLLEDX      : 'cx';
+CONTROLLEDZ      : 'cz';
+HADAMARD         : 'h';
 MEASURE          : 'measure';
-Z                : 'z';
+SWAP             : 'swap';
 S                : 's';
 T                : 't';
-Y                : 'y';
-SWAP             : 'swap';
 X                : 'x';
+Y                : 'y';
+Z                : 'z';
+
+
 
 // Operators
 DOT                : '.';

@@ -384,13 +384,15 @@ comp_iter
 
 //Quantum gates
 quantum_gates_definition
-    : HADAMARD
-    | MEASURE
+    : CONTROLLEDH
     | CONTROLLEDX
-    | Z
+    | CONTROLLEDZ
+    | HADAMARD
+    | MEASURE
+    | SWAP  
     | S
     | T
-    | Y
-    | SWAP   
     | X
+    | Y
+    | Z
     ;

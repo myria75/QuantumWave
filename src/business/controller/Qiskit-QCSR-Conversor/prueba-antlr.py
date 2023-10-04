@@ -12,7 +12,7 @@ from python_grammar.PythonVisitor import PythonParserVisitor
 #TODO: CAMBIAR LA MANERA DE IMPORTAR
 import sys
 sys.path.append('C:\\Users\\Miriam\\Desktop\\Patrones\\src\\business\\controller')
-#from QmetricsAPI.qmetrics_functions import *
+from QmetricsAPI.qmetrics_functions import *
 
 qPainter_url = 'http://172.20.48.7:8000/'
 
@@ -31,11 +31,17 @@ def deepSearch(tree):
     #print(visitor.content)
     return json.dumps(visitor.content)
 
-filePath = os.path.join("example", "circuit2.py")
+filePath = os.path.join("example", "circuit.py")
 tree = generateTree(os.path.join(os.path.dirname(__file__), filePath))
 
 #"C:\Users\Miriam\Desktop\Patrones\src\business\controller\Qiskit-QCSR-Conversor\example\circuit.py"
 circuitJson = deepSearch(tree)
 print(circuitJson)
 webbrowser.open(qPainter_url+circuitJson)
-#print(calculateMetrics(circuitJson))
+qmetricsjson =  {
+    "name" : "MiriamTFGCircuit",
+    "circuitCode" : circuitJson
+}
+updateCircuit(qmetricsjson)
+r = calculateMetrics(qmetricsjson)
+print(r.json())

@@ -41,29 +41,37 @@ class PythonVisitor(PythonParserVisitor):
                 
                 found_gate = True
                 break
-                
+            
         if not found_gate:
-            if ctx.CONTROLLEDX() is not None:
-                both_qubits = ctx.parentCtx.getChild(2).getChild(1)
-                qubit1 = int(both_qubits.getChild(0).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
-                qubit2 = int(both_qubits.getChild(2).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
-                index = 0
+            complex_qubit_gates = {
+                "H": ctx.CONTROLLEDH(),
+                "X": ctx.CONTROLLEDX(),
+                "Z": ctx.CONTROLLEDZ()
+            }
+            
+            for key,value in complex_qubit_gates.items():
+                if value is not None:
+                    both_qubits = ctx.parentCtx.getChild(2).getChild(1)
+                    qubit1 = int(both_qubits.getChild(0).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
+                    qubit2 = int(both_qubits.getChild(2).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
+                    index = 0
 
-                if len(self.content[qubit1]) > len(self.content[qubit2]):
-                    index = len(self.content[qubit1])
-                    
-                    while len(self.content[qubit2]) != index:
-                        self.content[qubit2].append("_")
-                else:
-                    index = len(self.content[qubit2])
-                    
-                    while len(self.content[qubit1]) != index:
-                        self.content[qubit1].append("_")
+                    if len(self.content[qubit1]) > len(self.content[qubit2]):
+                        index = len(self.content[qubit1])
+                        
+                        while len(self.content[qubit2]) != index:
+                            self.content[qubit2].append("_")
+                    else:
+                        index = len(self.content[qubit2])
+                        
+                        while len(self.content[qubit1]) != index:
+                            self.content[qubit1].append("_")
 
-                self.content[qubit1].append({"CONTROL":qubit2})
-                self.content[qubit2].append("X")
-                
-                #print(f"{gate}({qubit})")
-                found_gate = True
+                    self.content[qubit1].append({"CONTROL":qubit2})
+                    self.content[qubit2].append(key)
+                    
+                    #print(f"{gate}({qubit})")
+                    found_gate = True
+                    break
         
         return self.visitChildren(ctx) 
