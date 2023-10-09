@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <body>
+      <script>
+        function cerrarModal() {
+          document.getElementById("modal").style.display = "none";
+        }
+      </script>
+        <div id="modal" class="modal-div">
+          <div class="modal-content">
+            {% for warning in warnings %}
+              <h2 class="warning-yellow">{{ forloop.counter }} - {{ warning.0 }} !!</h2>
+              <p class="light-grey">{{ warning.1 }}</p>
+              {% if "Rotation" in warning.0 %}
+                {{ warning.2|safe }}
+              {% endif %}
+            {% endfor %}
+            <button onclick="cerrarModal()" id="modal-button" class="cabin-dialog-button dialog-close-button light-blue">Close</button>
+          </div>
+        </div>
+    </body>
+</html>

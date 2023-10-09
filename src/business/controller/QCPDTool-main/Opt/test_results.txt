@@ -1,0 +1,12 @@
+>>> Input Circuit for Tests <<<
+Circuit 1: [["H","_","_","_","_","_",{"CONTROL":1},{"CONTROL":2},"_",{"CONTROL":2},"_",{"CONTROL":1},{"CONTROL":2},"_",{"CONTROL":2},"_","X",{"CONTROL":1},{"CONTROL":2},"_",{"CONTROL":2},"_",{"CONTROL":1},{"CONTROL":2},"_",{"CONTROL":2},"_",{"CONTROL":3}],["H",{"CONTROL":2},"_",{"CONTROL":2},"_","X",{"CONTROL":2},"_","_","_","_",{"CONTROL":2},"_","_","_","_","_",{"CONTROL":2},"_","_","_","_",{"CONTROL":2},"_","_","_","_","_","H","MEASURE"],["_","X","RY","X","RY","_","X","X","RY","X","RY","X","X","RY","X","RY","_","X","X","RY","X","RY","X","X","RY","X","RY"],["_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","_","X","_","MEASURE"]]
+Circuit 2: [["H",{"CONTROL":2},{"CONTROL":1},"_",{"CONTROL":1},"_","_",{"CONTROL":2},{"CONTROL":1},"_",{"CONTROL":1},"_","X",{"CONTROL":2},{"CONTROL":1},"_",{"CONTROL":1},"_","_",{"CONTROL":2},{"CONTROL":1},"_",{"CONTROL":1},"_","MEASURE"],["H","_","X",{"CONTROL":2},"X",{"CONTROL":2},"X","_","X",{"CONTROL":2},"X",{"CONTROL":2},"X","_","X",{"CONTROL":2},"X",{"CONTROL":2},"X","_","X",{"CONTROL":2},"X",{"CONTROL":2},"MEASURE"],["_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","_","RY","MEASURE"]]
+
+### CIRCUIT 0 REPORT ###
+- SM-based time: 0.0025060176849365234
+- Parallel time: 0.13102149963378906
+
+### CIRCUIT 1 REPORT ###
+- SM-based time: 0.0
+- Parallel time: 0.13092875480651855
+

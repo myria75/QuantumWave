@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <body>
+        <div class="feedback-div">
+            <div class="container-div">
+                <span class="cabin-bullet dark-green inline-item">4)</span>
+                <p class="cabin-h1 semidark-blue inline-item">Feedback</p>
+            </div>
+            <p class="cabin-p dark-blue">Once the results have been exposed and identified, some recommendations and warnings found in the circuit will be shown. Please note that these are just some comments, they must not be interpreted as errors to be corrected, just considerations.<br></p>    
+            <ul>
+                {% for warn in feedback %}
+                    <li>
+                        <p class="cabin-table-h dark-green">{{ warn.0 }}</p>
+                        <p class="cabin-table-p dark-blue">{{ warn.1|safe }}</p>
+                        <div class="feedback-img-div">
+                            <img src="{% static 'imgs/circuits/'|add:warn.0|add:'.png' %}" alt="{{ warn.0 }}">
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </body>
+</html>

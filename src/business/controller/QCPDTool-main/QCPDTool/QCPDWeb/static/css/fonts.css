@@ -1,0 +1,184 @@
+.cabin-h1 {
+    display: inherit;
+    font-family: 'Cabin';
+    font-size: 35px;
+    font-weight: bold;
+    margin-left: 10px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+.cabin-p {
+    font-family: 'Cabin';
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.cabin-title {
+    display: inherit;
+    font-family: 'Cabin';
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    grid-column: 2;
+}
+
+.cabin-subtitle {
+    display: inherit;
+    font-family: 'Cabin';
+    font-size: 40px;
+    margin-top: 0px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    grid-column: 2;
+}
+
+.cabin-lowest {
+    font-family: 'Cabin';
+    font-size: 20px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+}
+
+.cabin-help-p {
+    font-family: 'Cabin';
+    font-size: 16px;
+    margin-bottom: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.cabin-help-h {
+    font-family: 'Cabin';
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+.cabin-bullet {
+    margin-left: 13px;
+    display: inline;
+    font-family: 'Cabin';
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.cabin-menu-h {
+    font-family: 'Cabin';
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+.cabin-dialog-title {
+    display: inherit;
+    font-family: 'Cabin';
+    font-size: 40px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.cabin-dialog-h {
+    font-family: 'Cabin';
+    font-size: 28px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    margin-right: 15px;
+}
+
+.cabin-dialog-p {
+    font-family: 'Cabin';
+    font-size: 20px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-right: 15px;
+}
+
+.cabin-dialog-button {
+    font-family: 'Cabin';
+    font-size: 23px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.cabin-error-title {
+    font-family: 'Cabin';
+    font-size: 40px;
+    margin-bottom: 5px;
+    margin-top: 75px;
+    text-align: center;
+}
+
+.cabin-error-p {
+    font-family: 'Cabin';
+    font-size: 25px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-right: 15px;
+    text-align: center;
+}
+
+.cabin-table-h {
+    font-family: 'Cabin';
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.cabin-table-p {
+    font-family: 'Cabin';
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.cabin-table-u {
+    text-decoration-thickness: 2px;
+}
+
+.light-green {
+    color: #C4FB6D;
+}
+
+.dark-green {
+    color: #a2cf59;
+}
+
+.light-blue {
+    color: #76EAD7;
+}
+
+.dark-blue {
+    color: #24272c;
+}
+
+.semidark-blue {
+    color: #57a89b;
+}
+
+.light-grey {
+    color: #EEEEEE;
+}
+
+.light-red {
+    color: #FA9494;
+}
+
+.semistrong-red {
+    color: #fc4a4a;
+}
+
+.strong-red {
+    color: #EB1D36;
+}
+
+.warning-yellow {
+    color: #ffcc00;
+}

@@ -29,19 +29,52 @@ def deepSearch(tree):
     visitor = PythonVisitor()
     visitor.visit(tree)
     #print(visitor.content)
-    return json.dumps(visitor.content)
+    #TODO: cambiar, manejar error para saltarse circuitos que no devuelvan nada ([] array vacio)
+    if len(visitor.content) != 0:
+        return json.dumps(visitor.content)
+    else:
+        return "empty array error"
 
-filePath = os.path.join("example", "circuit.py")
+fileName = "mirilla_example.py"
+filePath = os.path.join("example", fileName)
 tree = generateTree(os.path.join(os.path.dirname(__file__), filePath))
 
 #"C:\Users\Miriam\Desktop\Patrones\src\business\controller\Qiskit-QCSR-Conversor\example\circuit.py"
-circuitJson = deepSearch(tree)
-print(circuitJson)
-webbrowser.open(qPainter_url+circuitJson)
-qmetricsjson =  {
-    "name" : "MiriamTFGCircuit",
-    "circuitCode" : circuitJson
-}
-updateCircuit(qmetricsjson)
-r = calculateMetrics(qmetricsjson)
-print(r.json())
+circuitJson = deepSearch(tree) #[]
+
+if circuitJson != "empty array error": #TODO: arreglar circuitos que devuelva arrays vacios
+    print(circuitJson)
+    webbrowser.open(qPainter_url+circuitJson)
+    qmetricsjson =  {
+        "name" : "MiriamTFGCircuit",
+        "circuitCode" : circuitJson
+    }
+    updateCircuit(qmetricsjson)
+    r = calculateMetrics(qmetricsjson)
+    metrics = r.json()
+    #print(metrics)
+
+    #TODO: PONER BONITO Y BIEN
+    from pymongo import MongoClient
+    import re
+
+    db_link = 'mongodb://localhost:27017'
+    db_name = 'repositories'
+    db_coll = 'accepted_code'
+    connection = MongoClient(db_link)
+    dbGithub = connection[db_name]
+    collRepo = dbGithub[db_coll]
+
+    pattern = re.compile(fr".*{re.escape(fileName)}$")
+    query = {"path": {"$regex": pattern}}
+
+    results = list(collRepo.find(query))
+    print(len(results))
+    if len(results) > 0: #comprueba que esta en mongo
+        result = results[0]
+        result["metrics"]=metrics
+        print(result["id"])
+        queryBorrado = {"id": result["id"]} #borra la entrada
+        collRepo.delete_one(query)
+
+        collRepo.insert_one(result) #inserta la nueva con la metrica
