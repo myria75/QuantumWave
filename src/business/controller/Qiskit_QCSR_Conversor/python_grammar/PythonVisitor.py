@@ -1,7 +1,11 @@
 from antlr4 import *
 from antlr4.tree import *
-from python_grammar.PythonParser import PythonParser
-from python_grammar.PythonParserVisitor import PythonParserVisitor
+if "." in __name__:
+    from .PythonParser import PythonParser
+    from .PythonParserVisitor import PythonParserVisitor
+else:
+    from PythonParser import PythonParser
+    from PythonParserVisitor import PythonParserVisitor
 
 class PythonVisitor(PythonParserVisitor):
 
