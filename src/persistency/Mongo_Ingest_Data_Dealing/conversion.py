@@ -2,19 +2,16 @@
 """Content conversion from base64 to natural language
 """
 
-import configparser
 import base64
 import codecs
+import configparser
 import os
 import re
 import shutil
 import uuid
 from pymongo import MongoClient
 
-__author__ = "Miriam Fernández Osuna"
-__version__ = "1.0"
-
-configuration_file = 'properties.ini'
+configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
 
@@ -29,8 +26,8 @@ dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
 collRepo_accepted = dbGithub[db_coll_accepted]
 collRepo_discard = dbGithub[db_coll_discarded]
-dir_code = "code"
-dir_code_discard = "code_discard"
+dir_code = os.path.join("src","persistency","Mongo_Ingest_Data_Dealing","code")
+dir_code_discard = os.path.join("src","persistency","Mongo_Ingest_Data_Dealing","code_discard")
 
 def getContent():
     query = {
@@ -69,10 +66,10 @@ def getContent():
             dir_path = dir_code
             insert(r, content, file_path, False)
 
-        dir_path = os.path.join(dir_path, r['repo_language']) #hay que comprobar si esa carpeta existe
+        dir_path = os.path.join(dir_path, r['repo_language'])
 
         if r['repo_extension'] is not None:
-            dir_path = os.path.join(dir_path, r['repo_extension']) #hay que comprobar si esa carpeta existe
+            dir_path = os.path.join(dir_path, r['repo_extension'])
         
         os.makedirs(dir_path, exist_ok=True)
         file_path = os.path.join(dir_path, file_path)
@@ -108,7 +105,7 @@ def insert(r, content, file_path, discard):
     else:
         coll_to_insert = collRepo_discard
 
-    # json to ingest at MongoDB
+    #json to ingest at MongoDB
     ingest = {
         "id":str(uuid.uuid4()),
         "language": r['repo_language'],

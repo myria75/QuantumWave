@@ -4,6 +4,7 @@
 
 import ast
 import configparser
+import os
 import time
 from datetime import date, datetime
 from time import sleep
@@ -11,14 +12,10 @@ from urllib.parse import quote
 import requests
 from pymongo import MongoClient
 
-__author__ = "Miriam Fernández Osuna"
-__version__ = "1.0"
-
-configuration_file = 'properties.ini'
+configuration_file =  os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
-
-token = eval(config.get('MongoDB', 'token'))
+token = eval(config.get('GitHub', 'token'))
 
 #MongoDB
 db_link = eval(config.get('MongoDB', 'db_link'))
@@ -47,7 +44,6 @@ headers = {
 }
 
 def obtainConfiguration():
-
     return token, db_link, db_name, db_coll
 
 def rateLimit(resource) -> tuple[int, datetime]:
@@ -150,4 +146,4 @@ for l in languages:
     final_time = time.time()
     total_time = (final_time-initial_time)/3600
 
-    print("Tiempo de ejecución: ",total_time, "horas")
+    print("Execution time: ",total_time, "hours")

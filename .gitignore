@@ -1,5 +1,5 @@
 **/.vscode
 **/__pycache__
 **/.antlr
-src/persistency/Mongo-Ingest-Data-Dealing/code
-src/persistency/Mongo-Ingest-Data-Dealing/code_discard
+src/persistency/Mongo_Ingest_Data_Dealing/code/*
+src/persistency/Mongo_Ingest_Data_Dealing/code_discard/*

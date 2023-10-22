@@ -1,8 +1,17 @@
+
+"""Searches for codes
+"""
+
+import configparser
+import os
 from datetime import datetime
 from time import sleep
 import requests
 
-token = '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'
+configuration_file = os.path.join("resources", "config", "properties.ini")
+config = configparser.ConfigParser()
+config.read(configuration_file)
+token = eval(config.get('GitHub', 'token'))
 
 #URL and headers
 search_repo_url = 'https://api.github.com/search/repositories?q={}'

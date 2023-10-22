@@ -1,12 +1,16 @@
 
 """Request example at Raul's API  
 """
-__author__ = "Miriam Fernández Osuna"
-__version__ = "0.2"
 
 import requests
+import configparser
+import os
 
-metrics_endpoint = 'http://172.20.48.7:8080/'
+configuration_file = os.path.join("resources", "config", "properties.ini")
+config = configparser.ConfigParser()
+config.read(configuration_file)
+
+metrics_endpoint = eval(config.get('URL', 'qmetrics'))
 
 def getCircuits():
     operation = 'circuit/getCircuits/'
@@ -56,10 +60,3 @@ def getMetricsTypes():
     r = requests.get(metrics_endpoint+operation)
     r = r.json()
     return r 
-
-circuit = {
-  "name" : "PostCircuitName2",
-  "circuitCode" : "[[\"X\"]]"
-}
-
-print(calculateMetrics(circuit))
