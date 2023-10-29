@@ -5,6 +5,8 @@ import json
 import requests
 from src.business.controller.QCPDTool.src import finder_sm as sm
 from src.business.controller.QCPDTool.src import finder_sim as sim
+import os
+import configparser
 
 ERR_PROCESSING = ('Processing Error',
                 'An error ocurred when processing the circuit for searching patterns.' +\
@@ -22,7 +24,11 @@ ERR_ANGLE = ('Rotation Angle Error',
             'The given angle format or data type in <X> is not correct. It must be a float ' +\
             'number (e.g. 3.14). Please, try again with a correct angle.')
 
-QPAINTER_URL = 'http://172.20.48.7:8000/' #TODO: sacarlo del .ini
+configuration_file = os.path.join("resources", "config", "properties.ini")
+config = configparser.ConfigParser()
+config.read(configuration_file)
+
+QPAINTER_URL = eval(config.get('URL', 'qpainter'))
 PATTERN_ACHRONYMS = {
     'INI': 'initialization',
     'ENT': 'entanglement',
@@ -114,7 +120,6 @@ def contain_rotation(input_circ):
 
 
 def generate_pattern(input_circ):
-    print(input_circ)
     context = {}
 
     # 1) Check empty circuit
@@ -161,6 +166,6 @@ def generate_pattern(input_circ):
         patt_id = sum(len(matches) for matches in front_matches.values())
         patt_tuple = (0,0,input_circ)
         front_matches['uncompute'] = {patt_id: patt_tuple}
-    context['patterns'] = front_matches
+    context = front_matches
 
     return context

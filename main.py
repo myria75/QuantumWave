@@ -9,6 +9,7 @@ import configparser
 from src.business.controller.Qiskit_QCSR_Conversor.EmptyCircuitException import EmptyCircuitException
 import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as conversor
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
+import src.business.controller.QCPDTool.views as qcpdtool
 import os
 
 #Searches in GitHub and ingest the data
@@ -36,22 +37,27 @@ documents = collRepo.find(query)
 
 
 for document in documents:
+    print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
     arbolAntlr = conversor.generateTree(document["content"])
     
-    errorsFound = False
+    errorsFoundAtParse = False
     try:
         circuitJson = conversor.deepSearch(arbolAntlr)
     except EmptyCircuitException as e:
         print("Empty array error")
-        errorsFound = True
+        errorsFoundAtParse = True
     except (AttributeError, KeyError, ValueError, IndexError) as e: 
         print("Throws an error")
-        errorsFound = True
-   
-    print(document["path"])
-    if not errorsFound:
+        errorsFoundAtParse = True
+
+    if errorsFoundAtParse:
+        errorMsg = "The antlr4 tree couldn't be generated. The circuit isn't converted"
+        document["circuit"] = { 'error': errorMsg }
+        document["metrics"] = { 'error': errorMsg }
+    else:
+        document["circuit"] = circuitJson
         print(circuitJson)
         qmetricsjson =  {
             "name" : "MiriamTFGCircuit",
@@ -67,9 +73,21 @@ for document in documents:
         if "status" in metrics:
         #if status starts by 4** or 5**
             if str(metrics["status"])[0] in ("4","5"):
-                print("QMetrics couldn't calculate the metrics")
+                document["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
         else: 
-            #Update entry in MongoDB  
-            collRepo.update_one({"_id": document["_id"]},  {"$set": {"metrics": metrics}})
+            document["metrics"] = metrics
+
+    document["patterns"] = qcpdtool.generate_pattern(circuitJson)    
+
+
+    #Update entry in MongoDB  
+    collRepo.update_one({"_id": document["_id"]},
+    {
+        "$set": {
+            "circuit": document["circuit"],
+            "metrics": document["metrics"],
+            "patterns": document["patterns"]
+        }
+    })
 
 connection.close()
