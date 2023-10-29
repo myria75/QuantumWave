@@ -1,1 +1,0 @@
-The uncompute pattern detection method will not work if oracles exist in the circuit. This is due to the lack of time and resources. In a further future it might be implemented.

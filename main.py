@@ -63,11 +63,13 @@ for document in documents:
         r = qmetrics.calculateMetrics(qmetricsjson)
         metrics = r.json()
 
-        #if para comprobar que las métricas están bien
-        #if type(metrics) ==:
-            #A
-        collRepo.update_one({"_id": document["_id"]},  {"$set": {"metrics": metrics}})
-        #else:
-            #print("QMetrics no ha podido calcular las metricas")
+        #Checks if the metrics are correct
+        if "status" in metrics:
+        #if status starts by 4** or 5**
+            if str(metrics["status"])[0] in ("4","5"):
+                print("QMetrics couldn't calculate the metrics")
+        else: 
+            #Update entry in MongoDB  
+            collRepo.update_one({"_id": document["_id"]},  {"$set": {"metrics": metrics}})
 
 connection.close()

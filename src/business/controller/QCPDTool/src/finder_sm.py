@@ -14,7 +14,7 @@
 # pylint: disable=E0401
 import re
 import logging
-from patterns import Match
+from src.business.controller.QCPDTool.src.patterns import Match
 # pylint: enable=E0401
 #from patterns import Match
 
@@ -863,9 +863,12 @@ class Checker:
         return match
 
 if __name__ == '__main__':
-    suite_12 = '[[{"CONTROL":1},"X",{"CONTROL":1}],["X",{"CONTROL":0},"X"]]'
     dfa = StateMachine()
-    if dfa.start(suite_12, verbose=True) != 0:
+    if dfa.start(
+        '[["X","H",{"ORACLE":3},"H","X"],["Y","H","ORACLE2","H","Y"],' +\
+            '["Z","H","ORACLE2","H","Z"]]', 
+            verbose=True
+        ) != 0:
         print('DFA returned an error')
     print(dfa.stack)
     print(dfa.found)
