@@ -77,10 +77,12 @@ FALSE              : 'False';
 
 // Qiskit's Quantum Gates
 CONTROLLEDH      : 'ch';
+CONTROLLEDU      : 'cu';
 CONTROLLEDX      : 'cx';
 CONTROLLEDZ      : 'cz';
 HADAMARD         : 'h';
 MEASURE          : 'measure';
+ORACLE           : 'u';
 SWAP             : 'swap';
 S                : 's';
 T                : 't';

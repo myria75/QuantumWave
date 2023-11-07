@@ -78,4 +78,42 @@ class PythonVisitor(PythonParserVisitor):
                     found_gate = True
                     break
         
+        if not found_gate:
+            simple_oracle_gate = {
+                "ORACLE": ctx.ORACLE()
+            }
+            
+            for key,value in simple_oracle_gate.items():
+                if value is not None: #checks if there's some single qubit gates
+                    qubit = int(ctx.parentCtx.getChild(2).getChild(1).getChild(6).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
+                    self.content[qubit].append({key:1})
+                    found_gate = True
+                    break
+        
+        if not found_gate:
+            complex_oracle_gate = {
+                "ORACLE": ctx.CONTROLLEDU()
+            }
+            for key,value in complex_oracle_gate.items():
+                if value is not None:
+                    both_qubits = ctx.parentCtx.getChild(2).getChild(1)
+                    qubit1 = int(both_qubits.getChild(8).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
+                    qubit2 = int(both_qubits.getChild(10).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
+                    index = 0
+                    if len(self.content[qubit1]) > len(self.content[qubit2]):
+                        index = len(self.content[qubit1])
+                        
+                        while len(self.content[qubit2]) != index:
+                            self.content[qubit2].append("_")
+                    else:
+                        index = len(self.content[qubit2])
+                        
+                        while len(self.content[qubit1]) != index:
+                            self.content[qubit1].append("_")
+
+                    self.content[qubit1].append({"CONTROL":qubit2})
+                    self.content[qubit2].append({key:1})
+                    found_gate = True
+                    break
+
         return self.visitChildren(ctx) 

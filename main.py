@@ -11,6 +11,7 @@ import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as co
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
 import src.business.controller.QCPDTool.views as qcpdtool
 import os
+import json
 
 #Searches in GitHub and ingest the data
 #import src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates
@@ -35,16 +36,15 @@ collRepo = dbGithub[db_coll]
 query = {"extension": "qiskit"}
 documents = collRepo.find(query)
 
-
 for document in documents:
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
-    arbolAntlr = conversor.generateTree(document["content"])
+    antlr_tree = conversor.generateTree(document["content"])
     
     errorsFoundAtParse = False
     try:
-        circuitJson = conversor.deepSearch(arbolAntlr)
+        circuitJson = conversor.deepSearch(antlr_tree)
     except EmptyCircuitException as e:
         print("Empty array error")
         errorsFoundAtParse = True
@@ -77,11 +77,10 @@ for document in documents:
         else: 
             document["metrics"] = metrics
 
-    document["patterns"] = qcpdtool.generate_pattern(circuitJson)    
-
+    document["patterns"] = qcpdtool.generate_pattern(circuitJson)  
 
     #Update entry in MongoDB  
-    collRepo.update_one({"_id": document["_id"]},
+    collRepo.update_one({"id": document["id"]},
     {
         "$set": {
             "circuit": document["circuit"],

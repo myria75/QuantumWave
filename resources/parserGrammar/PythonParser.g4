@@ -385,10 +385,12 @@ comp_iter
 //Quantum gates
 quantum_gates_definition
     : CONTROLLEDH
+    | CONTROLLEDU
     | CONTROLLEDX
     | CONTROLLEDZ
     | HADAMARD
     | MEASURE
+    | ORACLE
     | SWAP  
     | S
     | T

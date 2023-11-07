@@ -87,12 +87,6 @@ def circuit_ok(response):
 
     return err_title, err_msg if err_title is not None else None
 
-def get_patterns():
-    '''Return list of the wanted patterns'''
-    manager = db.PatternManager()
-    pat_list = manager.read_all()
-    return pat_list
-
 def contain_oracles(input_circ):
     '''Returns true if the circuit has at least one oracle. False otherwise'''
     for qubit in input_circ:
@@ -118,24 +112,17 @@ def contain_rotation(input_circ):
             return True
     return False
 
-
 def generate_pattern(input_circ):
     context = {}
 
     # 1) Check empty circuit
-    if input_circ == '':
-        context['err_title'] = ERR_BLANKCIRCUIT[0]
-        context['err_msg'] = ERR_BLANKCIRCUIT[1]
-        return context
-
-    if input_circ == '[]' or input_circ == '{}':
+    if input_circ == '' or input_circ == '[]' or input_circ == '{}':
         context['err_title'] = ERR_BLANKCIRCUIT[0]
         context['err_msg'] = ERR_BLANKCIRCUIT[1]
         return context
 
     # 2) Initial Input Checking
     ## 2.1) Circuit string checking
-    #
     try:
         response = requests.get(f'{QPAINTER_URL}check/{input_circ}')
     except Exception:   #if couldn't connect, throws an error
@@ -166,6 +153,29 @@ def generate_pattern(input_circ):
         patt_id = sum(len(matches) for matches in front_matches.values())
         patt_tuple = (0,0,input_circ)
         front_matches['uncompute'] = {patt_id: patt_tuple}
+    
     context = front_matches
+    
+    new_context = {}
 
-    return context
+    for type, pattern_content in context.items():
+        new_context[type] = {}
+        if len(pattern_content) > 0:
+            pattern_array = []
+
+            for id_pattern, data_pattern in pattern_content.items():
+                qubit, column, fragment = data_pattern
+                aux_dict = {
+                    'id': id_pattern,
+                    'position': {
+                        'qubit': qubit,
+                        'column': column,
+                        'fragment': fragment
+                    }
+                }   
+
+                pattern_array.append(aux_dict)
+
+            new_context[type] = pattern_array
+
+    return new_context
