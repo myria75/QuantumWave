@@ -79,6 +79,20 @@ class PythonVisitor(PythonParserVisitor):
                     break
         
         if not found_gate:
+            single_r_gate = {
+                "RX": ctx.RX(),
+                "RY": ctx.RY(),
+                "RZ": ctx.RZ()
+            }
+            
+            for key,value in single_r_gate.items():
+                if value is not None: #checks if there's some single qubit gates
+                    qubit = int(ctx.parentCtx.getChild(2).getChild(1).getChild(2).getChild(0).getChild(0).getChild(0).getChild(0).getChild(1).getChild(0).getChild(1).getText())
+                    self.content[qubit].append(key)
+                    found_gate = True
+                    break
+
+        if not found_gate:
             simple_oracle_gate = {
                 "ORACLE": ctx.ORACLE()
             }

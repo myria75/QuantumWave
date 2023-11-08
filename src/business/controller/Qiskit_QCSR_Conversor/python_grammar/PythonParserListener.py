@@ -1,4 +1,4 @@
-# Generated from resources\parserGrammar\PythonParser.g4 by ANTLR 4.13.0
+# Generated from ..\parserGrammar\PythonParser.g4 by ANTLR 4.13.0
 from antlr4 import *
 if "." in __name__:
     from .PythonParser import PythonParser

@@ -391,6 +391,9 @@ quantum_gates_definition
     | HADAMARD
     | MEASURE
     | ORACLE
+    | RY
+    | RX
+    | RZ
     | SWAP  
     | S
     | T
