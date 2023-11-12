@@ -6,25 +6,33 @@ __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
 
 import configparser
+from datetime import datetime
 from src.business.controller.Qiskit_QCSR_Conversor.EmptyCircuitException import EmptyCircuitException
 import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as conversor
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
 import src.business.controller.QCPDTool.views as qcpdtool
 import os
 import json
-
-#Searches in GitHub and ingest the data
-#import src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates
-
-#Conversion from base64 to natural language and clasifies into languages and into quantic code and not quantic code
-#import src.persistency.Mongo_Ingest_Data_Dealing.conversion
-
-#Searches in db for codes in qiskit language
-from pymongo import MongoClient
+import logging
 
 configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
+
+logging.basicConfig(filename=eval(config.get('log', 'file')), filemode='a', encoding='utf-8', level=logging.DEBUG)
+logging.info(f"{datetime.now()} --EXCUTION STARTED")
+
+logging.info(f"{datetime.now()} --INGEST STARTED")
+#Searches in GitHub and ingest the data
+#import src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates
+
+logging.info(f"{datetime.now()} --CONVERSION STARTED")
+#Conversion from base64 to natural language and clasifies into languages and into quantic code and not quantic code
+import src.persistency.Mongo_Ingest_Data_Dealing.conversion
+
+logging.info(f"{datetime.now()} --ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
+#Searches in db for codes in qiskit language
+from pymongo import MongoClient
 
 db_link = eval(config.get('MongoDB', 'db_link'))
 db_name = eval(config.get('MongoDB', 'db_name'))
@@ -47,13 +55,16 @@ for document in documents:
         circuitJson = conversor.deepSearch(antlr_tree)
     except EmptyCircuitException as e:
         print("Empty array error")
+        logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} returns an empty array")
         errorsFoundAtParse = True
     except (AttributeError, KeyError, ValueError, IndexError) as e: 
         print("Throws an error")
+        logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
         errorsFoundAtParse = True
 
     if errorsFoundAtParse:
         errorMsg = "The antlr4 tree couldn't be generated. The circuit isn't converted"
+        logging.critical(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
         document["circuit"] = { 'error': errorMsg }
         document["metrics"] = { 'error': errorMsg }
     else:
@@ -73,12 +84,16 @@ for document in documents:
         if "status" in metrics:
         #if status starts by 4** or 5**
             if str(metrics["status"])[0] in ("4","5"):
+                logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
                 document["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
         else: 
             document["metrics"] = metrics
 
-    document["patterns"] = qcpdtool.generate_pattern(circuitJson)  
-
+    document["patterns"] = qcpdtool.generate_pattern(circuitJson)
+    
+    if 'err_msg' in document["patterns"].keys():
+        logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} {document['patterns']['err_msg']}")
+    
     #Update entry in MongoDB  
     collRepo.update_one({"id": document["id"]},
     {

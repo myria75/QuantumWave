@@ -7,9 +7,11 @@ import configparser
 import os
 import time
 from datetime import date, datetime
+import logging
 from time import sleep
 from urllib.parse import quote
 import requests
+from requests.adapters import Retry, HTTPAdapter
 from pymongo import MongoClient
 
 configuration_file =  os.path.join("resources", "config", "properties.ini")
@@ -48,7 +50,12 @@ def obtainConfiguration():
 
 def rateLimit(resource) -> tuple[int, datetime]:
     "Returns remaining requests left and the time when they are reset"
-    r = requests.get(limit_url, headers=headers)
+    session = requests.Session()
+    retry = Retry(connect=100, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    r = session.get(limit_url, headers=headers)
     rateLimit = r.json()
     remaining = rateLimit['resources'][resource]['remaining']
     reset = rateLimit['resources'][resource]['reset']
@@ -60,7 +67,7 @@ def checkWaitRateLimit(resource):
     remaining, resetDate = rateLimit(resource)
     
     if remaining == 0:
-        print("Esperando a que se reinicie el rate limit...")
+        print("Waiting for rate limit to reset...")
         secondsToWait = (resetDate - datetime.now()).total_seconds()
         sleep(secondsToWait+10)
 
@@ -80,7 +87,13 @@ def getCode (language, extension):
             repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, year, pagina_repo)
             
             checkWaitRateLimit('search')
-            r = requests.get(repo_url, headers=headers)
+            session1 = requests.Session()
+            retry1 = Retry(connect=100, backoff_factor=0.5)
+            adapter1 = HTTPAdapter(max_retries=retry1)
+            session1.mount('http://', adapter1)
+            session1.mount('https://', adapter1)
+            r = session1.get(repo_url, headers=headers)
+            #r = requests.get(repo_url, headers=headers)
 
             search_dict = r.json()               
             repos = None    #used to later store repositories which were returned
@@ -108,7 +121,13 @@ def getCode (language, extension):
                     code_url = search_code_url.format(extension_clause_plus+'+' + 'in:file+language:{}+repo:{}'.format(language,repo_full_name), pagina_codigo)                    
                     
                     checkWaitRateLimit('code_search')
-                    c = requests.get(code_url, headers=headers)
+                    session2 = requests.Session()
+                    retry2 = Retry(connect=100, backoff_factor=0.5)
+                    adapter2 = HTTPAdapter(max_retries=retry2)
+                    session2.mount('http://', adapter2)
+                    session2.mount('https://', adapter2)
+                    c = session2.get(code_url, headers=headers)
+                    #c = requests.get(code_url, headers=headers)
                     code_dict = c.json()
                     
                     if 'total_count' in code_dict and 'items' in code_dict:  #way to know if the request returned as expected  
@@ -122,7 +141,13 @@ def getCode (language, extension):
                         content_deep_url = content_url.format(repo_full_name, code_path)
                     
                         checkWaitRateLimit('core')
-                        p = requests.get(content_deep_url, headers=headers)
+                        session3 = requests.Session()
+                        retry3 = Retry(connect=100, backoff_factor=0.5)
+                        adapter3 = HTTPAdapter(max_retries=retry3)
+                        session3.mount('http://', adapter3)
+                        session3.mount('https://', adapter3)
+                        p = session3.get(content_deep_url, headers=headers)
+                        #p = requests.get(content_deep_url, headers=headers)
                         answer = p.json()
 
                         #Files attributes in MongoDB
@@ -135,15 +160,22 @@ def getCode (language, extension):
                         
                         if collRepo.find_one({'sha' : sha}) == None:    #Check if there are duplicate files
                             collRepo.insert_one(answer) #inserts the commits
+                            logging.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
                             contadorglobal+=1
 
 languages = config.get('languages', 'languages')
 languages = ast.literal_eval(languages)
+initial_time = time.time()
 
-for l in languages:
-    initial_time = time.time()
-    getCode(l[0], l[1])
-    final_time = time.time()
-    total_time = (final_time-initial_time)/3600
+if len(languages) <2:
+    True
+elif len(languages) ==2:
+    getCode(languages[0], languages[1])
+else:
+    for l in languages:
+        getCode(l[0], l[1])
 
-    print("Execution time: ",total_time, "hours")
+final_time = time.time()
+total_time = (final_time-initial_time)/3600
+
+print("Execution time: ",total_time, "hours")

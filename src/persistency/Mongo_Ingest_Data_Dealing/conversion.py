@@ -5,7 +5,9 @@
 import base64
 import codecs
 import configparser
+from datetime import datetime
 import os
+import logging
 import re
 import shutil
 import uuid
@@ -96,14 +98,17 @@ def insert(r, content, file_path, discard):
     hybrid:bool = False
     coll_to_insert = None
 
+    log_msg = f"{r['repo_language']}.{r['repo_extension']}, {r['repo_author']}/{r['repo_name']} | {file_path} has been"
     #checks if not discarded doccuments are hybrid
     if discard is False: 
         search_expression = eval(config.get('expression', 'search_hybrid'))
         search_result = re.search(search_expression, content)
         hybrid = False if (search_result is None) else True
         coll_to_insert = collRepo_accepted  #chosen collection to ingest 
+        log_msg = f"{log_msg} ACCPTED"
     else:
         coll_to_insert = collRepo_discard
+        log_msg = f"{log_msg} DISCARDED"
 
     #json to ingest at MongoDB
     ingest = {
@@ -119,5 +124,7 @@ def insert(r, content, file_path, discard):
     
     coll_to_insert.insert_one(ingest) #inserts the commits
 
+    logging.info(f"{datetime.now()} {log_msg}")
+    
 initializeDirs()
 getContent()
