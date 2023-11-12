@@ -28,7 +28,7 @@ logging.info(f"{datetime.now()} --INGEST STARTED")
 
 logging.info(f"{datetime.now()} --CONVERSION STARTED")
 #Conversion from base64 to natural language and clasifies into languages and into quantic code and not quantic code
-import src.persistency.Mongo_Ingest_Data_Dealing.conversion
+#import src.persistency.Mongo_Ingest_Data_Dealing.conversion
 
 logging.info(f"{datetime.now()} --ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
 #Searches in db for codes in qiskit language
@@ -48,11 +48,11 @@ for document in documents:
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
-    antlr_tree = conversor.generateTree(document["content"])
+    antlr_tree = conversor.generateTree(document["content"], document["language"])
     
     errorsFoundAtParse = False
     try:
-        circuitJson = conversor.deepSearch(antlr_tree)
+        circuitJson = conversor.deepSearch(antlr_tree, document["language"])
     except EmptyCircuitException as e:
         print("Empty array error")
         logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} returns an empty array")

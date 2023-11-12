@@ -139,43 +139,49 @@ def generate_pattern(input_circ):
     # 3) Circuit Processing
     # 3.1) SM Processing
     sm_finder = sm.StateMachine()
-    if sm_finder.start(input_circ, verbose=False) != 0:
-        print('DFA returned an error')
+
+    try:
+        if sm_finder.start(input_circ, verbose=False) != 0:
+            print('DFA returned an error')
+            context['err_title'] = ERR_PROCESSING[0]
+            context['err_msg'] = ERR_PROCESSING[1]
+            return context
+        sm_matches = sm_finder.found
+        front_matches = sm_to_front(sm_matches)
+
+        # 3.2) Simulator Processing
+        has_uncompute = sim.main(eval(input_circ))
+        if has_uncompute == 1: # Uncompute pattern found
+            patt_id = sum(len(matches) for matches in front_matches.values())
+            patt_tuple = (0,0,input_circ)
+            front_matches['uncompute'] = {patt_id: patt_tuple}
+        
+        context = front_matches
+        
+        new_context = {}
+
+        for type, pattern_content in context.items():
+            new_context[type] = {}
+            if len(pattern_content) > 0:
+                pattern_array = []
+
+                for id_pattern, data_pattern in pattern_content.items():
+                    qubit, column, fragment = data_pattern
+                    aux_dict = {
+                        'id': id_pattern,
+                        'position': {
+                            'qubit': qubit,
+                            'column': column,
+                            'fragment': fragment
+                        }
+                    }   
+
+                    pattern_array.append(aux_dict)
+
+                new_context[type] = pattern_array
+
+        return new_context
+    except:
         context['err_title'] = ERR_PROCESSING[0]
         context['err_msg'] = ERR_PROCESSING[1]
         return context
-    sm_matches = sm_finder.found
-    front_matches = sm_to_front(sm_matches)
-
-    # 3.2) Simulator Processing
-    has_uncompute = sim.main(eval(input_circ))
-    if has_uncompute == 1: # Uncompute pattern found
-        patt_id = sum(len(matches) for matches in front_matches.values())
-        patt_tuple = (0,0,input_circ)
-        front_matches['uncompute'] = {patt_id: patt_tuple}
-    
-    context = front_matches
-    
-    new_context = {}
-
-    for type, pattern_content in context.items():
-        new_context[type] = {}
-        if len(pattern_content) > 0:
-            pattern_array = []
-
-            for id_pattern, data_pattern in pattern_content.items():
-                qubit, column, fragment = data_pattern
-                aux_dict = {
-                    'id': id_pattern,
-                    'position': {
-                        'qubit': qubit,
-                        'column': column,
-                        'fragment': fragment
-                    }
-                }   
-
-                pattern_array.append(aux_dict)
-
-            new_context[type] = pattern_array
-
-    return new_context
