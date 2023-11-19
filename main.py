@@ -19,18 +19,25 @@ configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
 
-logging.basicConfig(filename=eval(config.get('log', 'file')), filemode='a', encoding='utf-8', level=logging.DEBUG)
-logging.info(f"{datetime.now()} --EXCUTION STARTED")
-
-logging.info(f"{datetime.now()} --INGEST STARTED")
+logging.root.handlers=[]
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(eval(config.get('log', 'file')))
+        #,logging.StreamHandler()
+    ]
+)
+logging.info("--EXCUTION STARTED")
+logging.info("--INGEST STARTED")
 #Searches in GitHub and ingest the data
 #import src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates
 
-logging.info(f"{datetime.now()} --CONVERSION STARTED")
+logging.info("--CONVERSION STARTED")
 #Conversion from base64 to natural language and clasifies into languages and into quantic code and not quantic code
 #import src.persistency.Mongo_Ingest_Data_Dealing.conversion
 
-logging.info(f"{datetime.now()} --ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
+logging.info("--ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
 #Searches in db for codes in qiskit language
 from pymongo import MongoClient
 
@@ -41,7 +48,7 @@ connection = MongoClient(db_link)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
 
-query = {"extension": "qiskit"}
+query = {"language": "openqasm"}
 documents = collRepo.find(query)
 
 for document in documents:
@@ -51,20 +58,28 @@ for document in documents:
     antlr_tree = conversor.generateTree(document["content"], document["language"])
     
     errorsFoundAtParse = False
+    errorMsg = ""
+
     try:
         circuitJson = conversor.deepSearch(antlr_tree, document["language"])
     except EmptyCircuitException as e:
-        print("Empty array error")
-        logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} returns an empty array")
+        print("Empty array error because QuantumRegister isn't called")
+        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
         errorsFoundAtParse = True
-    except (AttributeError, KeyError, ValueError, IndexError) as e: 
+        errorMsg = "The antlr4 tree couldn't be generated. Empty array error because QuantumRegister isn't called"
+    except ValueError as e:
+        print("Translator can't read variables when reading gates/circuit, the code is incompatible")
+        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
+        errorsFoundAtParse = True
+        errorMsg = "The antlr4 tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible"
+    except (AttributeError, KeyError, IndexError) as e: 
         print("Throws an error")
-        logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
+        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
         errorsFoundAtParse = True
+        errorMsg = "The antlr4 tree couldn't be generated. The circuit isn't converted"
 
     if errorsFoundAtParse:
-        errorMsg = "The antlr4 tree couldn't be generated. The circuit isn't converted"
-        logging.critical(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
+        logging.critical(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
         document["circuit"] = { 'error': errorMsg }
         document["metrics"] = { 'error': errorMsg }
     else:
@@ -84,7 +99,7 @@ for document in documents:
         if "status" in metrics:
         #if status starts by 4** or 5**
             if str(metrics["status"])[0] in ("4","5"):
-                logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
+                logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
                 document["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
         else: 
             document["metrics"] = metrics
@@ -92,7 +107,7 @@ for document in documents:
     document["patterns"] = qcpdtool.generate_pattern(circuitJson)
     
     if 'err_msg' in document["patterns"].keys():
-        logging.warning(f"{datetime.now()} {document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} {document['patterns']['err_msg']}")
+        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} {document['patterns']['err_msg']}")
     
     #Update entry in MongoDB  
     collRepo.update_one({"id": document["id"]},
