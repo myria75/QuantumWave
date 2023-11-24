@@ -14,6 +14,7 @@ import src.business.controller.QCPDTool.views as qcpdtool
 import os
 import json
 import logging
+import traceback
 
 configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
@@ -24,7 +25,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler(eval(config.get('log', 'file')))
+        #logging.FileHandler(eval(config.get('log', 'file')))
         #,logging.StreamHandler()
     ]
 )
@@ -48,9 +49,8 @@ connection = MongoClient(db_link)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
 
-query = {"language": "openqasm"}
+query = {"language": "Python"}
 documents = collRepo.find(query)
-
 for document in documents:
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
@@ -71,12 +71,13 @@ for document in documents:
         print("Translator can't read variables when reading gates/circuit, the code is incompatible")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
         errorsFoundAtParse = True
-        errorMsg = "The antlr4 tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible"
+        errorMsg = f"The antlr4 tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible\n{traceback.format_exc()}"
     except (AttributeError, KeyError, IndexError) as e: 
-        print("Throws an error")
+        print("-------Throws an error----------")
+        print(f"{e.__str__()} {document['path']}")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
         errorsFoundAtParse = True
-        errorMsg = "The antlr4 tree couldn't be generated. The circuit isn't converted"
+        errorMsg = f"The antlr4 tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
 
     if errorsFoundAtParse:
         logging.critical(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")

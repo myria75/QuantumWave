@@ -352,6 +352,7 @@ arglist
     : argument (COMMA argument)* COMMA?
     ;
 
+//TODO We change test by name to test quantum circuit instantiation
 argument
     : test (comp_for | ASSIGN test)?
     | (POWER | STAR) test

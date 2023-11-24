@@ -43,7 +43,7 @@ class qasm3Visitor(qasm3ParserVisitor):
     def __init__(self):
         self.content = ""
 
-    #para obtener el n de qubits
+    #to obtain the number of qubits
     def visitOldStyleDeclarationStatement(self, ctx:qasm3Parser.OldStyleDeclarationStatementContext):
         #obtener el primer hijo, comprobar si es QREG
         if ctx.getChild(0).getText() == 'qreg': 
@@ -53,7 +53,7 @@ class qasm3Visitor(qasm3ParserVisitor):
         return self.visitChildren(ctx)
     
     def visitGateCallStatement(self, ctx:qasm3Parser.GateCallStatementContext):
-        #hacer un diccionario por cada tipo distinto de puerta (si es de varios qbits, si tiene otros valores, etc)
+        #a dicitionary of every type of gate (more tan one qubit or more)
         gate = ctx.getChild(0).getText()
 
         if gate in self.single_qubit_gates:
@@ -98,7 +98,7 @@ class qasm3Visitor(qasm3ParserVisitor):
 
             self.content[qubit1].append({"CONTROL":qubit2})
             self.content[qubit2].append(self.r_oracle_complex_qubit_gates[gate])
-        #dependiendo de lo que sea, habrá que buscar un hijo u otro
+        #depends of what we are searching for, searches for one child or another
         return self.visitChildren(ctx)
     
     def visitMeasureExpression(self, ctx:qasm3Parser.MeasureExpressionContext):

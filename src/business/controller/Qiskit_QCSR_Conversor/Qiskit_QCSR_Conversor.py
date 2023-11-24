@@ -5,12 +5,12 @@
 import json
 from .EmptyCircuitException import EmptyCircuitException
 from antlr4 import *
-from src.business.controller.Qiskit_QCSR_Conversor.python_grammar.PythonLexer import PythonLexer
-from src.business.controller.Qiskit_QCSR_Conversor.python_grammar.PythonParser import PythonParser
-from src.business.controller.Qiskit_QCSR_Conversor.python_grammar.PythonVisitor import PythonVisitor
-from src.business.controller.Qiskit_QCSR_Conversor.python_grammar.qasm3Lexer import qasm3Lexer
-from src.business.controller.Qiskit_QCSR_Conversor.python_grammar.qasm3Parser import qasm3Parser
-from src.business.controller.Qiskit_QCSR_Conversor.python_grammar.qasm3Visitor import qasm3Visitor
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.PythonLexer import PythonLexer
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.PythonParser import PythonParser
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.PythonVisitor import PythonVisitor
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Lexer import qasm3Lexer
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Parser import qasm3Parser
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Visitor import qasm3Visitor
 
 def generateTree(input, language):
     input_stream = InputStream(input)
