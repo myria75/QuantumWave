@@ -49,6 +49,10 @@ connection = MongoClient(db_link)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
 
+n_generated_trees = 0
+n_generated_circuits = 0
+n_blank_circuits = 0
+
 query = {"language": "Python"}
 documents = collRepo.find(query)
 for document in documents:
@@ -56,17 +60,21 @@ for document in documents:
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
     antlr_tree = conversor.generateTree(document["content"], document["language"])
-    
+
+    n_generated_trees+=1
     errorsFoundAtParse = False
     errorMsg = ""
 
     try:
         circuitJson = conversor.deepSearch(antlr_tree, document["language"])
+        n_generated_circuits+=1
     except EmptyCircuitException as e:
         print("Empty array error because QuantumRegister isn't called")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
         errorsFoundAtParse = True
         errorMsg = "The antlr4 tree couldn't be generated. Empty array error because QuantumRegister isn't called"
+        n_generated_circuits+=1
+        n_blank_circuits+=1
     except ValueError as e:
         print("Translator can't read variables when reading gates/circuit, the code is incompatible")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
@@ -121,3 +129,7 @@ for document in documents:
     })
 
 connection.close()
+
+print(f"Number of codes with antlr4 tree: {n_generated_trees}")
+print(f"Number of codes with circuit: {n_generated_circuits}")
+print(f"Number of codes with blank circuits: {n_blank_circuits}")
