@@ -7,6 +7,7 @@ __version__ = "1.0"
 
 import configparser
 from datetime import datetime
+import time
 from src.business.controller.Qiskit_QCSR_Conversor.EmptyCircuitException import EmptyCircuitException
 import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as conversor
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
@@ -25,9 +26,10 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        #logging.FileHandler(eval(config.get('log', 'file')))
+        logging.FileHandler(eval(config.get('log', 'file')))
         #,logging.StreamHandler()
-    ]
+    ],
+    encoding="UTF-8"
 )
 logging.info("--EXCUTION STARTED")
 logging.info("--INGEST STARTED")
@@ -36,26 +38,35 @@ logging.info("--INGEST STARTED")
 
 logging.info("--CONVERSION STARTED")
 #Conversion from base64 to natural language and clasifies into languages and into quantic code and not quantic code
-#import src.persistency.Mongo_Ingest_Data_Dealing.conversion
+import src.persistency.Mongo_Ingest_Data_Dealing.conversion
 
 logging.info("--ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
 #Searches in db for codes in qiskit language
 from pymongo import MongoClient
+from pymongo import cursor
 
 db_link = eval(config.get('MongoDB', 'db_link'))
 db_name = eval(config.get('MongoDB', 'db_name'))
 db_coll = eval(config.get('MongoDB', 'db_coll_accepted'))
-connection = MongoClient(db_link)
+connection = MongoClient(db_link, socketTimeoutMS=None)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
-
 n_generated_trees = 0
 n_generated_circuits = 0
 n_blank_circuits = 0
 
 query = {"language": "Python"}
-documents = collRepo.find(query)
+documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
+refreshTime = 600 #10 minutes
+startQueryTime = time.time()
+
 for document in documents:
+    nowQueryTime = time.time()
+    if nowQueryTime - startQueryTime >= refreshTime:
+        documents.close()
+        documents = collRepo.find(query, no_cursor_timeout=True)
+        startQueryTime = nowQueryTime
+
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""

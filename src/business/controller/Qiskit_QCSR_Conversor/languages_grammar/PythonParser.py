@@ -349,10 +349,10 @@ def serializedATN():
         0,0,852,103,1,0,0,0,853,858,3,106,53,0,854,855,5,61,0,0,855,857,
         3,106,53,0,856,854,1,0,0,0,857,860,1,0,0,0,858,856,1,0,0,0,858,859,
         1,0,0,0,859,862,1,0,0,0,860,858,1,0,0,0,861,863,5,61,0,0,862,861,
-        1,0,0,0,862,863,1,0,0,0,863,105,1,0,0,0,864,868,3,90,45,0,865,869,
-        3,114,57,0,866,867,5,65,0,0,867,869,3,90,45,0,868,865,1,0,0,0,868,
+        1,0,0,0,862,863,1,0,0,0,863,105,1,0,0,0,864,868,3,62,31,0,865,869,
+        3,114,57,0,866,867,5,65,0,0,867,869,3,62,31,0,868,865,1,0,0,0,868,
         866,1,0,0,0,868,869,1,0,0,0,869,873,1,0,0,0,870,871,7,8,0,0,871,
-        873,3,90,45,0,872,864,1,0,0,0,872,870,1,0,0,0,873,107,1,0,0,0,874,
+        873,3,62,31,0,872,864,1,0,0,0,872,870,1,0,0,0,873,107,1,0,0,0,874,
         879,3,110,55,0,875,876,5,61,0,0,876,878,3,110,55,0,877,875,1,0,0,
         0,878,881,1,0,0,0,879,877,1,0,0,0,879,880,1,0,0,0,880,883,1,0,0,
         0,881,879,1,0,0,0,882,884,5,61,0,0,883,882,1,0,0,0,883,884,1,0,0,
@@ -1664,7 +1664,7 @@ class PythonParser ( PythonParserBase ):
                 self.state = 247
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 1152923153874288640) != 0) or _la==64 or _la==112:
+                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 2017614763517804544) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & 378197640221057) != 0):
                     self.state = 246
                     self.arglist()
 
@@ -2089,7 +2089,7 @@ class PythonParser ( PythonParserBase ):
                 self.state = 287
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 1152923153874288640) != 0) or _la==64 or _la==112:
+                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 2017614763517804544) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & 378197640221057) != 0):
                     self.state = 286
                     self.arglist()
 
@@ -6432,7 +6432,7 @@ class PythonParser ( PythonParserBase ):
                 self.state = 844
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 1152923153874288640) != 0) or _la==64 or _la==112:
+                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 2017614763517804544) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & 378197640221057) != 0):
                     self.state = 843
                     self.arglist()
 
@@ -6547,11 +6547,11 @@ class PythonParser ( PythonParserBase ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def name(self, i:int=None):
+        def test(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(PythonParser.NameContext)
+                return self.getTypedRuleContexts(PythonParser.TestContext)
             else:
-                return self.getTypedRuleContext(PythonParser.NameContext,i)
+                return self.getTypedRuleContext(PythonParser.TestContext,i)
 
 
         def comp_for(self):
@@ -6596,10 +6596,10 @@ class PythonParser ( PythonParserBase ):
             self.state = 872
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [39, 40, 112]:
+            if token in [20, 24, 27, 36, 37, 38, 39, 40, 58, 59, 71, 72, 76, 99, 100, 101, 102, 103, 104, 105, 106, 108, 110, 112]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 864
-                self.name()
+                self.test()
                 self.state = 868
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
@@ -6611,7 +6611,7 @@ class PythonParser ( PythonParserBase ):
                     self.state = 866
                     self.match(PythonParser.ASSIGN)
                     self.state = 867
-                    self.name()
+                    self.test()
                     pass
                 elif token in [61, 107]:
                     pass
@@ -6628,7 +6628,7 @@ class PythonParser ( PythonParserBase ):
                     self._errHandler.reportMatch(self)
                     self.consume()
                 self.state = 871
-                self.name()
+                self.test()
                 pass
             else:
                 raise NoViableAltException(self)

@@ -5,7 +5,6 @@
 import base64
 import codecs
 import configparser
-from datetime import datetime
 import os
 import logging
 import re
@@ -124,7 +123,7 @@ def insert(r, content, file_path, discard):
     
     coll_to_insert.insert_one(ingest) #inserts the commits
 
-    logging.info(f"{datetime.now()} {log_msg}")
+    logging.info(f"{log_msg}")
     
 initializeDirs()
 getContent()

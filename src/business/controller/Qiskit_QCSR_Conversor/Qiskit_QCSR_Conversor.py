@@ -16,12 +16,12 @@ def generateTree(input, language):
     input_stream = InputStream(input)
     tree = ''
 
-    if language == 'Python':
+    if language == "Python":
         lexer = PythonLexer(input_stream)
         stream = CommonTokenStream(lexer)
         parser = PythonParser(stream)
         tree = parser.root()
-    elif language == 'openqasm':
+    elif language == "openqasm":
         lexer = qasm3Lexer(input_stream)
         stream = CommonTokenStream(lexer)
         parser = qasm3Parser(stream)
@@ -32,9 +32,9 @@ def generateTree(input, language):
 def deepSearch(tree, language):
     visitor = ''
 
-    if language == 'Python':
+    if language == "Python":
         visitor = PythonVisitor()
-    elif language == 'openqasm':
+    elif language == "openqasm":
         visitor = qasm3Visitor()
 
     visitor.visit(tree) #The circuit array is stored in visitor.content 
