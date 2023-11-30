@@ -38,7 +38,7 @@ logging.info("--INGEST STARTED")
 
 logging.info("--CONVERSION STARTED")
 #Conversion from base64 to natural language and clasifies into languages and into quantic code and not quantic code
-import src.persistency.Mongo_Ingest_Data_Dealing.conversion
+#import src.persistency.Mongo_Ingest_Data_Dealing.conversion
 
 logging.info("--ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
 #Searches in db for codes in qiskit language
@@ -55,7 +55,7 @@ n_generated_trees = 0
 n_generated_circuits = 0
 n_blank_circuits = 0
 
-query = {"language": "Python"}
+query = { "language": "openqasm" } #{"language": "Python"}
 documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
 refreshTime = 600 #10 minutes
 startQueryTime = time.time()

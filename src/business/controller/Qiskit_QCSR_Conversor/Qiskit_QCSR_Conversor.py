@@ -41,5 +41,14 @@ def deepSearch(tree, language):
     
     if len(visitor.content) == 0:
         raise EmptyCircuitException()
+
+    blank_qubits = 0
+
+    for qubit in visitor.content:
+        if len(qubit) == 0:
+            blank_qubits+=1
+    
+    if blank_qubits == len(visitor.content):
+        raise EmptyCircuitException()
     
     return json.dumps(visitor.content)
