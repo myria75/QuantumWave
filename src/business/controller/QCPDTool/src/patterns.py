@@ -1,3 +1,4 @@
+
 '''Module for defining the logic and data needed for each pattern match'''
 
 def column_occ(row, col_no):
