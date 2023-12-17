@@ -13,6 +13,9 @@ from urllib.parse import quote
 import requests
 from requests.adapters import Retry, HTTPAdapter
 from pymongo import MongoClient
+import re
+import base64
+import uuid
 
 configuration_file =  os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
@@ -22,10 +25,12 @@ token = eval(config.get('GitHub', 'token'))
 #MongoDB
 db_link = eval(config.get('MongoDB', 'db_link'))
 db_name = eval(config.get('MongoDB', 'db_name'))
-db_coll = eval(config.get('MongoDB', 'db_coll'))
+db_coll_accepted = eval(config.get('MongoDB', 'db_coll_accepted'))
+db_coll_discarded = eval(config.get('MongoDB', 'db_coll_discarded'))
 connection = MongoClient(db_link)
 dbGithub = connection[db_name]
-collRepo = dbGithub[db_coll]
+collRepo_accepted = dbGithub[db_coll_accepted]
+collRepo_discard = dbGithub[db_coll_discarded]
 
 #URL and headers
 search_repo_url = 'https://api.github.com/search/repositories?q={}+created:{}-01-01..{}-12-31&per_page=100&page={}'
@@ -46,7 +51,7 @@ headers = {
 }
 
 def obtainConfiguration():
-    return token, db_link, db_name, db_coll
+    return token, db_link, db_name
 
 def rateLimit(resource) -> tuple[int, datetime]:
     "Returns remaining requests left and the time when they are reset"
@@ -69,6 +74,10 @@ def checkWaitRateLimit(resource):
     if remaining == 0:
         print("Waiting for rate limit to reset...")
         secondsToWait = (resetDate - datetime.now()).total_seconds()
+        
+        if secondsToWait < 0:
+            secondsToWait = 0
+
         sleep(secondsToWait+10)
 
 def content_ingestion(code_url, language, extension, repo_full_name, repo_name, repo_owner, repo_creation_date, year, pagina_repo):
@@ -89,7 +98,6 @@ def content_ingestion(code_url, language, extension, repo_full_name, repo_name, 
         codefiles = code_dict['items']
     #else:                    
     #    break   #there is no more code pages or any other gitHub API error, stop searching code pages and continue pages loop
-    print(code_url)
     if codefiles is not None:                    
         for code in codefiles:  #iterate over every code result
             code_path = quote(code['path']) #convert code path to URL-friendly
@@ -112,14 +120,70 @@ def content_ingestion(code_url, language, extension, repo_full_name, repo_name, 
             answer['repo_language'] = language
             answer['repo_extension'] = extension
             sha = str(p.json()['sha'])
-                                
-            if collRepo.find_one({'sha' : sha}) == None:    #Check if there are duplicate files
-                collRepo.insert_one(answer) #inserts the commits
-                logging.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
-                contadorglobal+=1
-        
-    
 
+            if obtainContentConversion(answer) == True:
+                logging.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
+                contadorglobal+=1       
+
+def obtainContentConversion(doc) -> bool:    
+    file_path:str = "{}_{}_{}_{}_{}".format(doc['repo_language'], doc['repo_extension'], doc['repo_author'], doc['repo_name'], doc['path'])
+    file_path = file_path.replace("/",".")
+
+    #convert content to base64
+    content_b64 = doc['content']
+    content_b64bytes = content_b64.encode('utf-8')
+    content_bytes = base64.b64decode(content_b64bytes)
+    content = content_bytes.decode('utf-8')
+        
+    search_result = "n"
+
+    if doc['repo_language'] == 'Python':
+        search_expression = eval(config.get('expression', 'search_python'))
+        search_result = re.search(search_expression, content)
+    elif doc['repo_language'] == 'qsharp':
+        search_expression = eval(config.get('expression', 'search_qsharp'))
+        search_result = re.search(search_expression, content)
+
+    hybrid:bool = False
+    coll_to_insert = None
+
+    log_msg = f"{doc['repo_language']}.{doc['repo_extension']}, {doc['repo_author']}/{doc['repo_name']} | {file_path} has been"
+
+    if search_result is None:
+        #Discarded
+        coll_to_insert = collRepo_discard
+        log_msg = f"{log_msg} DISCARDED"
+        #insert(doc, content, file_path, True) #set if this doccument is going to be discarded
+    else: 
+        #Accepted, to check hybrid
+        search_expression = eval(config.get('expression', 'search_hybrid'))
+        search_result = re.search(search_expression, content)
+        hybrid = False if (search_result is None) else True
+        coll_to_insert = collRepo_accepted  #chosen collection to ingest 
+        log_msg = f"{log_msg} ACCEPTED"
+        #insert(doc, content, file_path, False)
+    
+    #json to ingest at MongoDB
+    ingest = {
+        "id": str(uuid.uuid4()),
+        "sha": doc['sha'],
+        "language": doc['repo_language'],
+        "extension": doc['repo_extension'],
+        "author": doc['repo_author'],
+        "name": doc['repo_name'],
+        "path": file_path, 
+        "hybrid": hybrid, 
+        "content": content
+    }
+    
+    logging.info(f"{log_msg}")
+    
+    if coll_to_insert.find_one({'sha' : ingest['sha']}) == None:    #Check if there are duplicate files
+        coll_to_insert.insert_one(ingest) #inserts the commits
+        return True
+    else:
+        return False
+    
 def getCode (language, extension, filters):
     global contadorglobal
     plus_extension_clause = ''

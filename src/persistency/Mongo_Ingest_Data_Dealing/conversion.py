@@ -104,7 +104,7 @@ def insert(r, content, file_path, discard):
         search_result = re.search(search_expression, content)
         hybrid = False if (search_result is None) else True
         coll_to_insert = collRepo_accepted  #chosen collection to ingest 
-        log_msg = f"{log_msg} ACCPTED"
+        log_msg = f"{log_msg} ACCEPTED"
     else:
         coll_to_insert = collRepo_discard
         log_msg = f"{log_msg} DISCARDED"
