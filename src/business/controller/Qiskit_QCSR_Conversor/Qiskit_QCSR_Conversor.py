@@ -3,11 +3,12 @@
 """
 
 import json
+import ast
 from .EmptyCircuitException import EmptyCircuitException
 from antlr4 import *
-from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.PythonLexer import PythonLexer
-from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.PythonParser import PythonParser
-from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.PythonVisitor import PythonVisitor
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Lexer import Python3Lexer as PythonLexer
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Parser import Python3Parser as PythonParser
+from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Visitor import Python3Visitor as PythonVisitor
 from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Lexer import qasm3Lexer
 from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Parser import qasm3Parser
 from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Visitor import qasm3Visitor
@@ -17,10 +18,14 @@ def generateTree(input, language):
     tree = ''
 
     if language == "Python":
-        lexer = PythonLexer(input_stream)
-        stream = CommonTokenStream(lexer)
-        parser = PythonParser(stream)
-        tree = parser.root()
+        tree = parsePytyonWithAST(input)
+        
+        #lexer = PythonLexer(input_stream)
+        #stream = CommonTokenStream(lexer)
+        #parser = PythonParser(stream)
+        #tree = parser.root()
+        ##tree = parser.file_input()
+        
     elif language == "openqasm":
         lexer = qasm3Lexer(input_stream)
         stream = CommonTokenStream(lexer)
@@ -28,6 +33,16 @@ def generateTree(input, language):
         tree = parser.program()
 
     return tree
+
+def parsePytyonWithAST(fileContent):
+    try:
+        tree = ast.parse(fileContent)
+        #print(ast.dump(tree, indent=3))
+        return tree
+    except SyntaxError:
+        print("Hay error")
+        return None
+
 
 def deepSearch(tree, language):
     visitor = ''

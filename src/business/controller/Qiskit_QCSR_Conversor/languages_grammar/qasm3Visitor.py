@@ -30,7 +30,8 @@ class qasm3Visitor(qasm3ParserVisitor):
     complex_qubit_gates = {
         "ch": "H",
         "cy": "Y",
-        "cz": "Z"
+        "cz": "Z",
+        "cx": "X"
     }
 
     r_oracle_complex_qubit_gates = {

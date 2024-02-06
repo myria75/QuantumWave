@@ -6,3 +6,5 @@ src/persistency/Mongo_Ingest_Data_Dealing/code/*
 src/persistency/Mongo_Ingest_Data_Dealing/code_discard/*
 src/persistency/Mongo_Ingest_Data_Dealing/mongoDB_ingest_20231102/*
 src/persistency/Mongo_Ingest_Data_Dealing/mongoDB_ingest20231119/*
+src/persistency/Mongo_Ingest_Data_Dealing/mongoDB_ingest_20231216/repositories.accepted_code.json
+src/persistency/Mongo_Ingest_Data_Dealing/mongoDB_ingest_20231216/repositories.discarded_code.json
