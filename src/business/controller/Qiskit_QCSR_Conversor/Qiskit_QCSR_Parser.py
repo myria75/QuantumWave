@@ -1,4 +1,6 @@
 import ast
+from builtins import isinstance
+from _ast import And
 
 single_qubit_gates = {
     "h": "H",
@@ -30,16 +32,32 @@ complex_oracle_gate = {
     "cu": "ORACLE"
 }
 
+operations = {
+    ast.Add: "+",
+    ast.Sub: "-",
+    ast.Mult: "*",
+    ast.Div: "/",
+    ast.Mod: "%"
+}
+
 class VariableVisitor(ast.NodeVisitor):
     def __init__(self):
-        self.variables = {} #varible dictionary with values
+        self.variables = {} #variable dictionary with values
         self.content = ""
         
     def getNumValue(self, node):
-        if isinstance(node, ast.Constant): #if the node is a number, takes it
+        if isinstance(node, ast.Constant) and isinstance(node, ast.Num): #if the node is a number, takes it
             qubit = int(node.value)
         elif isinstance(node, ast.Name): #if the node is a variable, takes its value from the dictionary
             qubit = self.variables[node.id]
+        elif isinstance(node, ast.BinOp):
+            left = self.getNumValue(node.left)
+            right = self.getNumValue(node.right)
+            operator = operations.get(type(node.op))
+            if operator is None:
+                print("error, opracion no encontrada ")
+    
+            qubit = eval("{}{}{}".format(left, operator, right))
         return int(qubit)
     
     def fillWithBlanks(self, q1, q2):
@@ -56,8 +74,10 @@ class VariableVisitor(ast.NodeVisitor):
 
     def visit_Assign(self, node):
         for target in node.targets:
-            if isinstance(target, ast.Name) and isinstance(node.value, ast.Num):
-                self.variables[target.id] = node.value.n #adds/update the variable in the dictionary
+            if isinstance(target, ast.Name):
+                if isinstance(node.value, ast.Constant) or isinstance(node.value, ast.Name) or isinstance(node.value, ast.BinOp):
+                    self.variables[target.id] = self.getNumValue(node.value) #adds/update the variable in the dictionary
+        
         self.generic_visit(node)
         
     def visit_Call(self, node):
@@ -76,49 +96,56 @@ class VariableVisitor(ast.NodeVisitor):
             gate = node.func.attr #door
             
             if gate in single_qubit_gates:    
-                QCSRgate = single_qubit_gates[gate] 
-                qubit = self.getNumValue(node.args[0].slice)
+                QCSRgate = single_qubit_gates[gate]
+                qubit = self.getNumValue(node.args[0])
                 self.content[qubit].append(QCSRgate)
         
             if gate in complex_qubit_gates:    
                 QCSRgate = complex_qubit_gates[gate] 
-                qubit_1 = self.getNumValue(node.args[0].slice)
-                qubit_2 = self.getNumValue(node.args[1].slice)
+                qubit_1 = self.getNumValue(node.args[0])
+                qubit_2 = self.getNumValue(node.args[1])
                 self.fillWithBlanks(qubit_1, qubit_2)
                 self.content[qubit_1].append({"CONTROL":qubit_2})
                 self.content[qubit_2].append(QCSRgate)
                 
             if gate in single_r_gate:    
                 QCSRgate = single_r_gate[gate] 
-                qubit = self.getNumValue(node.args[1].slice)
+                qubit = self.getNumValue(node.args[1])
                 self.content[qubit].append(QCSRgate)
         
             if gate in simple_oracle_gate:    
                 QCSRgate = simple_oracle_gate[gate] 
-                qubit = self.getNumValue(node.args[3].slice)
+                qubit = self.getNumValue(node.args[3])
                 self.content[qubit].append(QCSRgate)
             
             if gate in complex_oracle_gate:    
                 QCSRgate = complex_oracle_gate[gate] 
-                qubit_1 = self.getNumValue(node.args[4].slice)
-                qubit_2 = self.getNumValue(node.args[5].slice)
+                qubit_1 = self.getNumValue(node.args[4])
+                qubit_2 = self.getNumValue(node.args[5])
                 self.fillWithBlanks(qubit_1, qubit_2)
                 self.content[qubit_1].append({"CONTROL":qubit_2})
                 self.content[qubit_2].append(QCSRgate)
-                    
+            
         self.generic_visit(node)
     
 code = '''
-qreg_q = QuantumRegister(4, 'q')
+b=3
+a=1
+a=b
+a = 1+1
+a=6-1
+qreg_q = QuantumRegister(a, 'q')
 creg_c = ClassicalRegister(4, 'c')
 circuit = QuantumCircuit(qreg_q, creg_c)
 
-circuit.cu(pi / 2, pi / 2, pi / 2, 0, qreg_q[0], qreg_q[2])
+circuit.h(a-1, qreg_q[2])
+circuit.h(1, qreg_q[2])
+
 '''
 
 #print(ast.dump(ast.parse(code), indent=2))
 codigoParseado: ast.Module = ast.parse(code)
 visitor = VariableVisitor()
 visitor.visit(codigoParseado)
-#print(visitor.variables)
+print(visitor.variables)
 print(visitor.content)
