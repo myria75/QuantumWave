@@ -6,9 +6,10 @@ import json
 import ast
 from .EmptyCircuitException import EmptyCircuitException
 from antlr4 import *
-from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Lexer import Python3Lexer as PythonLexer
-from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Parser import Python3Parser as PythonParser
-from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Visitor import Python3Visitor as PythonVisitor
+from src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Parser import Python3Visitor
+#from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Lexer import Python3Lexer as PythonLexer
+#from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Parser import Python3Parser as PythonParser
+#from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.Python3Visitor import Python3Visitor as PythonVisitor
 from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Lexer import qasm3Lexer
 from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Parser import qasm3Parser
 from src.business.controller.Qiskit_QCSR_Conversor.languages_grammar.qasm3Visitor import qasm3Visitor
@@ -18,8 +19,9 @@ def generateTree(input, language):
     tree = ''
 
     if language == "Python":
-        tree = parsePytyonWithAST(input)
+        tree = ast.parse(input)
         
+        #Old lexer:
         #lexer = PythonLexer(input_stream)
         #stream = CommonTokenStream(lexer)
         #parser = PythonParser(stream)
@@ -34,21 +36,12 @@ def generateTree(input, language):
 
     return tree
 
-def parsePytyonWithAST(fileContent):
-    try:
-        tree = ast.parse(fileContent)
-        #print(ast.dump(tree, indent=3))
-        return tree
-    except SyntaxError:
-        print("Hay error")
-        return None
-
-
 def deepSearch(tree, language):
     visitor = ''
 
     if language == "Python":
-        visitor = PythonVisitor()
+        visitor = Python3Visitor()
+        #visitor = PythonVisitor()
     elif language == "openqasm":
         visitor = qasm3Visitor()
 

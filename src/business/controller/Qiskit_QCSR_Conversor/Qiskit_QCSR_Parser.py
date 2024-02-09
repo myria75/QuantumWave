@@ -1,6 +1,6 @@
 import ast
 from builtins import isinstance
-from _ast import And
+from .VariableNotCalculatedException import VariableNotCalculatedException
 
 single_qubit_gates = {
     "h": "H",
@@ -40,25 +40,30 @@ operations = {
     ast.Mod: "%"
 }
 
-class VariableVisitor(ast.NodeVisitor):
+class Python3Visitor(ast.NodeVisitor):
     def __init__(self):
         self.variables = {} #variable dictionary with values
         self.content = ""
         
     def getNumValue(self, node):
-        if isinstance(node, ast.Constant) and isinstance(node, ast.Num): #if the node is a number, takes it
-            qubit = int(node.value)
-        elif isinstance(node, ast.Name): #if the node is a variable, takes its value from the dictionary
-            qubit = self.variables[node.id]
-        elif isinstance(node, ast.BinOp):
-            left = self.getNumValue(node.left)
-            right = self.getNumValue(node.right)
-            operator = operations.get(type(node.op))
-            if operator is None:
-                print("error, opracion no encontrada ")
-    
-            qubit = eval("{}{}{}".format(left, operator, right))
-        return int(qubit)
+        try:
+            if isinstance(node, ast.Constant) and isinstance(node, ast.Num): #if the node is a number, takes it
+                qubit = int(node.value)
+            elif isinstance(node, ast.Name): #if the node is a variable, takes its value from the dictionary
+                qubit = self.variables[node.id]
+            elif isinstance(node, ast.BinOp):
+                left = self.getNumValue(node.left)
+                right = self.getNumValue(node.right)
+                operator = operations.get(type(node.op))
+                if operator is None:
+                    print("error, opracion no encontrada ")
+        
+                qubit = eval("{}{}{}".format(left, operator, right))
+            elif isinstance(node, ast.Subscript):
+                qubit = self.getNumValue(node.slice)
+            return int(qubit)
+        except (ValueError, KeyError):
+            raise VariableNotCalculatedException()
     
     def fillWithBlanks(self, q1, q2):
         index = 0
@@ -75,9 +80,14 @@ class VariableVisitor(ast.NodeVisitor):
     def visit_Assign(self, node):
         for target in node.targets:
             if isinstance(target, ast.Name):
-                if isinstance(node.value, ast.Constant) or isinstance(node.value, ast.Name) or isinstance(node.value, ast.BinOp):
-                    self.variables[target.id] = self.getNumValue(node.value) #adds/update the variable in the dictionary
-        
+                try:
+                    if isinstance(node.value, ast.Constant):
+                        if str(node.value.value).isnumeric():
+                            self.variables[target.id] = int(node.value.value)
+                    elif isinstance(node.value, ast.Name) or isinstance(node.value, ast.BinOp):
+                        self.variables[target.id] = self.getNumValue(node.value) #adds/update the variable in the dictionary
+                except VariableNotCalculatedException:
+                    self.generic_visit(node) 
         self.generic_visit(node)
         
     def visit_Call(self, node):
@@ -128,24 +138,9 @@ class VariableVisitor(ast.NodeVisitor):
             
         self.generic_visit(node)
     
-code = '''
-b=3
-a=1
-a=b
-a = 1+1
-a=6-1
-qreg_q = QuantumRegister(a, 'q')
-creg_c = ClassicalRegister(4, 'c')
-circuit = QuantumCircuit(qreg_q, creg_c)
 
-circuit.h(a-1, qreg_q[2])
-circuit.h(1, qreg_q[2])
-
-'''
-
-#print(ast.dump(ast.parse(code), indent=2))
-codigoParseado: ast.Module = ast.parse(code)
-visitor = VariableVisitor()
-visitor.visit(codigoParseado)
-print(visitor.variables)
-print(visitor.content)
+#codigoParseado: ast.Module = ast.parse(code)
+#visitor = Python3Visitor()
+#visitor.visit(codigoParseado)
+#print(visitor.variables)
+#print(visitor.content)
