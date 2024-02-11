@@ -40,6 +40,8 @@ operations = {
     ast.Mod: "%"
 }
 
+all_simple_gates = list(single_qubit_gates.keys()) + list(single_r_gate.keys()) + list(simple_oracle_gate.keys())
+
 class Python3Visitor(ast.NodeVisitor):
     def __init__(self):
         self.variables = {} #variable dictionary with values
@@ -108,17 +110,30 @@ class Python3Visitor(ast.NodeVisitor):
         if isinstance(node.func, ast.Attribute):
             gate = node.func.attr #door
             
-            if gate in single_qubit_gates:    
-                QCSRgate = single_qubit_gates[gate]
+            #If a simple gate was found
+            if gate in all_simple_gates:
+                QCSRgate = ''
+                argument = ''
+                    
+                if gate in single_qubit_gates:    
+                    QCSRgate = single_qubit_gates[gate]
+                    argument = node.args[0]
+                elif gate in single_r_gate:    
+                    QCSRgate = single_r_gate[gate] 
+                    argument = node.args[1]
+                elif gate in simple_oracle_gate:    
+                    QCSRgate = simple_oracle_gate[gate] 
+                    argument = node.args[3]
                 
                 #Comprueba si se le ha pasado un QuantumRegister
-                if isinstance(node.args[0], ast.Name) and node.args[0].id in self.variables and self.variables[node.args[0].id] == 'QuantumRegister':
+                if isinstance(argument, ast.Name) and argument.id in self.variables and self.variables[argument.id] == 'QuantumRegister':
                     for qubit_index in range(0, len(self.content)): 
                         self.content[qubit_index].append(QCSRgate)
                 #O una variable/número
                 else:
-                    qubit = self.getNumValue(node.args[0])
+                    qubit = self.getNumValue(argument)
                     self.content[qubit].append(QCSRgate)
+        
         
             if gate in complex_qubit_gates:    
                 QCSRgate = complex_qubit_gates[gate] 
@@ -128,15 +143,7 @@ class Python3Visitor(ast.NodeVisitor):
                 self.content[qubit_1].append({"CONTROL":qubit_2})
                 self.content[qubit_2].append(QCSRgate)
                 
-            if gate in single_r_gate:    
-                QCSRgate = single_r_gate[gate] 
-                qubit = self.getNumValue(node.args[1])
-                self.content[qubit].append(QCSRgate)
-        
-            if gate in simple_oracle_gate:    
-                QCSRgate = simple_oracle_gate[gate] 
-                qubit = self.getNumValue(node.args[3])
-                self.content[qubit].append(QCSRgate)
+
             
             if gate in complex_oracle_gate:    
                 QCSRgate = complex_oracle_gate[gate] 

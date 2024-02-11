@@ -8,4 +8,4 @@ ANTES:
 DESPUÉS:
 | Language      | Ingested | Acepted | Parsed AST | Circuit RQCR  | Metrics & Patterns |
 | ------------- | -------- | ------- | ---------- | ------------- |--------------------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 1195          | no calculado       |
+|Python - Qiskit| 6963     | 5451    | 5416       | 1358          | no calculado       |
