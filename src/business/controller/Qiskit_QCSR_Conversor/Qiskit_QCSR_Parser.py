@@ -86,6 +86,9 @@ class Python3Visitor(ast.NodeVisitor):
                             self.variables[target.id] = int(node.value.value)
                     elif isinstance(node.value, ast.Name) or isinstance(node.value, ast.BinOp):
                         self.variables[target.id] = self.getNumValue(node.value) #adds/update the variable in the dictionary
+                    #almacena la variable para el registro del circuito
+                    elif isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == "QuantumRegister":
+                        self.variables[target.id] = 'QuantumRegister'
                 except VariableNotCalculatedException:
                     self.generic_visit(node) 
         self.generic_visit(node)
@@ -107,8 +110,15 @@ class Python3Visitor(ast.NodeVisitor):
             
             if gate in single_qubit_gates:    
                 QCSRgate = single_qubit_gates[gate]
-                qubit = self.getNumValue(node.args[0])
-                self.content[qubit].append(QCSRgate)
+                
+                #Comprueba si se le ha pasado un QuantumRegister
+                if isinstance(node.args[0], ast.Name) and node.args[0].id in self.variables and self.variables[node.args[0].id] == 'QuantumRegister':
+                    for qubit_index in range(0, len(self.content)): 
+                        self.content[qubit_index].append(QCSRgate)
+                #O una variable/número
+                else:
+                    qubit = self.getNumValue(node.args[0])
+                    self.content[qubit].append(QCSRgate)
         
             if gate in complex_qubit_gates:    
                 QCSRgate = complex_qubit_gates[gate] 
@@ -137,7 +147,6 @@ class Python3Visitor(ast.NodeVisitor):
                 self.content[qubit_2].append(QCSRgate)
             
         self.generic_visit(node)
-    
 
 #codigoParseado: ast.Module = ast.parse(code)
 #visitor = Python3Visitor()

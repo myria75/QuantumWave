@@ -36,8 +36,13 @@ def generateTree(input, language):
 
     return tree
 
+
+def generateTreeAndPrint(input, language):
+    tree = generateTree(input, language)
+    print(ast.dump(tree, indent=2))
+
 def deepSearch(tree, language):
-    visitor = ''
+    visitor = None
 
     if language == "Python":
         visitor = Python3Visitor()
@@ -60,3 +65,4 @@ def deepSearch(tree, language):
         raise EmptyCircuitException()
     
     return json.dumps(visitor.content)
+

@@ -66,14 +66,14 @@ for document in documents:
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
-    antlr_tree = conversor.generateTree(document["content"], document["language"])
+    tree = conversor.generateTree(document["content"], document["language"])
 
     n_generated_trees+=1
     errorsFoundAtParse = False
     errorMsg = ""
 
     try:
-        circuitJson = conversor.deepSearch(antlr_tree, document["language"])
+        circuitJson = conversor.deepSearch(tree, document["language"])
         n_generated_circuits+=1
     except EmptyCircuitException as e:
         print("Empty array error because QuantumRegister isn't called")
