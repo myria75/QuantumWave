@@ -1,5 +1,5 @@
 
-"""Main executable of the project
+"""Counts number of trees that can be generated from dataset
 """
 
 __author__ = "Miriam Fernández Osuna"
@@ -21,7 +21,6 @@ configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
 
-
 from pymongo import MongoClient
 from pymongo import cursor
 
@@ -40,15 +39,14 @@ counterAst = 0
 counterError = 0 
 
 for document in documents:
-    
-    
     nowQueryTime = time.time()
+    
     if nowQueryTime - startQueryTime >= refreshTime:
         documents.close()
         documents = collRepo.find(query, no_cursor_timeout=True)
         startQueryTime = nowQueryTime
 
-    #antlr4 of the codes and conversion from python qiskit to QCSR
+    #ast of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
     
     try:
