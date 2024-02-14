@@ -6,6 +6,6 @@ ANTES:
 
 
 DESPUÉS:
-| Language      | Ingested | Acepted | Parsed AST | Circuit RQCR  | Metrics & Patterns |
-| ------------- | -------- | ------- | ---------- | ------------- |--------------------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 1359          | no calculado       |
+| Language      | Ingested | Acepted | Parsed AST | Circuit RQCR               | Metrics & Patterns |
+| ------------- | -------- | ------- | ---------- | -------------------------- |--------------------|
+|Python - Qiskit| 6963     | 5451    | 5416       | 1625 ANTES 1340!!! NO PUC  | no calculado       |
