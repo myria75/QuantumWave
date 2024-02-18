@@ -78,7 +78,7 @@ for document in documents:
         else:
             errors_dict[str(e.args[0])].append(e)
             
-        if str(e.args[0]) == "cannot access local variable 'qubit' where it is not associated with a value":
+        if str(e.args[0]) == "Couldn't find operation":
             print(document["path"])
         
         counterErrorCircuit+=1

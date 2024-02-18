@@ -1,6 +1,7 @@
 import ast
 from builtins import isinstance
 from .VariableNotCalculatedException import VariableNotCalculatedException
+from .OperationNotFoundException import OperationNotFoundException
 
 # dictionaries with all kind of gates
 single_qubit_gates = {
@@ -39,7 +40,11 @@ operations = {
     ast.Mult: "*",
     ast.Div: "/",
     ast.Mod: "%",
-    ast.Pow: "**"
+    ast.Pow: "**",
+    ast.FloorDiv: "//", 
+    ast.BitXor: "^", 
+    ast.LShift: "<<",
+    ast.RShift: ">>"
 }
 
 circuits = { }
@@ -52,7 +57,15 @@ class Python3Visitor(ast.NodeVisitor):
     def __init__(self):
         self.variables = {} #variable dictionary with values
         self.content = ""
+    
+    def translateList(self, nodeList: ast.List) -> list:
+        qubits_arrays=[]
         
+        for elt in nodeList.elts:
+            qubits_arrays.append(self.getNumValue(elt))
+            
+        return qubits_arrays
+                    
     def getNumValue(self, node):
         try:
             if isinstance(node, ast.Constant) and isinstance(node, ast.Num): #if the node is a number, takes it
@@ -65,15 +78,17 @@ class Python3Visitor(ast.NodeVisitor):
                 operator = operations.get(type(node.op))
                 
                 if operator is None:
-                    print("ERROR: Not found operation")
+                    print(type(node.op))
+                    raise OperationNotFoundException()
         
                 qubit = eval("{}{}{}".format(left, operator, right))
             elif isinstance(node, ast.Subscript): #some of the operations are from a type of operation
                 qubit = self.getNumValue(node.slice)
+            
             if isinstance(qubit, tuple): #si se encuentra una tupla al leer de las variables, y s eueda con el segundo valor 
                 return int(qubit[1])
             else:
-                return int(qubit)
+                return qubit
         except (ValueError, KeyError):
             raise VariableNotCalculatedException()
         
@@ -131,15 +146,16 @@ class Python3Visitor(ast.NodeVisitor):
         #Or is a variable or a number
         else:
             if isinstance(qubitArgument, ast.List):
-                qubits_arrays=[]
-                for elt in qubitArgument.elts:
-                    qubits_arrays.append(self.getNumValue(elt))
-                
-                for qubit in qubits_arrays:
+                #traduce la lista para sacar los qubits
+                for qubit in self.translateList(qubitArgument):
                     self.content[qubit].append(QCSRgate)
             else:
                 qubit = self.getNumValue(qubitArgument)
-                self.content[qubit].append(QCSRgate)
+                if isinstance(qubit, list):
+                    for q in qubit:
+                        self.content[q].append(QCSRgate)
+                else:
+                    self.content[qubit].append(QCSRgate)
         
     def insertComplexGate(self, gate, nodeArgs):
         QCSRgate = ''
@@ -168,6 +184,11 @@ class Python3Visitor(ast.NodeVisitor):
                             self.variables[target.id] = int(node.value.value)
                     elif isinstance(node.value, ast.Name) or isinstance(node.value, ast.BinOp):
                         self.variables[target.id] = self.getNumValue(node.value) #adds/update the variable in the dictionary
+                    elif isinstance(node.value, ast.List):
+                        try:
+                            self.variables[target.id] = self.translateList(node.value)
+                        except:
+                            continue
                     #Store the variable for the register of the circuit
                     elif isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == "QuantumRegister":
                         quantity = 0 # PARA CASOS COMO q = QuantumRegister(2)
