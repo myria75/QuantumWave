@@ -1,7 +1,7 @@
 import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as conversor
 import ast
 
-file_name = "C:\\Users\\Miriam\\Desktop\\Patrones\\test3.py"
+file_name = "C:\\Users\\Miriam\\Desktop\\Patrones\\qubit_error.py"
 #file_name = "C:\\Users\\Miriam\\Desktop\\Patrones\\test1.py"
 #file_name = "C:\\Users\\Miriam\\Desktop\\Patrones\\test2.py"
 

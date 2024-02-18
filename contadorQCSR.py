@@ -9,6 +9,7 @@ import os
 import json
 import logging
 import traceback
+import re
 
 configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
@@ -32,6 +33,9 @@ startQueryTime = time.time()
 counterErrorCircuit = 0
 counterCircuit = 0
 
+
+errors_dict = {}
+
 for document in documents:
     
     
@@ -47,15 +51,36 @@ for document in documents:
     try:
         tree = conversor.generateTree(document["content"], document["language"])
     except Exception as e:
-        print(document["path"])
-        print(f"Se ha producido una excepción: {e}") 
+        #print(document["path"])
+        #print(f"Se ha producido una excepción: {e}") 
+        #print(traceback.print_stack())
+        
+        error_key = str(e)
+        
+        if not error_key in errors_dict:
+            errors_dict[str(e.args[0])] = [e]
+        else:
+            errors_dict[str(e.args[0])].append(e)
+        
         continue
                 
     try:
         circuitJson = conversor.deepSearch(tree, document["language"])
     except Exception as e:
-        print(document["path"])
-        print(f"Se ha producido una excepción: {e}") 
+        #print(document["path"])
+        #print(f"Se ha producido una excepción: {e}") 
+        #print(traceback.print_stack())
+        
+        error_key = str(e)
+        
+        if not error_key in errors_dict:
+            errors_dict[str(e.args[0])] = [e]
+        else:
+            errors_dict[str(e.args[0])].append(e)
+            
+        if str(e.args[0]) == "cannot access local variable 'qubit' where it is not associated with a value":
+            print(document["path"])
+        
         counterErrorCircuit+=1
         continue
     
@@ -64,3 +89,16 @@ for document in documents:
     
 print(f"Number of generated circuits: {counterCircuit}")
 print(f"Number of errors: {counterErrorCircuit}")
+
+
+# print(errors_dict)
+
+
+for k in errors_dict:
+    print(str(len(errors_dict[k])) + " --> " + str(k))
+    
+
+# res = ' \n'.join(sorted(errors_dict, key=lambda key: len(errors_dict[key])))
+#
+# # Printing result
+# print("Sorted keys by value list : " + res)

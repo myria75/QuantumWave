@@ -130,8 +130,16 @@ class Python3Visitor(ast.NodeVisitor):
                 self.content[qubit_index].append(QCSRgate)
         #Or is a variable or a number
         else:
-            qubit = self.getNumValue(qubitArgument)
-            self.content[qubit].append(QCSRgate)
+            if isinstance(qubitArgument, ast.List):
+                qubits_arrays=[]
+                for elt in qubitArgument.elts:
+                    qubits_arrays.append(self.getNumValue(elt))
+                
+                for qubit in qubits_arrays:
+                    self.content[qubit].append(QCSRgate)
+            else:
+                qubit = self.getNumValue(qubitArgument)
+                self.content[qubit].append(QCSRgate)
         
     def insertComplexGate(self, gate, nodeArgs):
         QCSRgate = ''
