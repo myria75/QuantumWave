@@ -78,13 +78,13 @@ for document in documents:
         else:
             errors_dict[str(e.args[0])].append(e)
             
-        if str(e.args[0]) == "Couldn't find operation":
+        if str(e.args[0]) == "string index out of range":
             print(document["path"])
         
         counterErrorCircuit+=1
         continue
     
-    print(circuitJson)
+    #print(circuitJson)
     counterCircuit+=1
     
 print(f"Number of generated circuits: {counterCircuit}")

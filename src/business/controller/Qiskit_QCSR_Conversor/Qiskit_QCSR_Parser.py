@@ -57,6 +57,29 @@ class Python3Visitor(ast.NodeVisitor):
     def __init__(self):
         self.variables = {} #variable dictionary with values
         self.content = ""
+        
+    def storeRegister(self, targetId, argument):
+        quantity = 0 # PARA CASOS COMO q = QuantumRegister(2)
+        
+        if isinstance(argument, ast.Constant): #if the argument is a number, takes it
+            quantity = int(argument.value)
+        elif isinstance(argument, ast.Name): #if the argument is a variable, takes its value from the dictionary
+            quantity = self.variables[argument.id]
+                            
+        self.variables[targetId] = 'QuantumRegister', quantity
+        
+    
+    def initializeCircuit(self, argument):
+        quantity = 0
+                
+        if isinstance(argument, ast.Constant): #if the argument is a number, takes it
+            quantity = int(argument.value)
+        elif isinstance(argument, ast.Name): #if the argument is a variable, takes its value from the dictionary
+            quantity = self.variables[argument.id] #checks if its in variables dicitonary
+            if isinstance(quantity, tuple): #checks if its a tuple
+                quantity = quantity[1]
+        
+        self.content = [[] for _ in range(quantity)] #create empty qubit array
     
     def translateList(self, nodeList: ast.List) -> list:
         qubits_arrays=[]
@@ -78,7 +101,6 @@ class Python3Visitor(ast.NodeVisitor):
                 operator = operations.get(type(node.op))
                 
                 if operator is None:
-                    print(type(node.op))
                     raise OperationNotFoundException()
         
                 qubit = eval("{}{}{}".format(left, operator, right))
@@ -190,42 +212,39 @@ class Python3Visitor(ast.NodeVisitor):
                         except:
                             continue
                     #Store the variable for the register of the circuit
-                    elif isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == "QuantumRegister":
-                        quantity = 0 # PARA CASOS COMO q = QuantumRegister(2)
-                        argument = node.value.args[0]
-                        if isinstance(argument, ast.Constant): #if the argument is a number, takes it
-                            quantity = int(argument.value)
-                        elif isinstance(argument, ast.Name): #if the argument is a variable, takes its value from the dictionary
-                            quantity = self.variables[argument.id]
+                    elif isinstance(node.value, ast.Call) and hasattr(node.value, 'func'):
+                        if isinstance(node.value.func, ast.Name) and node.value.func.id == "QuantumRegister":
+                            self.storeRegister(target.id, node.value.args[0])
+                        elif hasattr(node.value.func, 'value'):
+                            if hasattr(node.value.func.value, 'id') and isinstance(node.value.func, ast.Attribute) and node.value.func.value.id == "circuit" and hasattr(node.value.func, 'attr') and node.value.func.attr == "QuantumRegister":
+                                self.storeRegister(target.id, node.value.args[0])
                         
-                        self.variables[target.id] = 'QuantumRegister', quantity #stores value of qubits in dictionary
                 except VariableNotCalculatedException:
                     self.generic_visit(node) 
         self.generic_visit(node)
         
     def visit_Call(self, node):
+        #Cuando se crean circuitos con el formato QC=QuantumCircuit(2)
         if isinstance(node.func, ast.Name):
             if node.func.id == "QuantumCircuit": #checks to initialize qubit array
-                quantity = 0
-                argument = node.args[0] #location of the qubit
-                
-                if isinstance(argument, ast.Constant): #if the argument is a number, takes it
-                    quantity = int(argument.value)
-                elif isinstance(argument, ast.Name): #if the argument is a variable, takes its value from the dictionary
-                    quantity = self.variables[argument.id] #checks if its in variables dicitonary
-                    if isinstance(quantity, tuple): #checks if its a tuple
-                        quantity = quantity[1]
-                self.content = [[] for _ in range(quantity)] #create empty qubit array
-    
+              self.initializeCircuit(node.args[0])  
         elif isinstance(node.func, ast.Attribute):
-            gate = node.func.attr #door            
             
-            #If a simple gate was found
-            if gate in all_simple_gates:
-                self.insertSimpleGate(gate, node)
-        
-            #Or if a complex gate was found
-            elif gate in all_complex_gates:
-                self.insertComplexGate(gate, node.args)
+            #if False:
+            #    return True
+            #Cuando se crean circuitos con el formato QC=circuit.QuantumCircuit(2)
+            if hasattr(node.func, 'value') and hasattr(node.func.value, 'id') and node.func.value.id == "circuit" and hasattr(node.func, 'attr') and node.func.attr == "QuantumCircuit":
+                self.initializeCircuit(node.args[0]) #location of the qubit
+    
+            else:
+                gate = node.func.attr #door            
+                
+                #If a simple gate was found
+                if gate in all_simple_gates:
+                    self.insertSimpleGate(gate, node)
+            
+                #Or if a complex gate was found
+                elif gate in all_complex_gates:
+                    self.insertComplexGate(gate, node.args)
                 
         self.generic_visit(node)
