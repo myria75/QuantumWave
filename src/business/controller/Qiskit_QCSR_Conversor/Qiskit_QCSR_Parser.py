@@ -90,27 +90,34 @@ class Python3Visitor(ast.NodeVisitor):
         return qubits_arrays
                     
     def getNumValue(self, node):
+        #print(node)
         try:
+            qubit = None
             if isinstance(node, ast.Constant) and isinstance(node, ast.Num): #if the node is a number, takes it
                 qubit = int(node.value)
             elif isinstance(node, ast.Name): #if the node is a variable, takes its value from the dictionary
-                qubit = self.variables[node.id]  
+                qubit = self.variables[node.id]
             elif isinstance(node, ast.BinOp): # if its a operation symbol, it executes the operation 
-                left = self.getNumValue(node.left) 
-                right = self.getNumValue(node.right) 
                 operator = operations.get(type(node.op))
-                
+
                 if operator is None:
                     raise OperationNotFoundException()
-        
+
+                left = self.getNumValue(node.left) 
+                right = self.getNumValue(node.right) 
+                
                 qubit = eval("{}{}{}".format(left, operator, right))
             elif isinstance(node, ast.Subscript): #some of the operations are from a type of operation
                 qubit = self.getNumValue(node.slice)
             
-            if isinstance(qubit, tuple): #si se encuentra una tupla al leer de las variables, y s eueda con el segundo valor 
-                return int(qubit[1])
+            if qubit is None:
+                raise VariableNotCalculatedException()
             else:
-                return qubit
+                if isinstance(qubit, tuple): #si se encuentra una tupla al leer de las variables, y s eueda con el segundo valor 
+                    return int(qubit[1])
+                else:
+                    return qubit
+                
         except (ValueError, KeyError):
             raise VariableNotCalculatedException()
         
@@ -159,7 +166,7 @@ class Python3Visitor(ast.NodeVisitor):
             elif gate in simple_oracle_gate:    
                 QCSRgate = simple_oracle_gate[gate] 
                 qubitArgument = node.args[3]
-                            
+            
         #ÉSTE CASO: circuit.h(q)
         #Check if the argument its a QuantumRegister
         if isinstance(qubitArgument, ast.Name) and qubitArgument.id in self.variables and self.variables[qubitArgument.id][0] == 'QuantumRegister':
@@ -205,6 +212,7 @@ class Python3Visitor(ast.NodeVisitor):
                         if str(node.value.value).isnumeric():
                             self.variables[target.id] = int(node.value.value)
                     elif isinstance(node.value, ast.Name) or isinstance(node.value, ast.BinOp):
+                        print(target.id)
                         self.variables[target.id] = self.getNumValue(node.value) #adds/update the variable in the dictionary
                     elif isinstance(node.value, ast.List):
                         try:
@@ -216,7 +224,7 @@ class Python3Visitor(ast.NodeVisitor):
                         if isinstance(node.value.func, ast.Name) and node.value.func.id == "QuantumRegister":
                             self.storeRegister(target.id, node.value.args[0])
                         elif hasattr(node.value.func, 'value'):
-                            if hasattr(node.value.func.value, 'id') and isinstance(node.value.func, ast.Attribute) and node.value.func.value.id == "circuit" and hasattr(node.value.func, 'attr') and node.value.func.attr == "QuantumRegister":
+                            if hasattr(node.value.func.value, 'id') and isinstance(node.value.func, ast.Attribute) and (node.value.func.value.id == "circuit" or node.value.func.value.id == "qiskit") and hasattr(node.value.func, 'attr') and node.value.func.attr == "QuantumRegister":
                                 self.storeRegister(target.id, node.value.args[0])
                         
                 except VariableNotCalculatedException:
@@ -229,11 +237,9 @@ class Python3Visitor(ast.NodeVisitor):
             if node.func.id == "QuantumCircuit": #checks to initialize qubit array
               self.initializeCircuit(node.args[0])  
         elif isinstance(node.func, ast.Attribute):
-            
-            #if False:
-            #    return True
+
             #Cuando se crean circuitos con el formato QC=circuit.QuantumCircuit(2)
-            if hasattr(node.func, 'value') and hasattr(node.func.value, 'id') and node.func.value.id == "circuit" and hasattr(node.func, 'attr') and node.func.attr == "QuantumCircuit":
+            if hasattr(node.func, 'value') and hasattr(node.func.value, 'id') and (node.func.value.id == "circuit" or node.func.value.id == "qiskit") and hasattr(node.func, 'attr') and node.func.attr == "QuantumCircuit":
                 self.initializeCircuit(node.args[0]) #location of the qubit
     
             else:
