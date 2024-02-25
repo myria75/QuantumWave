@@ -9,6 +9,8 @@ import configparser
 from datetime import datetime
 import time
 from src.business.controller.Qiskit_QCSR_Conversor.EmptyCircuitException import EmptyCircuitException
+from src.business.controller.Qiskit_QCSR_Conversor.VariableNotCalculatedException import VariableNotCalculatedException
+from src.business.controller.Qiskit_QCSR_Conversor.OperationNotFoundException import OperationNotFoundException
 import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as conversor
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
 import src.business.controller.QCPDTool.views as qcpdtool
@@ -66,7 +68,11 @@ for document in documents:
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
-    tree = conversor.generateTree(document["content"], document["language"])
+    tree = ""
+    try:
+        tree = conversor.generateTree(document["content"], document["language"])
+    except (IndentationError, Exception):
+        continue
 
     n_generated_trees+=1
     errorsFoundAtParse = False
@@ -79,20 +85,25 @@ for document in documents:
         print("Empty array error because QuantumRegister isn't called")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
         errorsFoundAtParse = True
-        errorMsg = "The antlr4 tree couldn't be generated. Empty array error because QuantumRegister isn't called"
+        errorMsg = "The tree couldn't be generated. Empty array error because QuantumRegister isn't called"
         n_generated_circuits+=1
         n_blank_circuits+=1
+    except VariableNotCalculatedException as e:
+        print("A variable during the QCSR circuit conversion couldn't be obtained")
+        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} A variable during the QCSR circuit conversion couldn't be obtained")
+        errorsFoundAtParse = True
+        errorMsg = f"The ast tree couldn't be generated. A variable during the QCSR circuit conversion couldn't be obtained"
     except ValueError as e:
         print("Translator can't read variables when reading gates/circuit, the code is incompatible")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
         errorsFoundAtParse = True
         errorMsg = f"The antlr4 tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible\n{traceback.format_exc()}"
-    except (AttributeError, KeyError, IndexError) as e: 
+    except (AttributeError, KeyError, IndexError, TypeError, OperationNotFoundException, ZeroDivisionError, Exception) as e: 
         print("-------Throws an error----------")
         print(f"{e.__str__()} {document['path']}")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
         errorsFoundAtParse = True
-        errorMsg = f"The antlr4 tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
+        errorMsg = f"The tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
 
     if errorsFoundAtParse:
         logging.critical(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
