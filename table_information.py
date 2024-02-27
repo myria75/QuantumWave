@@ -55,6 +55,7 @@ startQueryTime = time.time()
 with open('dataset_openqasm_qiskit.csv', 'w', newline='') as file:
   writer = csv.writer(file, delimiter=';')
   writer.writerow(field)
+  
 
   for document in documents:
     nowQueryTime = time.time()
@@ -97,3 +98,5 @@ with open('dataset_openqasm_qiskit.csv', 'w', newline='') as file:
        rowToInsert.append("None")
 
     writer.writerow(rowToInsert)
+    n_generated_circuits += 1
+print(n_generated_circuits)

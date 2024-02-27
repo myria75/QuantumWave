@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//src/business/controller/Qiskit_QCSR_Conversor/example/error_gate_array/Python_qiskit_indian-institute-of-science-qc_qiskit-aakash_qiskit.circuit.quantumcircuit.py=utf-8
+encoding//src/business/controller/Qiskit_QCSR_Conversor/example/error_many_QuantumCreations/qubit_error.py=utf-8
+encoding//src/business/controller/Qiskit_QCSR_Conversor/example/error_type_operation/Python_qiskit_qiskit-community_qiskit-qec_src.qiskit_qec.circuits.surface_code.py=utf-8
 encoding//src/business/controller/Qiskit_QCSR_Conversor/languages_grammar/Python3Parser.py=utf-8
 encoding//src/persistency/Mongo_Ingest_Data_Dealing/code/Python/qiskit/Python_qiskit_1ucian0_rpo_tests.test_constant_state_optimization.py=utf-8
-encoding/qubit_error.py=utf-8

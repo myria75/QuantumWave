@@ -65,7 +65,7 @@ for document in documents:
         continue
                 
     try:
-        circuitJson = conversor.deepSearch(tree, document["language"])
+        circuitJson = conversor.visitTree(tree, document["language"])
     except Exception as e:
         #print(document["path"])
         #print(f"Se ha producido una excepción: {e}") 
@@ -78,7 +78,7 @@ for document in documents:
         else:
             errors_dict[str(e.args[0])].append(e)
             
-        if str(e.args[0]) == "cannot access local variable 'qubit' where it is not associated with a value":
+        if str(e.args[0]) == "Empty array error. Conversion from python qiskit to QCSR failed":
             print(document["path"])
         
         counterErrorCircuit+=1
@@ -86,7 +86,7 @@ for document in documents:
     
     #print(circuitJson)
     counterCircuit+=1
-    
+
 print(f"Number of generated circuits: {counterCircuit}")
 print(f"Number of errors: {counterErrorCircuit}")
 

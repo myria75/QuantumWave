@@ -41,7 +41,7 @@ def generateTreeAndPrint(input, language):
     tree = generateTree(input, language)
     print(ast.dump(tree, indent=2))
 
-def deepSearch(tree, language):
+def visitTree(tree, language):
     visitor = None
 
     if language == "Python":

@@ -79,7 +79,7 @@ for document in documents:
     errorMsg = ""
 
     try:
-        circuitJson = conversor.deepSearch(tree, document["language"])
+        circuitJson = conversor.visitTree(tree, document["language"])
         n_generated_circuits+=1
     except EmptyCircuitException as e:
         print("Empty array error because QuantumRegister isn't called")

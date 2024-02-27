@@ -10,7 +10,7 @@ with open(file_name, 'r') as file:
 
     circuitJson = ""
     astTree = conversor.generateTree(data, "Python")
-    #print(ast.dump(astTree, indent=2))
+    # print(ast.dump(astTree, indent=2))
 
-    circuitJson = conversor.deepSearch(astTree, "Python")
+    circuitJson = conversor.visitTree(astTree, "Python")
     print(circuitJson)
