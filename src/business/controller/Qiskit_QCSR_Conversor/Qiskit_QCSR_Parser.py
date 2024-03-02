@@ -18,6 +18,12 @@ complex_qubit_gates = {
     "ch": "H",
     "cx": "X",
     "cz": "Z"
+    }
+    
+complex_r_gates = {    
+    "crz": "RZ",
+    "cry": "RY",
+    "crx": "RX"
 }
 
 single_r_gate = {
@@ -53,10 +59,12 @@ operations = {
     ast.BitAnd: "&"
 }
 
-circuits = { }
+circuits = { 
+
+}
 
 all_simple_gates = list(single_qubit_gates.keys()) + list(single_r_gate.keys()) + list(simple_oracle_gate.keys()) + list(simple_gate_all_qubits.keys()) #mix all simple gates inside an array
-all_complex_gates = list(complex_qubit_gates.keys()) + list(complex_oracle_gate.keys()) #mix all complex gates inside an array
+all_complex_gates = list(complex_qubit_gates.keys()) + list(complex_oracle_gate.keys()) + list(complex_r_gates.keys()) #mix all complex gates inside an array
 
 
 class Python3Visitor(ast.NodeVisitor):
@@ -219,6 +227,10 @@ class Python3Visitor(ast.NodeVisitor):
             QCSRgate = complex_oracle_gate[gate] 
             qubit_1 = self.getNumValue(nodeArgs[4])
             qubit_2 = self.getNumValue(nodeArgs[5])
+        elif gate in complex_r_gates:
+            QCSRgate = complex_r_gates[gate] 
+            qubit_1 = self.getNumValue(nodeArgs[1])
+            qubit_2 = self.getNumValue(nodeArgs[2])
             
         self.fillWithBlanks(qubit_1, qubit_2)
         self.content[qubit_1].append({"CONTROL":qubit_2})
