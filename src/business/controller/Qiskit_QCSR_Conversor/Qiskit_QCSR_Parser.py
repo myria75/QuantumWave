@@ -2,6 +2,7 @@ import ast
 from builtins import isinstance
 from .VariableNotCalculatedException import VariableNotCalculatedException
 from .OperationNotFoundException import OperationNotFoundException
+from src.business.controller.Qiskit_QCSR_Conversor.Circuit_creation import Circuit_creation
 
 # dictionaries with all kind of gates
 single_qubit_gates = {
@@ -59,18 +60,15 @@ operations = {
     ast.BitAnd: "&"
 }
 
-circuits = { 
-
-}
-
 all_simple_gates = list(single_qubit_gates.keys()) + list(single_r_gate.keys()) + list(simple_oracle_gate.keys()) + list(simple_gate_all_qubits.keys()) #mix all simple gates inside an array
-all_complex_gates = list(complex_qubit_gates.keys()) + list(complex_oracle_gate.keys()) + list(complex_r_gates.keys()) #mix all complex gates inside an array
+#all_complex_gates = list(complex_qubit_gates.keys()) + list(complex_oracle_gate.keys()) + list(complex_r_gates.keys()) #mix all complex gates inside an array
 
 
 class Python3Visitor(ast.NodeVisitor):
     def __init__(self):
         self.variables = {} #variable dictionary with values
         self.content = ""
+        self.circuits = {}
         
     def storeRegister(self, targetId, argument, regType):
         quantity = 0 # PARA CASOS COMO q = QuantumRegister(2), qiskit.quantumregister, circuit.quantumregister
@@ -97,6 +95,20 @@ class Python3Visitor(ast.NodeVisitor):
         
         self.content = [[] for _ in range(quantity)] #create empty qubit array
     
+    def assignRegister(self, idCircuit, nodeArgs):
+        if len(nodeArgs) > 0:
+            for nodeArg in nodeArgs:
+                if isinstance(nodeArg, ast.Name) or isinstance(nodeArg, ast.Constant):
+                    argument = self.getNumValue(nodeArg) #comprobar argumentos si es un register
+                    if isinstance(argument, tuple) and argument[0] == "QuantumRegister":
+                        self.circuits[idCircuit].addRegister(argument[1], nodeArg.id)
+                    else:
+                        self.circuits[idCircuit].addRegister(argument)                            
+                elif isinstance(nodeArg, ast.Call) and nodeArg.func.id == "QuantumRegister":
+                    qubits = self.getNumValue(nodeArg.args[0])
+                    self.circuits[idCircuit].addRegister(qubits)
+        
+    
     def translateList(self, nodeList: ast.List) -> list:
         qubits_arrays=[] #circuit.h([1,2,3]) solo se aplica en puertas, guardar variables como arrays
         
@@ -121,8 +133,6 @@ class Python3Visitor(ast.NodeVisitor):
                 right = self.getNumValue(node.right) 
                 
                 qubit = eval("{}{}{}".format(left, operator, right))
-            elif isinstance(node, ast.Subscript): #some of the operations are from a type of operation
-                qubit = self.getNumValue(node.slice)
             
             if qubit is None:
                 raise VariableNotCalculatedException()
@@ -148,7 +158,7 @@ class Python3Visitor(ast.NodeVisitor):
             while len(self.content[q1]) != index:
                 self.content[q1].append("_")
                 
-    def insertSimpleGate(self, gate, node):
+    def insertSimpleGate(self, circuit_id, gate, node):
         QCSRgate = ''
         qubitArgument = ''
         #if circuit.h(qubit=q[3]) occurs, qubitArgument=q[3]
@@ -173,8 +183,6 @@ class Python3Visitor(ast.NodeVisitor):
                         elif gate in simple_oracle_gate:    
                             QCSRgate = simple_oracle_gate[gate] 
                                
-                  
-                      
         if not keywordQubitExists:                                      
             #It depends on the type of the door, it gets traduced to QCSR and obtains from the argument where it should be appended
             if gate in single_qubit_gates:    
@@ -191,50 +199,41 @@ class Python3Visitor(ast.NodeVisitor):
                 QCSRgate = simple_gate_all_qubits[gate]    
 
             
-        #ÉSTE CASO: circuit.h(q)
-        #Check if the argument its a QuantumRegister
         if not needsArguments:
-            for qubit_index in range(0, len(self.content)): 
-                self.content[qubit_index].append(QCSRgate)
+            pass
         else:
-            if isinstance(qubitArgument, ast.Name) and qubitArgument.id in self.variables and self.variables[qubitArgument.id][0] == 'QuantumRegister':
-                for qubit_index in range(0, len(self.content)): 
-                    self.content[qubit_index].append(QCSRgate) #recorre los qubit e inserta la puerta
-            #Or is a variable or a number
-            else:
-                if isinstance(qubitArgument, ast.List): #circuit.h([0, 1, 2])
-                    #traduce la lista para sacar los qubits
-                    for qubit in self.translateList(qubitArgument):
-                        self.content[qubit].append(QCSRgate)
-                else:
-                    qubit = self.getNumValue(qubitArgument)
-                    if isinstance(qubit, list):
-                        for q in qubit:
-                            self.content[q].append(QCSRgate)
-                    else:
-                        self.content[qubit].append(QCSRgate)
-        
-    def insertComplexGate(self, gate, nodeArgs):
-        QCSRgate = ''
-        qubit_1 = ''
-        qubit_2 = ''
-                
-        if gate in complex_qubit_gates:
-            QCSRgate = complex_qubit_gates[gate] 
-            qubit_1 = self.getNumValue(nodeArgs[0])
-            qubit_2 = self.getNumValue(nodeArgs[1]) 
-        elif gate in complex_oracle_gate:
-            QCSRgate = complex_oracle_gate[gate] 
-            qubit_1 = self.getNumValue(nodeArgs[4])
-            qubit_2 = self.getNumValue(nodeArgs[5])
-        elif gate in complex_r_gates:
-            QCSRgate = complex_r_gates[gate] 
-            qubit_1 = self.getNumValue(nodeArgs[1])
-            qubit_2 = self.getNumValue(nodeArgs[2])
+            if isinstance(qubitArgument, ast.Constant) or isinstance(qubitArgument, ast.Name):
+                qubit=self.getNumValue(qubitArgument)
+                self.circuits[circuit_id].insertGate(QCSRgate, qubit)
+            elif isinstance(qubitArgument, ast.Subscript):
+                qubit = self.getNumValue(qubitArgument.slice)
+                name = qubitArgument.value.id
+                self.circuits[circuit_id].insertGate(QCSRgate, qubit, name)
+
             
-        self.fillWithBlanks(qubit_1, qubit_2)
-        self.content[qubit_1].append({"CONTROL":qubit_2})
-        self.content[qubit_2].append(QCSRgate)
+            #TODO: check list
+        
+#    def insertComplexGate(self, gate, nodeArgs):
+#        QCSRgate = ''
+#        qubit_1 = ''
+#        qubit_2 = ''
+                
+#        if gate in complex_qubit_gates:
+#            QCSRgate = complex_qubit_gates[gate] 
+#            qubit_1 = self.getNumValue(nodeArgs[0])
+#            qubit_2 = self.getNumValue(nodeArgs[1]) 
+#        elif gate in complex_oracle_gate:
+#            QCSRgate = complex_oracle_gate[gate] 
+#            qubit_1 = self.getNumValue(nodeArgs[4])
+#            qubit_2 = self.getNumValue(nodeArgs[5])
+#        elif gate in complex_r_gates:
+#            QCSRgate = complex_r_gates[gate] 
+#            qubit_1 = self.getNumValue(nodeArgs[1])
+#            qubit_2 = self.getNumValue(nodeArgs[2])
+            
+#        self.fillWithBlanks(qubit_1, qubit_2)
+#        self.content[qubit_1].append({"CONTROL":qubit_2})
+#        self.content[qubit_2].append(QCSRgate)
             
     def visit_Assign(self, node):
         for target in node.targets:
@@ -252,7 +251,14 @@ class Python3Visitor(ast.NodeVisitor):
                             continue
                     #Store the variable for the register of the circuit
                     elif isinstance(node.value, ast.Call) and hasattr(node.value, 'func'):
-                        if isinstance(node.value.func, ast.Name) and (node.value.func.id == "ClassicalRegister" or node.value.func.id == "QuantumRegister"): #q = QuantumRegister(2)
+                        ##############
+                        if isinstance(node.value.func, ast.Name) and node.value.func.id == "QuantumCircuit":
+                            id_circuit = target.id#revisar el id                                                          
+                            self.circuits[id_circuit] = Circuit_creation(id_circuit)
+                            self.assignRegister(id_circuit, node.value.args)
+        
+                
+                        elif isinstance(node.value.func, ast.Name) and (node.value.func.id == "ClassicalRegister" or node.value.func.id == "QuantumRegister"): #q = QuantumRegister(2)
                             self.storeRegister(target.id, node.value.args[0], node.value.func.id)
                         elif hasattr(node.value.func, 'value'):
                             #q = circuit.QuantumRegister(2) || q = qiskit.QuantumRegister(2)
@@ -264,36 +270,47 @@ class Python3Visitor(ast.NodeVisitor):
         self.generic_visit(node)
         
     def visit_Call(self, node):
-        #Cuando se crean circuitos con el formato QC=QuantumCircuit(2)
-        if isinstance(node.func, ast.Name):
-            if node.func.id == "QuantumCircuit" and len(node.args) > 0: #checks to initialize qubit array
-              
-              self.initializeCircuit(node.args[0])  
-        elif isinstance(node.func, ast.Attribute):
-            if hasattr(node.func, 'attr') and node.func.attr == "add_register":
-                if isinstance(node.args[0], ast.Call) and node.args[0].func.id == "QuantumRegister":
-                    self.initializeCircuit(self.getNumValue(node.args[0].args[0]))
-                else:
-                    qubits = self.getNumValue(node.args[0])
-                    
-                    if isinstance(qubits, tuple) and qubits[0] == "QuantumRegister":
-                        self.initializeCircuit(qubits[1])
-                    else:
-                        self.initializeCircuit(qubits)
-            #Cuando se crean circuitos con el formato QC=circuit.QuantumCircuit(2) || qiskit.QuantumCircuit
-            elif hasattr(node.func, 'value') and hasattr(node.func.value, 'id') and (node.func.value.id == "circuit" or node.func.value.id == "qiskit") and hasattr(node.func, 'attr') and node.func.attr == "QuantumCircuit":
-                if len(node.args) > 0:
-                    self.initializeCircuit(node.args[0]) #location of the qubit
-    
+        if isinstance(node.func, ast.Attribute):
+            circuit_id = node.func.value.id
+            if node.func.attr == "add_register":
+                self.assignRegister(circuit_id, node.args)
             else:
                 gate = node.func.attr #door            
                 
                 #If a simple gate was found
                 if gate in all_simple_gates:
-                    self.insertSimpleGate(gate, node)
+                    self.insertSimpleGate(circuit_id, gate, node)
             
-                #Or if a complex gate was found
-                elif gate in all_complex_gates:
-                    self.insertComplexGate(gate, node.args)
+    #     #Cuando se crean circuitos con el formato QC=QuantumCircuit(2)
+    #     if isinstance(node.func, ast.Name):
+    #         if node.func.id == "QuantumCircuit" and len(node.args) > 0: #checks to initialize qubit array
+              
+    #           self.initializeCircuit(node.args[0])  
+    #     elif isinstance(node.func, ast.Attribute):
+    #         if hasattr(node.func, 'attr') and node.func.attr == "add_register":
+    #             if isinstance(node.args[0], ast.Call) and node.args[0].func.id == "QuantumRegister":
+    #                 self.initializeCircuit(self.getNumValue(node.args[0].args[0]))
+    #             else:
+    #                 qubits = self.getNumValue(node.args[0])
+                    
+    #                 if isinstance(qubits, tuple) and qubits[0] == "QuantumRegister":
+    #                     self.initializeCircuit(qubits[1])
+    #                 else:
+    #                     self.initializeCircuit(qubits)
+    #         #Cuando se crean circuitos con el formato QC=circuit.QuantumCircuit(2) || qiskit.QuantumCircuit
+    #         elif hasattr(node.func, 'value') and hasattr(node.func.value, 'id') and (node.func.value.id == "circuit" or node.func.value.id == "qiskit") and hasattr(node.func, 'attr') and node.func.attr == "QuantumCircuit":
+    #             if len(node.args) > 0:
+    #                 self.initializeCircuit(node.args[0]) #location of the qubit
+    
+    #         else:
+    #             gate = node.func.attr #door            
+                
+    #             #If a simple gate was found
+    #             if gate in all_simple_gates:
+    #                 self.insertSimpleGate(gate, node)
+            
+    #             #Or if a complex gate was found
+    #             #elif gate in all_complex_gates:
+    #             #    self.insertComplexGate(gate, node.args)
                 
         self.generic_visit(node)
