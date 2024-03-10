@@ -195,7 +195,12 @@ class Python3Visitor(ast.NodeVisitor):
         else:
             if isinstance(qubitArgument, ast.Constant) or isinstance(qubitArgument, ast.Name):
                 qubit=self.getNumValue(qubitArgument)
-                self.circuits[circuit_id].insertGate(QCSRgate, qubit)
+                if isinstance(qubit, tuple):
+                    if qubit[0] == "QuantumRegister":
+                        name = qubitArgument.id
+                        self.circuits[circuit_id].insertGate(QCSRgate, name=name)
+                else:
+                    self.circuits[circuit_id].insertGate(QCSRgate, qubit)
             elif isinstance(qubitArgument, ast.Subscript):
                 qubit = self.getNumValue(qubitArgument.slice)
                 name = qubitArgument.value.id

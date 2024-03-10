@@ -8,4 +8,6 @@ ANTES:
 DESPUÉS:
 | Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics & Patterns |
 | ------------- | -------- | ------- | ---------- | ---------------- |--------------------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 1971 ANTES 1970	 |   1263*            |
+|Python - Qiskit| 6963     | 5451    | 5416       | 2752 ANTES 1971* |   1263*            |
+
+2082 files

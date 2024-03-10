@@ -20,14 +20,22 @@ class Circuit_creation():
         if name=="_":
             self.lastCustomReg = self.lastCustomReg + length
         
-    def insertGate(self, gate, qubit, name="_"):
+    def insertGate(self, gate, qubit="_", name="_"):
         #TODO: throw exception if name doesn't exist
-        if name!="_": #circuit.h(qr[0]) -> insertGate("H", 0, "qr")
-            id = f"{name}_{qubit}"
-        else: #circuit.h(0) -> insertGate("H", 0)
-            regsKeyList = list(self.registers.keys())
-            id = regsKeyList[qubit]
-        self.registers[id].append(gate)
+        if not qubit: 
+            if name!="_": #circuit.h(qr[0]) -> insertGate("H", 0, "qr")
+                id = f"{name}_{qubit}"
+            else: #circuit.h(0) -> insertGate("H", 0)
+                regsKeyList = list(self.registers.keys())
+                id = regsKeyList[qubit]
+            self.registers[id].append(gate)
+        else:
+            for id in self.registers:
+                if id.startswith(f"{name}_"):
+                    self.registers[id].append(gate)
+            #coger el name
+            #recorrer todo el diccionario buscando si el nombre empieza por {name}_
+                #si cumple. append
         
     def insertControl(self, controlled_qubit, insert_qubit, controlled_name="_", insert_name="_"):
         regsKeyList = list(self.registers.keys())
@@ -67,7 +75,7 @@ class Circuit_creation():
         
         if len(self.registers[control_qubit]) > len(self.registers[target_qubit]):
             index = len(self.registers[control_qubit])         
-            while len(self.regiters[target_qubit]) != index:
+            while len(self.registers[target_qubit]) != index:
                 self.registers[target_qubit].append("_")
         else:
             index = len(self.registers[target_qubit])

@@ -101,12 +101,18 @@ circuit19.add_register(c19_qr)
 circuit19.cx(0, c19_qr[0])
 # [CONTROL:1], [X], [], []
 
-circuit20 = QuantumCircuit(5)
-circuit20.cx(control_qubit=[0], target_qubit=[2, 3, 4])
-print(circuit20)
+c20_qr1 = QuantumRegister(2)
+c20_qr2 = QuantumRegister(3)
+circuit20 = QuantumCircuit(c20_qr1, c20_qr2)
+circuit20.h(c20_qr1)
+# [[H], [H], [], [], []]
+
+
+# circuit20 = QuantumCircuit(5)
+# circuit20.cx(control_qubit=[0], target_qubit=[2, 3, 4])
 # [CONTROL:1], [X]
 
-circuit21 = QuantumCircuit(5)
-circuit21.cx(control_qubit=[0, 1, 2], target_qubit=[4])
+# circuit21 = QuantumCircuit(5)
+# circuit21.cx(control_qubit=[0, 1, 2], target_qubit=[4])
 # [CONTROL:1], [X]
 

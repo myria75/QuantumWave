@@ -32,6 +32,7 @@ refreshTime = 600 #10 minutes
 startQueryTime = time.time()
 counterErrorCircuit = 0
 counterCircuit = 0
+counterCircuitFiles = 0
 errors_dict = {}
 
 for document in documents:
@@ -82,8 +83,10 @@ for document in documents:
     
     #print(circuitJson)
     counterCircuit+=len(circuitsJson)
+    counterCircuitFiles+=1
 
 print(f"Number of generated circuits: {counterCircuit}")
+print(f"Number of files with circuits: {counterCircuitFiles}")
 print(f"Number of errors: {counterErrorCircuit}")
 
 
