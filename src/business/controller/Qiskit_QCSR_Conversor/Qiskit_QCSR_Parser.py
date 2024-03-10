@@ -61,7 +61,7 @@ operations = {
 }
 
 all_simple_gates = list(single_qubit_gates.keys()) + list(single_r_gate.keys()) + list(simple_oracle_gate.keys()) + list(simple_gate_all_qubits.keys()) #mix all simple gates inside an array
-#all_complex_gates = list(complex_qubit_gates.keys()) + list(complex_oracle_gate.keys()) + list(complex_r_gates.keys()) #mix all complex gates inside an array
+all_complex_gates = list(complex_qubit_gates.keys()) + list(complex_oracle_gate.keys()) + list(complex_r_gates.keys()) #mix all complex gates inside an array
 
 
 class Python3Visitor(ast.NodeVisitor):
@@ -146,17 +146,6 @@ class Python3Visitor(ast.NodeVisitor):
         except (ValueError, KeyError):
             raise VariableNotCalculatedException()
         
-    def fillWithBlanks(self, q1, q2): #Function to draw the QCSR circuit with blank spaces if its needed
-        index = 0
-        
-        if len(self.content[q1]) > len(self.content[q2]):
-            index = len(self.content[q1])         
-            while len(self.content[q2]) != index:
-                self.content[q2].append("_")
-        else:
-            index = len(self.content[q2])
-            while len(self.content[q1]) != index:
-                self.content[q1].append("_")
                 
     def insertSimpleGate(self, circuit_id, gate, node):
         QCSRgate = ''
@@ -222,28 +211,32 @@ class Python3Visitor(ast.NodeVisitor):
             
             #TODO: check list
         
-#    def insertComplexGate(self, gate, nodeArgs):
-#        QCSRgate = ''
-#        qubit_1 = ''
-#        qubit_2 = ''
-                
-#        if gate in complex_qubit_gates:
-#            QCSRgate = complex_qubit_gates[gate] 
-#            qubit_1 = self.getNumValue(nodeArgs[0])
-#            qubit_2 = self.getNumValue(nodeArgs[1]) 
-#        elif gate in complex_oracle_gate:
-#            QCSRgate = complex_oracle_gate[gate] 
-#            qubit_1 = self.getNumValue(nodeArgs[4])
-#            qubit_2 = self.getNumValue(nodeArgs[5])
-#        elif gate in complex_r_gates:
-#            QCSRgate = complex_r_gates[gate] 
-#            qubit_1 = self.getNumValue(nodeArgs[1])
-#            qubit_2 = self.getNumValue(nodeArgs[2])
-            
-#        self.fillWithBlanks(qubit_1, qubit_2)
-#        self.content[qubit_1].append({"CONTROL":qubit_2})
-#        self.content[qubit_2].append(QCSRgate)
-            
+    def insertComplexGate(self, circuit_id, gate, node):
+        QCSRgate = ''
+        qubitArgument = ''
+        keywordQubitExists = False
+        needsArguments = True
+        
+        qubit_1 = ''
+        qubit_2 = ''
+
+        if gate in complex_qubit_gates:
+            QCSRgate = complex_qubit_gates[gate] 
+            qubit_1 = self.getNumValue(node.args[0])
+            qubit_2 = self.getNumValue(node.args[1]) 
+        elif gate in complex_oracle_gate:
+            QCSRgate = complex_oracle_gate[gate] 
+            qubit_1 = self.getNumValue(node.args[4])
+            qubit_2 = self.getNumValue(node.args[5])
+        elif gate in complex_r_gates:
+            QCSRgate = complex_r_gates[gate] 
+            qubit_1 = self.getNumValue(node.args[1])
+            qubit_2 = self.getNumValue(node.args[2])
+
+        self.circuits[circuit_id].fillWithBlanks(qubit_1, qubit_2)
+        self.circuits[circuit_id].insertGate({"CONTROL":qubit_2}, qubit_1)
+        self.circuits[circuit_id].insertGate(QCSRgate, qubit_2)        
+        
     def visit_Assign(self, node):
         for target in node.targets:
             if isinstance(target, ast.Name):
@@ -289,6 +282,8 @@ class Python3Visitor(ast.NodeVisitor):
                 #If a simple gate was found
                 if gate in all_simple_gates:
                     self.insertSimpleGate(circuit_id, gate, node)
+                elif gate in all_complex_gates:
+                    self.insertComplexGate(circuit_id, gate, node)
             
     #     #Cuando se crean circuitos con el formato QC=QuantumCircuit(2)
     #     if isinstance(node.func, ast.Name):
@@ -317,9 +312,4 @@ class Python3Visitor(ast.NodeVisitor):
     #             #If a simple gate was found
     #             if gate in all_simple_gates:
     #                 self.insertSimpleGate(gate, node)
-            
-    #             #Or if a complex gate was found
-    #             #elif gate in all_complex_gates:
-    #             #    self.insertComplexGate(gate, node.args)
-                
         self.generic_visit(node)
