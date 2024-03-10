@@ -80,6 +80,6 @@ circuit15 = QuantumCircuit(2)
 circuit15.cx(0,1)
 # [CONTROL:1], [X]
 
-# circuit16 = QuantumCircuit(2)
-# circuit16.cx(control_qubit=0, target_qubit=1)
-# # [CONTROL:1], [X]
+circuit16 = QuantumCircuit(2)
+circuit16.cx(control_qubit=0, target_qubit=1)
+# [CONTROL:1], [X]
