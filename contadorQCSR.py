@@ -32,13 +32,9 @@ refreshTime = 600 #10 minutes
 startQueryTime = time.time()
 counterErrorCircuit = 0
 counterCircuit = 0
-
-
 errors_dict = {}
 
 for document in documents:
-    
-    
     nowQueryTime = time.time()
     if nowQueryTime - startQueryTime >= refreshTime:
         documents.close()
@@ -46,7 +42,7 @@ for document in documents:
         startQueryTime = nowQueryTime
 
     #antlr4 of the codes and conversion from python qiskit to QCSR
-    circuitJson = ""
+    circuitsJson = {}
     
     try:
         tree = conversor.generateTree(document["content"], document["language"])
@@ -65,7 +61,7 @@ for document in documents:
         continue
                 
     try:
-        circuitJson = conversor.visitTree(tree, document["language"])
+        circuitsJson = conversor.visitTree(tree, document["language"])
     except Exception as e:
         #print(document["path"])
         #print(f"Se ha producido una excepción: {e}") 
@@ -78,14 +74,14 @@ for document in documents:
         else:
             errors_dict[str(e.args[0])].append(e)
             
-        if str(e.args[0]) == "Empty array error. Conversion from python qiskit to QCSR failed":
+        if str(e.args[0]) == "'tuple' object cannot be interpreted as an integer":
             print(document["path"])
         
         counterErrorCircuit+=1
         continue
     
     #print(circuitJson)
-    counterCircuit+=1
+    counterCircuit+=len(circuitsJson)
 
 print(f"Number of generated circuits: {counterCircuit}")
 print(f"Number of errors: {counterErrorCircuit}")

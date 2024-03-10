@@ -29,6 +29,7 @@ c6_q1 = QuantumRegister(2)
 c6_q2 = QuantumRegister(3)
 circuit6 = QuantumCircuit(c6_q1, c6_q2)
 circuit6.h(c6_q2[0])
+print(circuit6)
 # [], [], [H], [], []
 
 
@@ -107,5 +108,5 @@ print(circuit20)
 
 circuit21 = QuantumCircuit(5)
 circuit21.cx(control_qubit=[0, 1, 2], target_qubit=[4])
-print(circuit21)
 # [CONTROL:1], [X]
+

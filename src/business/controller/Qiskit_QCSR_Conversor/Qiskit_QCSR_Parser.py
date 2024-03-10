@@ -3,6 +3,7 @@ from builtins import isinstance
 from .VariableNotCalculatedException import VariableNotCalculatedException
 from .OperationNotFoundException import OperationNotFoundException
 from src.business.controller.Qiskit_QCSR_Conversor.Circuit_creation import Circuit_creation
+from _ast import If
 
 # dictionaries with all kind of gates
 single_qubit_gates = {
@@ -103,7 +104,8 @@ class Python3Visitor(ast.NodeVisitor):
                     if isinstance(argument, tuple) and argument[0] == "QuantumRegister":
                         self.circuits[idCircuit].addRegister(argument[1], nodeArg.id)
                     else:
-                        self.circuits[idCircuit].addRegister(argument)                            
+                        if not isinstance(argument, tuple):
+                            self.circuits[idCircuit].addRegister(argument)                            
                 elif isinstance(nodeArg, ast.Call) and nodeArg.func.id == "QuantumRegister":
                     qubits = self.getNumValue(nodeArg.args[0])
                     self.circuits[idCircuit].addRegister(qubits)
@@ -311,7 +313,7 @@ class Python3Visitor(ast.NodeVisitor):
         self.generic_visit(node)
         
     def visit_Call(self, node):
-        if isinstance(node.func, ast.Attribute):
+        if isinstance(node.func, ast.Attribute) and hasattr(node.func.value, "id"):
             circuit_id = node.func.value.id
             if node.func.attr == "add_register":
                 self.assignRegister(circuit_id, node.args)
@@ -352,3 +354,9 @@ class Python3Visitor(ast.NodeVisitor):
     #             if gate in all_simple_gates:
     #                 self.insertSimpleGate(gate, node)
         self.generic_visit(node)
+        
+    def getConvertedCircuits(self)->dict:
+        converted_circuits = {}
+        for circuit_id, circuit_object in self.circuits.items():
+           converted_circuits[circuit_id] = circuit_object.convertToQCSR()     
+        return converted_circuits

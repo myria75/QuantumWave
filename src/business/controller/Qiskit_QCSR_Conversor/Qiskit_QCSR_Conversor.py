@@ -43,26 +43,43 @@ def generateTreeAndPrint(input, language):
 
 def visitTree(tree, language):
     visitor = None
+    
+    circuits = {}
 
     if language == "Python":
         visitor = Python3Visitor()
         #visitor = PythonVisitor()
+        visitor.visit(tree)
+        circuits = visitor.getConvertedCircuits()
     elif language == "openqasm":
         visitor = qasm3Visitor()
+        visitor.visit(tree)
+        if len(visitor.content) == 0:
+            raise EmptyCircuitException()
+        circuits["_1"] = visitor.content
 
-    visitor.visit(tree) #The circuit array is stored in visitor.content 
     
-    if len(visitor.content) == 0:
+    #filtrar circuitos vacíos
+    dict_circuits = circuits.copy()
+    
+    for key, circuit in dict_circuits.items():
+        if circuit == [] or circuit is None: #removes empty circuits
+            del circuits[key]
+        else:
+            #checks for circuits like [[], [], [], []]
+            blank_qubits = 0
+
+            for qubit in circuit:
+                if len(qubit) == 0:
+                    blank_qubits+=1
+            
+            if blank_qubits == len(circuit):
+                del circuits[key]
+            else:
+                #converts circuits to string
+                circuits[key] = json.dumps(circuit)
+            
+    if len(circuits) == 0:
         raise EmptyCircuitException()
 
-    blank_qubits = 0
-
-    for qubit in visitor.content:
-        if len(qubit) == 0:
-            blank_qubits+=1
-    
-    if blank_qubits == len(visitor.content):
-        raise EmptyCircuitException()
-    
-    return json.dumps(visitor.content)
-
+    return circuits
