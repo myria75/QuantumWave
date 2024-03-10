@@ -83,3 +83,29 @@ circuit15.cx(0,1)
 circuit16 = QuantumCircuit(2)
 circuit16.cx(control_qubit=0, target_qubit=1)
 # [CONTROL:1], [X]
+
+c17_qr = QuantumRegister(3)
+circuit17 = QuantumCircuit(c17_qr)
+circuit17.cx(c17_qr[0], c17_qr[2])
+# [CONTROL:2], [], [X]
+
+c18_qr = QuantumRegister(3)
+circuit18 = QuantumCircuit(c18_qr)
+circuit18.cx(control_qubit=c18_qr[0], target_qubit=c18_qr[2])
+# [CONTROL:2], [], [X]
+
+c19_qr = QuantumRegister(3)
+circuit19 = QuantumCircuit(1)
+circuit19.add_register(c19_qr)
+circuit19.cx(0, c19_qr[0])
+# [CONTROL:1], [X], [], []
+
+circuit20 = QuantumCircuit(5)
+circuit20.cx(control_qubit=[0], target_qubit=[2, 3, 4])
+print(circuit20)
+# [CONTROL:1], [X]
+
+circuit21 = QuantumCircuit(5)
+circuit21.cx(control_qubit=[0, 1, 2], target_qubit=[4])
+print(circuit21)
+# [CONTROL:1], [X]

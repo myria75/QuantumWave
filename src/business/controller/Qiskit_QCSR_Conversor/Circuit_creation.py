@@ -28,6 +28,17 @@ class Circuit_creation():
             regsKeyList = list(self.registers.keys())
             id = regsKeyList[qubit]
         self.registers[id].append(gate)
+        
+    def insertControl(self, controlled_qubit, insert_qubit, controlled_name="_", insert_name="_"):
+        regsKeyList = list(self.registers.keys())
+        nameId_controlled_qubit = ""
+        if controlled_name!="_": 
+            nameId_controlled_qubit = f"{controlled_name}_{controlled_qubit}"
+        else: 
+            nameId_controlled_qubit = regsKeyList[controlled_qubit]
+        
+        position = regsKeyList.index(nameId_controlled_qubit)
+        self.insertGate({"CONTROL":position}, insert_qubit, insert_name)
     
     def convertToQCSR(self):
         result=[]
