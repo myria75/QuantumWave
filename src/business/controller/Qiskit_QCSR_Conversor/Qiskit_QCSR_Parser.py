@@ -163,7 +163,6 @@ class Python3Visitor(ast.NodeVisitor):
         qubitArgument = ''
         #if circuit.h(qubit=q[3]) occurs, qubitArgument=q[3]
         #if circuit.h(q[2]) occurs, qubitArgument=q[2]
- 
         keywordQubitExists = False
         needsArguments = True
                 
@@ -171,7 +170,7 @@ class Python3Visitor(ast.NodeVisitor):
             for keyword in node.keywords:
                 if keyword.arg == "qubit":
                     keywordQubitExists = True
-                    if gate in simple_gate_all_qubits[gate]:
+                    if gate in simple_gate_all_qubits:
                         needsArguments = False
                         QCSRgate = simple_gate_all_qubits[gate]    
                     else:
@@ -200,7 +199,8 @@ class Python3Visitor(ast.NodeVisitor):
 
             
         if not needsArguments:
-            pass
+            for qubit in range(len(self.circuits[circuit_id].registers)):
+               self.circuits[circuit_id].insertGate(QCSRgate, qubit) 
         else:
             if isinstance(qubitArgument, ast.Constant) or isinstance(qubitArgument, ast.Name):
                 qubit=self.getNumValue(qubitArgument)
@@ -209,6 +209,15 @@ class Python3Visitor(ast.NodeVisitor):
                 qubit = self.getNumValue(qubitArgument.slice)
                 name = qubitArgument.value.id
                 self.circuits[circuit_id].insertGate(QCSRgate, qubit, name)
+            elif isinstance(qubitArgument, ast.List):
+                for elt in qubitArgument.elts:
+                    if isinstance(elt, ast.Constant) or isinstance(elt, ast.Name):
+                        qubit=self.getNumValue(elt)
+                        self.circuits[circuit_id].insertGate(QCSRgate, qubit)
+                    elif isinstance(elt, ast.Subscript):
+                        qubit = self.getNumValue(elt.slice)
+                        name = elt.value.id
+                        self.circuits[circuit_id].insertGate(QCSRgate, qubit, name)
 
             
             #TODO: check list

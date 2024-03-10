@@ -10,5 +10,6 @@ with open(file_name, 'r') as file:
     visitor = Python3Visitor()
     visitor.visit(astTree)
     print(visitor.variables)
+    
     for circuit in visitor.circuits.values():
         print(circuit.__str__())
