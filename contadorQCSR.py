@@ -75,7 +75,7 @@ for document in documents:
         else:
             errors_dict[str(e.args[0])].append(e)
             
-        if str(e.args[0]) == "'tuple' object cannot be interpreted as an integer":
+        if str(e.args[0]) == "list indices must be integers or slices, not str":
             print(document["path"])
         
         counterErrorCircuit+=1

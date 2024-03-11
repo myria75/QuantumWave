@@ -67,7 +67,7 @@ for document in documents:
 
     print(document["path"])
     #antlr4 of the codes and conversion from python qiskit to QCSR
-    circuitJson = ""
+    circuitsJsons = {}
     tree = ""
     try:
         tree = conversor.generateTree(document["content"], document["language"])
@@ -79,7 +79,7 @@ for document in documents:
     errorMsg = ""
 
     try:
-        circuitJson = conversor.visitTree(tree, document["language"])
+        circuitsJsons = conversor.visitTree(tree, document["language"])
         n_generated_circuits+=1
     except EmptyCircuitException as e:
         print("Empty array error because QuantumRegister isn't called")
@@ -105,16 +105,18 @@ for document in documents:
         errorsFoundAtParse = True
         errorMsg = f"The tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
 
-    if errorsFoundAtParse:
-        logging.critical(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
-        document["circuit"] = { 'error': errorMsg }
-        document["metrics"] = { 'error': errorMsg }
-    else:
-        document["circuit"] = circuitJson
-        print(circuitJson)
+    #TODO: insert general error
+
+    document["circuits"] = []
+
+    for circuit_id, circuit in circuitsJsons.items():
+        circuitProperties = {}
+        circuitProperties["name"] = circuit_id 
+        circuitProperties["circuit"] = circuit
+        
         qmetricsjson =  {
             "name" : "MiriamTFGCircuit",
-            "circuitCode" : circuitJson
+            "circuitCode" : circuit
         }
 
         #Query QPainter and QMetrics 
@@ -127,22 +129,32 @@ for document in documents:
         #if status starts by 4** or 5**
             if str(metrics["status"])[0] in ("4","5"):
                 logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
-                document["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
+                circuitProperties["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
         else: 
-            document["metrics"] = metrics
-
-    document["patterns"] = qcpdtool.generate_pattern(circuitJson)
+            circuitProperties["metrics"] = metrics
+            
+        circuitProperties["patterns"] = qcpdtool.generate_pattern(circuit)
     
-    if 'err_msg' in document["patterns"].keys():
-        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} {document['patterns']['err_msg']}")
+        #if 'err_msg' in document["circuits"][circuit_id]["patterns"].keys():
+        #    logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} {document['circuits'][{circuit_id}]['patterns']['err_msg']}")
+        
+        document["circuits"].append(circuitProperties)
+
+
+
+
+
+
+    #if errorsFoundAtParse:
+    #    logging.critical(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
+    #    document["circuit"] = { 'error': errorMsg }
+    #    document["metrics"] = { 'error': errorMsg }
     
     #Update entry in MongoDB  
     collRepo.update_one({"id": document["id"]},
     {
         "$set": {
-            "circuit": document["circuit"],
-            "metrics": document["metrics"],
-            "patterns": document["patterns"]
+            "circuits": document["circuits"]
         }
     })
 
