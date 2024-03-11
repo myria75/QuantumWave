@@ -5,6 +5,7 @@
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
 
+import ast
 import configparser
 from datetime import datetime
 import time
@@ -110,6 +111,9 @@ for document in documents:
     document["circuits"] = []
 
     for circuit_id, circuit in circuitsJsons.items():
+
+        #TO COUNT TEST FILES
+
         circuitProperties = {}
         circuitProperties["name"] = circuit_id 
         circuitProperties["circuit"] = circuit

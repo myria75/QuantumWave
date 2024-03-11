@@ -36,7 +36,6 @@ def generateTree(input, language):
 
     return tree
 
-
 def generateTreeAndPrint(input, language):
     tree = generateTree(input, language)
     print(ast.dump(tree, indent=2))
@@ -82,4 +81,6 @@ def visitTree(tree, language):
     if len(circuits) == 0:
         raise EmptyCircuitException()
 
+
+    
     return circuits
