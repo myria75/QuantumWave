@@ -58,6 +58,10 @@ class Circuit_creation():
         for values in self.registers.values():
             result.append(values)
         
+        for sub_array in result:
+            while sub_array and sub_array[-1] == '_':
+                sub_array.pop()
+        
         return result
     
     def fillWithBlanks(self, qubit1, qubit2, name1="_", name2="_"): #Function to draw the QCSR circuit with blank spaces if its needed
@@ -85,6 +89,28 @@ class Circuit_creation():
             index = len(self.registers[target_qubit])
             while len(self.registers[control_qubit]) != index:
                 self.registers[control_qubit].append("_")
+                
+    def fillOthersWithBlanks(self, qubit1, qubit2, name1="_", name2="_"):
+        control_qubit = 0
+        target_qubit = 0
+        
+        if name1!="_": #cases like: circuit.h(qr[0]) -> insertGate("H", 0, "qr")
+            control_qubit = f"{name1}_{qubit1}"
+        else: #cases like: circuit.h(0) -> insertGate("H", 0)
+            regsKeyList = list(self.registers.keys())
+            control_qubit = regsKeyList[qubit1]
+            
+        if name2!="_": #cases like: circuit.h(qr[0]) -> insertGate("H", 0, "qr")
+            target_qubit = f"{name2}_{qubit2}"
+        else: #cases like: circuit.h(0) -> insertGate("H", 0)
+            regsKeyList = list(self.registers.keys())
+            target_qubit = regsKeyList[qubit2]
+        
+        for qubit_id in self.registers:
+            if control_qubit!=qubit_id and target_qubit!=qubit_id:
+                self.registers[qubit_id].append("_")
+            
+        
     
     def __str__(self):
         return f'''

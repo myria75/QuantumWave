@@ -55,7 +55,7 @@ simple_gate_all_qubits = {
 }
 
 complex_oracle_gate = {
-    "cu": "ORACLE"
+    "cu": {"ORACLE": 1}
 }
 
 operations = {
@@ -275,7 +275,8 @@ class Python3Visitor(ast.NodeVisitor):
 
         self.circuits[circuit_id].fillWithBlanks(qubit_1, qubit_2, name_1, name_2)
         self.circuits[circuit_id].insertControl(qubit_2, qubit_1, name_2, name_1)
-        self.circuits[circuit_id].insertGate(QCSRgate, qubit_2, name_2)  
+        self.circuits[circuit_id].insertGate(QCSRgate, qubit_2, name_2)
+        self.circuits[circuit_id].fillOthersWithBlanks(qubit_1, qubit_2, name_1, name_2)
         
     def insertDoubleComplexGates(self, circuit_id, gate, node):      
         QCSRgate = ''
