@@ -3,11 +3,14 @@ from qiskit.circuit import QuantumRegister, QuantumCircuit
 q = QuantumRegister(2)
 circuit1 = QuantumCircuit(q)
 circuit1.h(1)
-# [], [H]
+circuit1.cx(0, 1)
+# [_, {CONTROL:1}], [H, X]
 
 q2 = QuantumRegister(3)
 circuit2 = QuantumCircuit(q2)
 circuit2.h(q2[0])
+circuit2.ccx(0,2,1)
+print(circuit2)
 # [H], [], []
 
 circuit3 = QuantumCircuit(QuantumRegister(3))
@@ -116,3 +119,6 @@ circuit20.h(c20_qr1)
 # circuit21.cx(control_qubit=[0, 1, 2], target_qubit=[4])
 # [CONTROL:1], [X]
 
+# circuit22 = QuantumCircuit(5)
+# circuit22.ccx(0, 1, 4)
+# [CONTROL:4], [CONTROL:4], [], [X], []

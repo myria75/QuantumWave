@@ -1,3 +1,10 @@
+
+"""Counts how many quantum registers and quantum circuits are in one file from the dataset
+"""
+
+__author__ = "Miriam Fernández Osuna"
+__version__ = "1.0"
+
 import ast
 import configparser
 import time
@@ -41,7 +48,7 @@ for document in documents:
         documents = collRepo.find(query, no_cursor_timeout=True)
         startQueryTime = nowQueryTime
 
-    #antlr4 of the codes and conversion from python qiskit to QCSR
+    #ast of the codes and conversion from python qiskit to QCSR
     circuitJson = ""
     
     try:
@@ -51,7 +58,7 @@ for document in documents:
 
     counterParsedFile+=1
 
-    #COUNT WITHOUT CONVERTING TO CIRCUIT
+    #count without converting to circuit
     try:
         visitor1 = PythonVisitorNOCIRCUIT()
         visitor1.visit(tree)
@@ -65,7 +72,7 @@ for document in documents:
     except Exception as e:
         pass
     
-    #COUNT WITH CONVERTING TO CIRCUIT
+    #count with converting to circuit
     try:
         visitor2 = PythonVisitorWITHCIRCUIT()
         visitor2.visit(tree)

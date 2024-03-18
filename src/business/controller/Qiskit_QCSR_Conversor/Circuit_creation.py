@@ -1,3 +1,10 @@
+
+"""Circuit object that is introduced into QCSR format, manage with registers and its names
+"""
+
+__author__ = "Miriam Fernández Osuna"
+__version__ = "1.0"
+
 class Circuit_creation():
     name:str = ""
     registers = {}
@@ -22,7 +29,7 @@ class Circuit_creation():
         
     def insertGate(self, gate, qubit="_", name="_"):
         #TODO: throw exception if name doesn't exist
-        if not qubit: 
+        if not(qubit is None) and not(qubit=="_"):
             if name!="_": #circuit.h(qr[0]) -> insertGate("H", 0, "qr")
                 id = f"{name}_{qubit}"
             else: #circuit.h(0) -> insertGate("H", 0)
@@ -30,12 +37,9 @@ class Circuit_creation():
                 id = regsKeyList[qubit]
             self.registers[id].append(gate)
         else:
-            for id in self.registers:
+            for id in self.registers: # takes the name, goes throw dict to search if the name starts by _, and if its true, append 
                 if id.startswith(f"{name}_"):
                     self.registers[id].append(gate)
-            #coger el name
-            #recorrer todo el diccionario buscando si el nombre empieza por {name}_
-                #si cumple. append
         
     def insertControl(self, controlled_qubit, insert_qubit, controlled_name="_", insert_name="_"):
         regsKeyList = list(self.registers.keys())
@@ -61,15 +65,15 @@ class Circuit_creation():
         control_qubit = 0
         target_qubit = 0
         
-        if name1!="_": #circuit.h(qr[0]) -> insertGate("H", 0, "qr")
+        if name1!="_": #cases like: circuit.h(qr[0]) -> insertGate("H", 0, "qr")
             control_qubit = f"{name1}_{qubit1}"
-        else: #circuit.h(0) -> insertGate("H", 0)
+        else: #cases like: circuit.h(0) -> insertGate("H", 0)
             regsKeyList = list(self.registers.keys())
             control_qubit = regsKeyList[qubit1]
             
-        if name2!="_": #circuit.h(qr[0]) -> insertGate("H", 0, "qr")
+        if name2!="_": #cases like: circuit.h(qr[0]) -> insertGate("H", 0, "qr")
             target_qubit = f"{name2}_{qubit2}"
-        else: #circuit.h(0) -> insertGate("H", 0)
+        else: #cases like: circuit.h(0) -> insertGate("H", 0)
             regsKeyList = list(self.registers.keys())
             target_qubit = regsKeyList[qubit2]
         
