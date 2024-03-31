@@ -10,6 +10,7 @@ import csv
 import os
 import time
 from pymongo import MongoClient
+import pandas
 
 configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
@@ -21,9 +22,6 @@ db_coll = eval(config.get('MongoDB', 'db_coll_accepted'))
 connection = MongoClient(db_link, socketTimeoutMS=None)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
-n_generated_trees = 0
-n_generated_circuits = 0
-n_blank_circuits = 0
 
 query = {
   "$and": [
@@ -31,6 +29,7 @@ query = {
     { "circuits.metrics.error": { "$exists": False } },
     { "circuits.patterns": { "$exists": True } },
     { "circuits.patterns.err_msg": { "$exists": False } }
+    #, { "path": { "$regex": "test", "$options": "i" } }
   ]
 }
 
@@ -59,7 +58,9 @@ documents = collRepo.find(query, no_cursor_timeout=True)
 refreshTime = 600 #10 minutes
 startQueryTime = time.time()
 
-with open('dataset_openqasm_qiskit.csv', 'w', newline='') as file:
+file_name = 'dataset_openqasm_qiskit.csv'
+
+with open(file_name, 'w', newline='') as file:
   writer = csv.writer(file, delimiter=';')
   writer.writerow(field)
   
@@ -86,7 +87,7 @@ with open('dataset_openqasm_qiskit.csv', 'w', newline='') as file:
         entanglement = False
     
         for i in range(0, len(document["circuits"][circuit_index]["metrics"])):
-          metrics.append(document["circuits"][circuit_index]['metrics'][i]['value'])
+            metrics.append(round(float(document["circuits"][circuit_index]['metrics'][i]['value']), 4)) #fix some decimal errors detected in csv file
         
         if len(document["circuits"][circuit_index]["patterns"]["initialization"]) > 0:
           initialization = True
@@ -105,5 +106,9 @@ with open('dataset_openqasm_qiskit.csv', 'w', newline='') as file:
            rowToInsert.append("None")
     
         writer.writerow(rowToInsert)
-        n_generated_circuits += 1
-print(n_generated_circuits)
+        
+df = pandas.read_csv(file_name, delimiter=';')
+df_no_duplicates = df.drop_duplicates(subset=['path', 'circuit'])
+df_no_duplicates.to_csv(file_name, index=False, sep=';')
+
+print(len(df_no_duplicates))

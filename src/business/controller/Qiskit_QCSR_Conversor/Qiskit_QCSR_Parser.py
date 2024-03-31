@@ -285,7 +285,7 @@ class Python3Visitor(ast.NodeVisitor):
         qubitArgument = ''
         keywordQubitExists = False
         
-        if len(node.keywords) > 0: # as keyword in simple gate, there are keywords specified in control gates like control_gate or target_gate
+        if len(node.keywords) > 0: 
             for keyword in node.keywords:
                 if keyword.arg == "control_qubit1": # starts from qubit that controls
                     cqubit1Argument = keyword.value

@@ -110,8 +110,6 @@ class Circuit_creation():
             if control_qubit!=qubit_id and target_qubit!=qubit_id:
                 self.registers[qubit_id].append("_")
             
-        
-    
     def __str__(self):
         return f'''
         Name: {self.name},
