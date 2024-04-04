@@ -87,7 +87,7 @@ with open(file_name, 'w', newline='') as file:
         entanglement = False
     
         for i in range(0, len(document["circuits"][circuit_index]["metrics"])):
-            metrics.append(round(float(document["circuits"][circuit_index]['metrics'][i]['value']), 4)) #fix some decimal errors detected in csv file
+            metrics.append(round(float(document["circuits"][circuit_index]['metrics'][i]['value']), 3)) #fix some decimal errors detected in csv file
         
         if len(document["circuits"][circuit_index]["patterns"]["initialization"]) > 0:
           initialization = True
