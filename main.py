@@ -5,6 +5,7 @@
 __author__ = "Miriam Fernández Osuna"
 __version__ = "1.0"
 
+import ast
 import configparser
 from datetime import datetime
 import time
@@ -38,7 +39,7 @@ logging.info("--INGEST STARTED")
 #Searches in GitHub and ingest the data
 #import src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates
 
-logging.info("--ANTLR4, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
+logging.info("--AST, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
 #Searches in db for codes in qiskit language
 from pymongo import MongoClient
 from pymongo import cursor
@@ -49,9 +50,6 @@ db_coll = eval(config.get('MongoDB', 'db_coll_accepted'))
 connection = MongoClient(db_link, socketTimeoutMS=None)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
-n_generated_trees = 0
-n_generated_circuits = 0
-n_blank_circuits = 0
 
 query = {"language": "Python"}
 documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
@@ -66,28 +64,24 @@ for document in documents:
         startQueryTime = nowQueryTime
 
     print(document["path"])
-    #antlr4 of the codes and conversion from python qiskit to QCSR
-    circuitJson = ""
+    #ast of the codes and conversion from python qiskit to QCSR
+    circuitsJsons = {}
     tree = ""
     try:
         tree = conversor.generateTree(document["content"], document["language"])
     except (IndentationError, Exception):
         continue
-
-    n_generated_trees+=1
+    
     errorsFoundAtParse = False
     errorMsg = ""
 
     try:
-        circuitJson = conversor.visitTree(tree, document["language"])
-        n_generated_circuits+=1
+        circuitsJsons = conversor.visitTree(tree, document["language"])
     except EmptyCircuitException as e:
         print("Empty array error because QuantumRegister isn't called")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
         errorsFoundAtParse = True
         errorMsg = "The tree couldn't be generated. Empty array error because QuantumRegister isn't called"
-        n_generated_circuits+=1
-        n_blank_circuits+=1
     except VariableNotCalculatedException as e:
         print("A variable during the QCSR circuit conversion couldn't be obtained")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} A variable during the QCSR circuit conversion couldn't be obtained")
@@ -97,7 +91,7 @@ for document in documents:
         print("Translator can't read variables when reading gates/circuit, the code is incompatible")
         logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
         errorsFoundAtParse = True
-        errorMsg = f"The antlr4 tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible\n{traceback.format_exc()}"
+        errorMsg = f"The ast tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible\n{traceback.format_exc()}"
     except (AttributeError, KeyError, IndexError, TypeError, OperationNotFoundException, ZeroDivisionError, Exception) as e: 
         print("-------Throws an error----------")
         print(f"{e.__str__()} {document['path']}")
@@ -105,16 +99,20 @@ for document in documents:
         errorsFoundAtParse = True
         errorMsg = f"The tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
 
-    if errorsFoundAtParse:
-        logging.critical(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} The antlr4 tree couldn't be generated. The circuit isn't converted")
-        document["circuit"] = { 'error': errorMsg }
-        document["metrics"] = { 'error': errorMsg }
-    else:
-        document["circuit"] = circuitJson
-        print(circuitJson)
+    #TODO: insert general error
+
+    document["circuits"] = []
+
+    for circuit_id, circuit in circuitsJsons.items():
+        circuitProperties = {}
+        circuitProperties["name"] = circuit_id 
+        circuitProperties["circuit"] = circuit
+        print(document["path"])
+        print(circuit)
+        
         qmetricsjson =  {
             "name" : "MiriamTFGCircuit",
-            "circuitCode" : circuitJson
+            "circuitCode" : circuit
         }
 
         #Query QPainter and QMetrics 
@@ -127,27 +125,19 @@ for document in documents:
         #if status starts by 4** or 5**
             if str(metrics["status"])[0] in ("4","5"):
                 logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
-                document["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
+                circuitProperties["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
         else: 
-            document["metrics"] = metrics
-
-    document["patterns"] = qcpdtool.generate_pattern(circuitJson)
-    
-    if 'err_msg' in document["patterns"].keys():
-        logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} {document['patterns']['err_msg']}")
+            circuitProperties["metrics"] = metrics
+            
+        circuitProperties["patterns"] = qcpdtool.generate_pattern(circuit)
+        document["circuits"].append(circuitProperties)
     
     #Update entry in MongoDB  
     collRepo.update_one({"id": document["id"]},
     {
         "$set": {
-            "circuit": document["circuit"],
-            "metrics": document["metrics"],
-            "patterns": document["patterns"]
+            "circuits": document["circuits"]
         }
     })
 
 connection.close()
-
-print(f"Number of codes with antlr4 tree: {n_generated_trees}")
-print(f"Number of codes with circuit: {n_generated_circuits}")
-print(f"Number of codes with blank circuits: {n_blank_circuits}")

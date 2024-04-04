@@ -1,3 +1,10 @@
+
+"""Counts the number of QCSR circuits that are generated
+"""
+
+__author__ = "Miriam Fernández Osuna"
+__version__ = "1.0"
+
 import configparser
 from datetime import datetime
 import time
@@ -32,29 +39,22 @@ refreshTime = 600 #10 minutes
 startQueryTime = time.time()
 counterErrorCircuit = 0
 counterCircuit = 0
-
-
+counterCircuitFiles = 0
 errors_dict = {}
 
 for document in documents:
-    
-    
     nowQueryTime = time.time()
     if nowQueryTime - startQueryTime >= refreshTime:
         documents.close()
         documents = collRepo.find(query, no_cursor_timeout=True)
         startQueryTime = nowQueryTime
 
-    #antlr4 of the codes and conversion from python qiskit to QCSR
-    circuitJson = ""
+    #ast of the codes and conversion from python qiskit to QCSR
+    circuitsJson = {}
     
     try:
         tree = conversor.generateTree(document["content"], document["language"])
     except Exception as e:
-        #print(document["path"])
-        #print(f"Se ha producido una excepción: {e}") 
-        #print(traceback.print_stack())
-        
         error_key = str(e)
         
         if not error_key in errors_dict:
@@ -65,12 +65,8 @@ for document in documents:
         continue
                 
     try:
-        circuitJson = conversor.visitTree(tree, document["language"])
+        circuitsJson = conversor.visitTree(tree, document["language"])
     except Exception as e:
-        #print(document["path"])
-        #print(f"Se ha producido una excepción: {e}") 
-        #print(traceback.print_stack())
-        
         error_key = str(e)
         
         if not error_key in errors_dict:
@@ -78,27 +74,18 @@ for document in documents:
         else:
             errors_dict[str(e.args[0])].append(e)
             
-        if str(e.args[0]) == "Empty array error. Conversion from python qiskit to QCSR failed":
+        if str(e.args[0]) == "list indices must be integers or slices, not str":
             print(document["path"])
         
         counterErrorCircuit+=1
         continue
     
-    #print(circuitJson)
-    counterCircuit+=1
+    counterCircuit+=len(circuitsJson)
+    counterCircuitFiles+=1
 
 print(f"Number of generated circuits: {counterCircuit}")
+print(f"Number of files with circuits: {counterCircuitFiles}")
 print(f"Number of errors: {counterErrorCircuit}")
-
-
-# print(errors_dict)
-
 
 for k in errors_dict:
     print(str(len(errors_dict[k])) + " --> " + str(k))
-    
-
-# res = ' \n'.join(sorted(errors_dict, key=lambda key: len(errors_dict[key])))
-#
-# # Printing result
-# print("Sorted keys by value list : " + res)
