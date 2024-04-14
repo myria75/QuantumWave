@@ -8,7 +8,7 @@ ANTES:
 DESPUÉS:
 | Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics & Patterns |
 | ------------- | -------- | ------- | ---------- | ---------------- |--------------------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 2824* ANTES 2752 |   1945 ANTES 982   |
+|Python - Qiskit| 6963     | 5451    | 5416       | 2824             |   1860 ANTES 1945  |
 
 2095 files
 
@@ -31,7 +31,7 @@ DESPUÉS:
 DESPUÉS CON MÉTRICAS Y PATRONES SEPARADOS:
 | Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics | Patterns |
 | ------------- | -------- | ------- | ---------- | ---------------- |-------- |----------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 2824* ANTES 2752 |   1945  |  537     |
+|Python - Qiskit| 6963     | 5451    | 5416       | 2824             |   1860  |  537     |
 
 
 
@@ -52,21 +52,21 @@ DESPUÉS CON MÉTRICAS Y PATRONES SEPARADOS:
 TEST FILES:
 TOTAL: 600
 CIRCUITOS CON 1 PUERTA: 257
-| Circuit RQCR     | Metrics & Patterns |
-| ---------------- |--------------------|
-| 2567			   |   1688			    |
+| Circuit RQCR     | Metrics | Patterns |
+| ---------------- |---------|----------|
+| 2567			   |   257	 |	60	    |
 
 CIRCUITOS CON 2 PUERTA: 287
-| Circuit RQCR     | Metrics & Patterns |
-| ---------------- |--------------------|
-| 2537			   |   1658		    	|
+| Circuit RQCR     | Metrics | Patterns |
+| ---------------- |---------|----------|
+| 2537			   |   287	 |	 69   	|
 
 CIRCUITOS CON 3 PUERTA: 102
-| Circuit RQCR     | Metrics & Patterns |
-| ---------------- |--------------------|
-| 2722			   |   1843		    	|
+| Circuit RQCR     | Metrics | Patterns |
+| ---------------- |---------|----------|
+| 2722			   |   102	 |	 25 	|
 
 CIRCUITOS CON 4 PUERTA: 56
-| Circuit RQCR     | Metrics & Patterns |
-| ---------------- |--------------------|
-| 2768			   |   1889		    	|
+| Circuit RQCR     | Metrics | Patterns |
+| ---------------- |---------|----------|
+| 2768			   |   56	 |	 12  	|
