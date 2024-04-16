@@ -4,57 +4,55 @@
 {% block content %}
 <style>
   .form-inline .form-control {
-    width: auto; /* Ajusta el ancho según tus necesidades */
+    width: auto;
   }
 </style>
+
+{% for field, errors in form.errors.items() %}
+	<div class="alert alert-danger">
+    {{ form[field].label }}: {{ ', '.join(errors) }}
+	</div>
+{% endfor %}
 
 <p>Texto</p>
 <div class="row justify-content-center">
   <div class="col-6"> <!-- primera mitad de la pantalla -->
     <form action="/ingest" method="post">
+      {{ form.csrf_token }}
       <div class="form-group container text-center">
         <div class="row align-items-center justify-content-center">
           <div class="col-auto">
-            <label for="language_select" class="form-label">Language:</label>
+            {{ form.language.label() }}:         
           </div>
           <div class="col-auto">
-            <select class="form-select" id="language_select" name="language">
-              <option selected>Default</option>
-              <option value="python">Python</option>
-              <option value="openqasm">OpenQASM</option>
-            </select>
+            {{ form.language(class="form-select", id="language") }}        
           </div>
         </div>
         <br>
         <div class="row align-items-center justify-content-center">
           <div class="col-auto">
-            <label for="extension_select" class="form-label">Extension:</label>
+            {{ form.extension.label() }}: 
           </div>
           <div class="col-auto">
-            <select class="form-select" id="extension_select" name="extension">
-              <option selected>Default</option>
-              <option value="cirq">Cirq</option>
-              <option value="qiskit">Qiskit</option>
-            </select>
+            {{ form.extension(class="form-select", id="extension") }}        
+          </div>
+        </div>
+        <br>
+        <div class="row align-items-center justify-content-center">
+          <div class="col-auto">
+            {{ form.from_date(class="form-control datepicker", id="from_date") }}        
+          </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+          <div class="col-auto">
+            {{ form.to_date(class="form-control datepicker", id="from_date") }}        
           </div>
         </div>
         <br>
         <div class="row">
-          <div class='col-md-6'>
-              <div class="form-group">
-                  <!-- El input donde se mostrará el datepicker -->
-                  <div class='input-group date' id='datepicker'>
-                      <input type='text' class="form-control" />
-                      <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-calendar"></span>
-                      </span>
-                  </div>
-              </div>
+          <div class="col text-center">
+            {{ form.ingest(class="btn btn-success btn-lg") }}
           </div>
-      </div>
-        <br>
-        <div class="row">
-          <div class="col text-center"><button type="submit" class="btn btn-success btn-lg" name="submit_button" value="ingest">Ingest</button></div>
         </div>
       </div>
     </form>
@@ -63,6 +61,23 @@
     <div class="progress" role="progressbar">
       <div class="progress-bar" style="width: 75%">Progress: 75%</div>
     </div>
+    <br>
+    <fieldset class="border" >
+      <p>Console:</p>
+      <p style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em;">
+        Lorem Ipsum is simply dummy text of the printing and 
+        typesetting industry. Lorem Ipsum has been the industry's
+        standard dummy text ever since the 1500s, when an unknown 
+        printer took a galley of type and scrambled it to make a type
+        specimen book. It has survived not only five 
+        centuries, but also the leap into electronic typesetting, 
+        remaining essentially unchanged. It was popularised 
+        in the 1960s with the release of Letraset sheets containing 
+        Lorem Ipsum passages, and more recently with desktop 
+        publishing software like Aldus PageMaker including 
+        versions of Lorem Ipsum.
+      </p>
+    </fieldset>
   </div>
 </div>
 

@@ -5,3 +5,10 @@
 .form-select {
     width: 160px;
 }
+
+.reddit-mono-console {
+  font-family: "Reddit Mono", monospace !important;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}

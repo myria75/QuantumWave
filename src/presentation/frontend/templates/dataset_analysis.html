@@ -3,5 +3,28 @@
 
 {% block content %}
     <p>Content</p>
-    <a href="https://wikipedia.org">Ejemplo</a>
+    <div class="overflow-auto">
+        <table class="table table-hover">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Width</th>
+                <th scope="col">Depth</th>
+                <th scope="col">MaxDens</th>
+                <th scope="col">AvgDens</th>
+                <th scope="col">NoP-X</th>
+                <th scope="col">NoP-Y</th> 
+                <th scope="col">NoP-Z</th>
+                <th scope="col">TNo-P</th> 
+                <th scope="col">NoH</th>   
+                <th scope="col">SpposQ</th>
+                <th scope="col">NoOtherSG</th>  
+                <th scope="col">NoSQG</th>  
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Circuit 1</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
