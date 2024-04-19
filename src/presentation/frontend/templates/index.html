@@ -1,5 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Tool name{% endblock %}
+{% block title %}QuanticWave{% endblock %}
+
+{% block titulo %}
+<div style="text-align: center; background-color: #5F6F52;">
+  <div style= "color: #FEFAE0">
+    <h1>Data ingestion</h1>
+  </div>
+  <div style = "color: #ffff">
+    <p>On this page you can perform a data ingest, just by selecting the programming language and extension, if it's required. </p>
+    <br>
+  </div>
+</div>
+<br>
+{% endblock %}
 
 {% block content %}
 <style>
@@ -14,7 +27,6 @@
 	</div>
 {% endfor %}
 
-<p>Texto</p>
 <div class="row justify-content-center">
   <div class="col-6"> <!-- primera mitad de la pantalla -->
     <form action="/ingest" method="post">
@@ -40,10 +52,17 @@
         <br>
         <div class="row align-items-center justify-content-center">
           <div class="col-auto">
+            {{form.from_date.label()}}:
+          </div>
+          <div class="col-auto">
             {{ form.from_date(class="form-control datepicker", id="from_date") }}        
           </div>
         </div>
+        <br>
         <div class="row align-items-center justify-content-center">
+          <div class="col-auto">
+            {{form.to_date.label()}}:
+          </div>
           <div class="col-auto">
             {{ form.to_date(class="form-control datepicker", id="from_date") }}        
           </div>
@@ -62,8 +81,8 @@
       <div class="progress-bar" style="width: 75%">Progress: 75%</div>
     </div>
     <br>
-    <fieldset class="border" >
-      <p>Console:</p>
+    <p>Console:</p>
+    <fieldset class="border">
       <p style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em;">
         Lorem Ipsum is simply dummy text of the printing and 
         typesetting industry. Lorem Ipsum has been the industry's
@@ -80,5 +99,22 @@
     </fieldset>
   </div>
 </div>
+<br><br><br>
+{% endblock %}
 
+{% block pie %}
+<div id="footer" style="background-color: #7b644d; color: #ffff;">
+  <footer class="row align-items-center">
+    <div class="col-md-6 text-center">
+      <img src="/static/img/image.png" alt="alarcos" width="250" height="90" class="d-inline-block align-text-left" style="margin-left: 6px;">
+    </div>
+    <div class="col-md-4">
+      <div class="text-left" style="font-size: small;">
+        <p>Miriam Fernández Osuna</p>
+        <p>Degree in computer engineering</p>
+        <p>Facultad de Ciencias Sociales y Tecnologías de la Información</p>
+      </div>
+    </div>
+  </footer>
+</div>
 {% endblock %}

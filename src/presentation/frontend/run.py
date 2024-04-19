@@ -29,7 +29,14 @@ def home():
 
 @app.route('/dataset_analysis')
 def dataset_analysis():
-    return render_template("dataset_analysis.html")
+    data = [
+        ("01-01-2020", 1597),
+        ("02-01-2020", 1456)
+    ]
+
+    labels = [row[0] for row in data]
+    values = [row[1] for row in data]
+    return render_template("dataset_analysis.html", labels=labels, values=values)
 
 @app.route('/circuit')
 def circuit():

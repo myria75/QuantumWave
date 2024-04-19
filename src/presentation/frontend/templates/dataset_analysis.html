@@ -1,8 +1,36 @@
 {% extends "base.html" %}
 {% block title %}Dataset Analysis{% endblock %}
 
+{% block scripts %}
+    <script>
+        var ctx = document.getElementById("patternChart").getContext("2d");
+        var patternChart = new Chart(ctx, {
+            type: "line", 
+            data: {
+                labels: {{ labels | safe }},
+                datasets: [
+                    {
+                        label: "Pattern chart",
+                        data: {{values | safe }},
+                        fill: false,
+                        borderColor: "rgb(75, 192, 192)",
+                        lineTension: 0.1 
+                    }
+                ]
+            },
+            options: {
+                responsive: true
+            } 
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
     <p>Content</p>
+    <div>
+        <p>Acá el grafico</p>
+        <canvas id="patternChart" width="900" height="400"></canvas>
+    </div>
     <div class="overflow-auto">
         <table class="table table-hover">
             <thead>
