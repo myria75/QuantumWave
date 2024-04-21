@@ -11,7 +11,7 @@
                 datasets: [
                     {
                         label: "Pattern chart",
-                        data: {{values | safe }},
+                        data: {{ values | safe | tojson }},
                         fill: false,
                         borderColor: "rgb(75, 192, 192)",
                         lineTension: 0.1 
@@ -25,34 +25,49 @@
     </script>
 {% endblock %}
 
+
 {% block content %}
     <p>Content</p>
+    <form id="auto-submit-form">
+        {{ form.csrf_token }}
+        <div class="form-group container text-center">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-auto">
+              {{ form.path.label() }}:         
+            </div>
+            <div class="col-auto">
+              {{ form.path(class="form-select", id="path", onchange="this.form.submit()") }}        
+            </div>
+          </div>
+        </div>
+    </form>
+
     <div>
         <p>Acá el grafico</p>
         <canvas id="patternChart" width="900" height="400"></canvas>
     </div>
     <div class="overflow-auto">
         <table class="table table-hover">
-            <thead>
-                <th scope="col">#</th>
-                <th scope="col">Width</th>
-                <th scope="col">Depth</th>
-                <th scope="col">MaxDens</th>
-                <th scope="col">AvgDens</th>
-                <th scope="col">NoP-X</th>
-                <th scope="col">NoP-Y</th> 
-                <th scope="col">NoP-Z</th>
-                <th scope="col">TNo-P</th> 
-                <th scope="col">NoH</th>   
-                <th scope="col">SpposQ</th>
-                <th scope="col">NoOtherSG</th>  
-                <th scope="col">NoSQG</th>  
+            <thead style>
+                {% for header in table_header %} 
+                    <th scope="col">{{ header }}</th>
+                {% endfor %}        
             </thead>
             <tbody>
+                {% for row in table_content %}
                 <tr>
-                    <th scope="row">Circuit 1</th>
+                    {% for item in row %}
+                    <td>{{ item }}</td>
+                    {% endfor %}
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <script>
+        document.getElementById('path').addEventListener('change', function() {
+            document.getElementById('auto-submit-form').submit();
+        });
+    </script>
 {% endblock %}

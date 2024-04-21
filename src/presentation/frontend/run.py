@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-from app.forms import FormIngestParameters
+from app.forms import FormIngestParameters, FormSelectPath
+from app.csv_interpreter import getTableContent, getTableHeader
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -27,8 +28,10 @@ def home():
     else:
         return render_template("index.html", form=form)
 
-@app.route('/dataset_analysis')
+@app.route('/dataset_analysis', methods=['GET', 'POST'])
 def dataset_analysis():
+    form = FormSelectPath(request.form)
+
     data = [
         ("01-01-2020", 1597),
         ("02-01-2020", 1456)
@@ -36,7 +39,14 @@ def dataset_analysis():
 
     labels = [row[0] for row in data]
     values = [row[1] for row in data]
-    return render_template("dataset_analysis.html", labels=labels, values=values)
+    path = ""
+
+    if form.validate_on_submit():
+        path = form.path.data
+        print(path)
+    else:
+        path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py"
+    return render_template("dataset_analysis.html", form=form, labels=labels, values=values, table_header=getTableHeader(), table_content=getTableContent(path))
 
 @app.route('/circuit')
 def circuit():
