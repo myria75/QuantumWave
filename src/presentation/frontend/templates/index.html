@@ -29,7 +29,7 @@
 
 <div class="row justify-content-center">
   <div class="col-6"> <!-- primera mitad de la pantalla -->
-    <form action="/ingest" method="post">
+    <form method="post">
       {{ form.csrf_token }}
       <div class="form-group container text-center">
         <div class="row align-items-center justify-content-center">
@@ -83,7 +83,7 @@
     <br>
     <p>Console:</p>
     <fieldset class="border">
-      <p style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em;">
+      <p id="dynamic-terminal" style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em;">
         Lorem Ipsum is simply dummy text of the printing and 
         typesetting industry. Lorem Ipsum has been the industry's
         standard dummy text ever since the 1500s, when an unknown 
@@ -100,6 +100,19 @@
   </div>
 </div>
 <br><br><br>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function updateTerminal() {
+    fetch('/get-terminal-text')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('dynamic-terminal').textContent = data;
+      });
+  }
+  setInterval(updateTerminal, 1000);
+</script>
 {% endblock %}
 
 {% block pie %}

@@ -1,9 +1,21 @@
 from flask import Flask, render_template, request
 from app.forms import FormIngestParameters, FormSelectPath
-from app.csv_interpreter import getTableContent, getTableHeader
+from app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
+languageApp=None
+extensionApp=None
+
+@app.route('/get-terminal-text', methods=["GET"])
+def getTerminalText():
+    updated_text = "The tool isn't initialized!"
+
+    if languageApp is not None and extensionApp is not None:
+        updated_text = "You have selected ", languageApp, " and ", extensionApp
+
+    return updated_text
 
 @app.route('/ingest', methods=['GET', 'POST'])
 def handle_ingest():
@@ -19,22 +31,30 @@ def handle_ingest():
 @app.route('/', methods=["get", "post"])
 def home():
     form = FormIngestParameters(request.form)
+
     if form.validate_on_submit():
         language = form.language.data
         extension = form.extension.data
         from_date = form.from_date.data
         to_date = form.to_date.data
-        #procesar
-    else:
-        return render_template("index.html", form=form)
+
+        form.language.data=language
+        form.extension.data=extension
+        #form.from_date.data=from_date
+        #form.to_date.data=to_date
+        languageApp=language
+        extensionApp=extension
+    return render_template("index.html", form=form)
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
 def dataset_analysis():
     form = FormSelectPath(request.form)
 
     data = [
-        ("01-01-2020", 1597),
-        ("02-01-2020", 1456)
+        ("Initialization", 12),
+        ("Superposition", 52),
+        ("Oracle", 32),
+        ("Entanglement", 0),
     ]
 
     labels = [row[0] for row in data]
@@ -45,8 +65,10 @@ def dataset_analysis():
         path = form.path.data
         print(path)
     else:
-        path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py"
-    return render_template("dataset_analysis.html", form=form, labels=labels, values=values, table_header=getTableHeader(), table_content=getTableContent(path))
+        path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py" #TODO: get first or display none
+    form.path.data = path
+    return render_template("dataset_analysis.html", form=form, labels=labels, values=values, table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path))
+    return render_template("dataset_analysis.html", form=form, labels=labels, values=values, table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path))
 
 @app.route('/circuit')
 def circuit():

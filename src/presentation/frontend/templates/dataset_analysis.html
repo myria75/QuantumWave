@@ -1,34 +1,38 @@
 {% extends "base.html" %}
 {% block title %}Dataset Analysis{% endblock %}
 
-{% block scripts %}
-    <script>
-        var ctx = document.getElementById("patternChart").getContext("2d");
-        var patternChart = new Chart(ctx, {
-            type: "line", 
-            data: {
-                labels: {{ labels | safe }},
-                datasets: [
-                    {
-                        label: "Pattern chart",
-                        data: {{ values | safe | tojson }},
-                        fill: false,
-                        borderColor: "rgb(75, 192, 192)",
-                        lineTension: 0.1 
-                    }
-                ]
-            },
-            options: {
-                responsive: true
-            } 
-        });
-    </script>
+{% block titulo %}
+<div style="text-align: center; background-color: #5F6F52;">
+  <div style= "color: #FEFAE0">
+    <h1>Analysis of dataset</h1>
+  </div>
+  <div style = "color: #ffff">
+    <p>On this page you can see stadistics of the codes you ingested before, you can even see the metrics and patterns per circuit. </p>
+    <br>
+  </div>
+</div>
+<br>
 {% endblock %}
 
-
 {% block content %}
-    <p>Content</p>
-    <form id="auto-submit-form">
+    <div class="row align-items-center;" style=" color: #A9B388;">
+        <div class="col-6">
+            <h1>Patterns:</h1>
+        </div>
+    </div>
+    <br>
+
+    <div class="row align-items-center justify-content-between">
+        <div class="col-6">
+            <p>knfeelnf</p>
+        </div>
+        <div class="col-6 text-right">
+            <canvas id="patternChart"></canvas>
+        </div>
+    </div>
+    <br><br>
+
+    <form id="auto-submit-form" method="post">
         {{ form.csrf_token }}
         <div class="form-group container text-center">
           <div class="row align-items-center justify-content-center">
@@ -41,20 +45,43 @@
           </div>
         </div>
     </form>
+    <br><br>
 
-    <div>
-        <p>Acá el grafico</p>
-        <canvas id="patternChart" width="900" height="400"></canvas>
+    <div class="row align-items-center;" style=" color: #A9B388;">
+        <div class="col-6">
+            <h1>Metrics:</h1>
+        </div>
     </div>
+    <br>
+
     <div class="overflow-auto">
         <table class="table table-hover">
             <thead style>
-                {% for header in table_header %} 
+                {% for header in table_header_Patterns %} 
                     <th scope="col">{{ header }}</th>
                 {% endfor %}        
             </thead>
             <tbody>
-                {% for row in table_content %}
+                {% for row in table_content_Patterns %}
+                <tr>
+                    {% for item in row %}
+                    <td>{{ item }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="overflow-auto">
+        <table class="table table-hover">
+            <thead style>
+                {% for header in table_header_Metrics %} 
+                    <th scope="col">{{ header }}</th>
+                {% endfor %}        
+            </thead>
+            <tbody>
+                {% for row in table_content_Metrics %}
                 <tr>
                     {% for item in row %}
                     <td>{{ item }}</td>
@@ -68,6 +95,34 @@
     <script>
         document.getElementById('path').addEventListener('change', function() {
             document.getElementById('auto-submit-form').submit();
+        });
+    </script>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+         document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById("patternChart").getContext("2d");
+            var labels = {{ labels | tojson }};
+            var values = {{ values | tojson }};
+            var patternChart = new Chart(ctx, {
+                type: "bar", 
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Pattern chart",
+                            data: values,
+                            backgroundColor: "rgb(75, 192, 192)",
+                            borderColor: "rgb(75, 192, 192)",
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true
+                } 
+            });
         });
     </script>
 {% endblock %}
