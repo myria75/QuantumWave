@@ -7,7 +7,7 @@
     <h1>Analysis of dataset</h1>
   </div>
   <div style = "color: #ffff">
-    <p>On this page you can see stadistics of the codes you ingested before, you can even see the metrics and patterns per circuit. </p>
+    <p>On this page you can see stadistics of the codes you ingested before, across the board. </p>
     <br>
   </div>
 </div>
@@ -24,7 +24,10 @@
 
     <div class="row align-items-center justify-content-between">
         <div class="col-6">
-            <p>knfeelnf</p>
+            <p>- Initialization: Since only Pauli gates are involved, by checking the beggining of each qubit and look for Pauli X, Y or Z gates the pattern can be detected.</p>
+            <p>- Superposition: Only Hadamard gates are needed in all qubits and check that each qubit superposition has not being cancelled previously.</p>
+            <p>- Uncompute: Aparte from being symmetric the qubits must end in the same state than before applying the circuit. To detect this, a simulation or execution is needed to find out this condition.</p>
+            <p>- Entanglement: A sub-get of qubits should be superposed. In later columns, CNOT gates should be applied.</p>
         </div>
         <div class="col-6 text-right">
             <canvas id="patternChart"></canvas>
@@ -47,25 +50,18 @@
     </form>
     <br><br>
 
-    <div class="row align-items-center;" style=" color: #A9B388;">
-        <div class="col-6">
-            <h1>Metrics:</h1>
-        </div>
-    </div>
-    <br>
-
     <div class="overflow-auto">
         <table class="table table-hover">
-            <thead style>
-                {% for header in table_header_Patterns %} 
-                    <th scope="col">{{ header }}</th>
+            <thead style="">
+                {% for headerP in table_header_Patterns %} 
+                    <th scope="col" style = "background-color: #A9B388; color:#ffff">{{ headerP }}</th>
                 {% endfor %}        
             </thead>
             <tbody>
-                {% for row in table_content_Patterns %}
+                {% for rowP in table_content_Patterns %}
                 <tr>
-                    {% for item in row %}
-                    <td>{{ item }}</td>
+                    {% for itemP in rowP %}
+                    <td>{{ itemP }}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}
@@ -73,18 +69,25 @@
         </table>
     </div>
     <br>
+
+    <div class="row align-items-center;" style=" color: #A9B388;">
+        <div class="col-6">
+            <h1>Metrics:</h1>
+        </div>
+    </div>
+    <br>
     <div class="overflow-auto">
         <table class="table table-hover">
-            <thead style>
-                {% for header in table_header_Metrics %} 
-                    <th scope="col">{{ header }}</th>
-                {% endfor %}        
+            <thead style="">
+                {% for headerM in table_header_Metrics %} 
+                    <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}</th>
+                {% endfor %}     
             </thead>
             <tbody>
-                {% for row in table_content_Metrics %}
+                {% for rowM in table_content_Metrics %}
                 <tr>
-                    {% for item in row %}
-                    <td>{{ item }}</td>
+                    {% for itemM in rowM %}
+                    <td>{{ itemM }}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}
@@ -97,30 +100,41 @@
             document.getElementById('auto-submit-form').submit();
         });
     </script>
+
+    <br />
 {% endblock %}
 
 {% block scripts %}
     <script>
-         document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
             var ctx = document.getElementById("patternChart").getContext("2d");
             var labels = {{ labels | tojson }};
             var values = {{ values | tojson }};
+
             var patternChart = new Chart(ctx, {
                 type: "bar", 
                 data: {
                     labels: labels,
                     datasets: [
                         {
-                            label: "Pattern chart",
+                            label: '',
                             data: values,
-                            backgroundColor: "rgb(75, 192, 192)",
-                            borderColor: "rgb(75, 192, 192)",
+                            backgroundColor: ["rgb(75, 192, 192)", "rgb(185, 148, 112)", "rgb(95, 111, 82)", "rgb(221, 87, 70)"],
+                            borderColor: ["rgb(75, 192, 192)", "rgb(185, 148, 112)", "rgb(95, 111, 82)", "rgb(221, 87, 70)"],
                             borderWidth: 1
                         }
                     ]
                 },
                 options: {
-                    responsive: true
+                    legends: {
+                        display: false
+                    },
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                 } 
             });
         });

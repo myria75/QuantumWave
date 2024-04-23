@@ -67,12 +67,16 @@ def dataset_analysis():
     else:
         path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py" #TODO: get first or display none
     form.path.data = path
-    return render_template("dataset_analysis.html", form=form, labels=labels, values=values, table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path))
-    return render_template("dataset_analysis.html", form=form, labels=labels, values=values, table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path))
+    return render_template("dataset_analysis.html", form=form, labels=labels, values=values,
+                           table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path),
+                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path))
 
-@app.route('/circuit')
+@app.route('/circuit', methods=['GET', 'POST'])
 def circuit():
-    return render_template("circuit.html")
+    all_paths = "*"
+    return render_template("circuit.html",
+                           table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(all_paths),
+                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(all_paths))
 
 @app.errorhandler(404)
 def page_not_found(error):
