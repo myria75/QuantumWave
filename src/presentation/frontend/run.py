@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from app.forms import FormIngestParameters, FormSelectPath
-from app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns
+from app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -48,11 +48,13 @@ def home():
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
 def dataset_analysis():
+    pattern_statistics = getStatistics()
+
     data = [
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 12),
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 52),
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 32),
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 0),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[0]),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[1]),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[2]),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[3]),
     ]
 
     labels = [row[0] for row in data]

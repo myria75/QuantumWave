@@ -101,4 +101,16 @@ def getAllPaths():
     
     return list(set(all_paths))
 
-#print(getTableContentMetrics(all_paths))
+def getStatistics():
+    pattern_data = getTableContentPatterns(all_paths)
+    initialization_data = [row[1] for row in pattern_data]
+    superposition_data = [row[2] for row in pattern_data]
+    oracle_data = [row[3] for row in pattern_data]
+    entanglement_data = [row[4] for row in pattern_data]
+    
+    initialization_value = initialization_data.count("True")
+    superposition_value = superposition_data.count("True")
+    oracle_value= oracle_data.count("True")
+    entanglement_value= entanglement_data.count("True")
+
+    return [initialization_value, superposition_value, oracle_value,  entanglement_value]

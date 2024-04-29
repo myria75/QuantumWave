@@ -65,52 +65,7 @@
 </div>
 <br>
 <div class="overflow-auto">
-    <table class="table table-hover">
-        <thead style="">
-            {% for headerM in table_header_Metrics %} 
-                <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}</th>
-            {% endfor %}     
-        </thead>
-        <tbody>
-            {% for rowM in table_content_Metrics %}
-            <tr>
-                {% for itemM in rowM %}
-                <td>{{ itemM }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-<div class="overflow-auto">
-    <table class="table table-hover">
-        <thead style="">
-            {% for headerP in table_header_Patterns %} 
-                <th scope="col" style = "background-color: #A9B388; color:#ffff">{{ headerP }}</th>
-            {% endfor %}        
-        </thead>
-        <tbody>
-            {% for rowP in table_content_Patterns %}
-            <tr>
-                {% for itemP in rowP %}
-                <td>{{ itemP }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-<br>
-
-<div class="row align-items-center;" style=" color: #A9B388;">
-    <div class="col-6">
-        <h1>Metrics:</h1>
-    </div>
-</div>
-
-<div class="overflow-auto">
-    <table class="table table-hover">
+    <table class="table table-hover rtable rtable--flip">
         <thead style="">
             {% for headerM in table_header_Metrics %} 
                 <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}</th>
