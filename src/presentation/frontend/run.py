@@ -48,39 +48,44 @@ def home():
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
 def dataset_analysis():
-    form = FormSelectPath(request.form)
-
     data = [
-        ("Initialization", 12),
-        ("Superposition", 52),
-        ("Oracle", 32),
-        ("Entanglement", 0),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 12),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 52),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 32),
+        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", 0),
     ]
 
     labels = [row[0] for row in data]
     values = [row[1] for row in data]
+
+    return render_template("dataset_analysis.html", data=data, labels=labels, values=values)
+    
+
+@app.route('/circuit', methods=['GET', 'POST'])
+def circuit():
     path = ""
+    form = FormSelectPath(request.form)
 
     if form.validate_on_submit():
         path = form.path.data
         print(path)
     else:
         path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py" #TODO: get first or display none
+    
     form.path.data = path
-    return render_template("dataset_analysis.html", form=form, labels=labels, values=values,
+    
+    return render_template("circuit.html", form=form,
                            table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path),
                            table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path))
 
-@app.route('/circuit', methods=['GET', 'POST'])
-def circuit():
-    all_paths = "*"
-    return render_template("circuit.html",
-                           table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(all_paths),
-                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(all_paths))
+    #all_paths = "*"
+    #return render_template("circuit.html",
+    #                       table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(all_paths),
+    #                       table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(all_paths))
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template("error.html", error="Página no encontrada..."), 404
+    return render_template("error.html", error="Not found..."), 404
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
