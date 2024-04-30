@@ -220,6 +220,58 @@
         </div>
     </div>
 
+    <a href="#" data-bs-toggle="modal" data-bs-target="#entanglement">Entanglement</a>
+    <div class="modal fade" id="entanglement" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center;">
+                    <img class= "pattern-icon" src="{{ url_for('static', filename='img/entanglement_icon.png') }}">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">Creating Entanglement</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <b>Intent:</b>
+                        <p>Enforce a strong correlation between qubits by entangling them</p>
+                    </div>
+                    <div>
+                        <b>Context:</b>
+                        <p>Entanglement is a unique characteristic of quantum mechanics and one of the causes for the power of quantum algorithms <a href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.83.052313">(Bruß and Macchiavello 2011)</a>.<br>
+                            Although entanglement is not necessarily needed for a powerful quantum algorithm <a href="https://www.sciencedirect.com/science/article/pii/S0304397504001926">(Biham et al. 2004)</a>, it is required to achieve an exponential speedup over classical algorithms <a href="https://royalsocietypublishing.org/doi/abs/10.1098/rspa.2002.1097">(Jozsa and Linden 2003)</a>.<br>
+                            Consequently, a quantum register is often entangled for further processing after the <a href="#/patterns/15">Initialization</a>.</p>
+                    </div>
+                    <div>
+                        <b>Solution:</b>
+                        <p>The concrete implementation of an oracle is highly problem-specific.<br>
+                            As a consequence, there are many different types of oracles, of which several are discussed in <a href="https://epubs.siam.org/doi/abs/10.1137/1.9781611975482.87">(Gilyen et al. 2019)</a>.</p>
+                    </div>
+                    <div>
+                        <b>Result:</b>
+                        <p>Unitary transformations that create entanglement must include multi-qubit operators such as CNOT.<br>
+                            Such operators typically have a lower gate fidelity than single qubit operators and therefore increase the overall gate error.</p>
+                    </div>
+                    <div>
+                        <b>Related patterns:</b>
+                        <p>A quantum register must make use of <a href="#/patterns/15">Initialization</a> before entanglement can be created.<br>
+                            Applying <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> as described above computes a <a href="#/patterns/18">Function Table</a> and makes use of <a href="#/patterns/16">Uniform Superposition</a>.</p>
+                    </div>
+                    <div>
+                        <b>Known Uses:</b>
+                        <p>Most algorithms use entangled states.<br>
+                            A <a href="#/patterns/18">Function Table</a> may create an entangled state, by making use of the above-defined unitary operation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> of a Boolean function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>.</p>
+                    </div>
+                    <div>
+                        <b>Source:</b>
+                        <span _ngcontent-fkv-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
+                    </div>
+                    <div>
+                        <footer _ngcontent-mod-c84="" class="centered" style="text-align: center;"> © quantumcomputingpatterns.org. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.getElementById('path').addEventListener('change', function() {
             document.getElementById('auto-submit-form').submit();
