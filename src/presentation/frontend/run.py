@@ -51,10 +51,10 @@ def dataset_analysis():
     pattern_statistics = getStatistics()
 
     data = [
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[0]),
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[1]),
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[2]),
-        ("https://quantumcomputingpatterns.org/assets/pattern-icons/equal_superposition_icon.png", pattern_statistics[3]),
+        ("Initialization", pattern_statistics[0]),
+        ("Superposition", pattern_statistics[1]),
+        ("Oracle", pattern_statistics[2]),
+        ("Entanglement", pattern_statistics[3]),
     ]
 
     labels = [row[0] for row in data]
