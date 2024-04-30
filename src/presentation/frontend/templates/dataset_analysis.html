@@ -32,8 +32,8 @@
     </div>
     <br><br>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Initialization</a>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#initialization">Initialization</a>
+    <div class="modal fade" id="initialization" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="text-align: center;">
@@ -95,8 +95,8 @@
         </div>
     </div>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModale">Superposition</a>
-    <div class="modal fade" id="exampleModale" tabindex="-1" role="dialog" aria-hidden="true">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#superposition">Superposition</a>
+    <div class="modal fade" id="superposition" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="text-align: center;">
@@ -162,8 +162,8 @@
         </div>
     </div>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModales">Oracle</a>
-    <div class="modal fade" id="exampleModales" tabindex="-1" role="dialog" aria-hidden="true">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#oracle">Oracle</a>
+    <div class="modal fade" id="oracle" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="text-align: center;">
@@ -177,46 +177,37 @@
                         <p>Re-use a computation of a quantum algorithm without necessarily knowing the implementation.</p>
                     </div>
                     <div>
+                        <b>Alias:</b>
+                        <p>This pattern has also been referred to as Black Box.</p>
+                    </div>
+                    <div>
                         <b>Context:</b>
-                        <p>The power of quantum algorithms 
-                            partially originates in the ability to represent multiple states at 
-                            once, the so-called quantum parallelism.<br>
-                            To realize quantum parallelism, some qubits of a quantum register must be brought into superposition.<br>
-                            Many algorithms start with obtaining an equally weighted superposition 
-                            in (a part of) a quantum register. Therefore, for every state 
-                            represented by (this part of) the quantum register, the measurement 
-                            probability is the same.</p>
+                        <p>A Divide-and-Conquer approach is a commonly used method that simplifies solving a complex problem.<br>
+                            In such an approach, an oracle can be used as an reusable part of a 
+                            quantum algorithm - a black blox with hidden internals. Multiple oracles
+                             can be used as building blocks to compose larger algorithms.</p>
                     </div>
                     <div>
                         <b>Solution:</b>
-                        <p>After initializing the quantum register as the unit vector 
-                            <span class="katex">{% raw %}<span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo fence="true">∣</mo><mn>0</mn><mo>…</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><annotation encoding="application/x-tex">\left|0 \ldots 0\right&gt;</annotation></semantics></math></span>{% endraw %}</span>, a Uniform Superposition is created via the Hadamard transformation:</p>
-                        <span class="katex-display">
-                            <span class="katex">
-                                {% raw %}<span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>H</mi><mrow><mo>⊗</mo><mi>n</mi></mrow></msup><mrow><mo fence="true">(</mo><msup><mrow><mo fence="true">∣</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><mrow><mo>⊗</mo><mi>n</mi></mrow></msup><mo fence="true">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><msup><mn>2</mn><mi>n</mi></msup></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><mrow><msup><mn>2</mn><mi>n</mi></msup><mo>−</mo><mn>1</mn></mrow></munderover><mrow><mo fence="true">∣</mo><mi>x</mi><mo fence="true">&gt;</mo></mrow><annotation encoding="application/x-tex">\newcommand{\colVec}
-                                [1]{% inline column vector
-                                \bigl( \begin{smallmatrix}#1\end{smallmatrix}\bigr)
-                                }
-                                \newcommand{\bigColVec}[1]{% inline column vector
-                                \left( \begin{matrix}#1\end{matrix}\right)
-                                }
-                                \newcommand{\state}[1]{{\left| #1 \right&gt;}}H^{\otimes n} \left( 
-                                \left| 0 \right&gt;^{\otimes n} \right)= \dfrac{1}{\sqrt{2^n}} 
-                                \sum_{x=0}^{2^n-1} \left|x \right&gt;{% endraw %}
-                            </span>
-                        </span>
+                        <p>The concrete implementation of an oracle is highly problem-specific.<br>
+                            As a consequence, there are many different types of oracles, of which several are discussed in <a href="https://epubs.siam.org/doi/abs/10.1137/1.9781611975482.87">(Gilyen et al. 2019)</a>.</p>
                     </div>
                     <div>
                         <b>Result:</b>
-                        <p>A <a href="#/patterns/15">Uniform Superposition</a>
-                            can be achieved by performing a single parallel operation on each 
-                           qubit, increasing the depth of the entire circuit by only one.</p>
+                        <p>Concrete implementations of oracles 
+                            add to the overall depth to the overall quantum algorithm but are often 
+                            neglected in the runtime of an oracle-based algorithm.</p>
                     </div>
+                    <div>
                         <b>Related patterns:</b>
-                        <p><a href="#/patterns/16">Uniform Superposition</a> is a special case of <a href="#/patterns/15">Initialization</a>.<br>
-                            After a register is brought into uniform superposition, <a href="#/patterns/17">Creating Entanglement</a> may be used.<br>
-                            A <a href="#/patterns/18">Function Table</a> can be computed on a register in uniform superposition.<br>
-                            An <a href="#/patterns/19">Oracle</a> may require its input to be in uniform superposition.</p>
+                        <p>An oracle requires correct <a href="#/patterns/15">Initialization</a> of the problem-specific input.<br>
+                            Typically, an <a href="#/patterns/20">Uncompute</a> is used after an oracle was applied.</p>
+                    </div>
+                    <div>
+                        <b>Known Uses:</b>
+                        <p>Oracles are used in the algorithms of Deutsch, Deutsch-Jozsa, Bernstein-Vazirani,  Simon,  Grover, and many others. In <a href="https://arxiv.org/abs/0808.0369">(Mosca 2008)</a>, further usages are given.</p>
+                    </div>
+                    
                     <div>
                         <b>Source:</b>
                         <span _ngcontent-fkv-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
