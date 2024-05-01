@@ -17,14 +17,82 @@
 {% block content %}
     <div class="row align-items-center;" style=" color: #A9B388;">
         <div class="col-6">
+            <h1>Dashboard:</h1>
+        </div>
+    </div>
+    <p>This table compiles the results of all the processes through which this tool passes. It is related to the number of circuits that go through the different steps. </p>
+    <br>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+    </head>
+    <body>
+    
+    <table class="table table-hover">
+      <thead>
+        <tr style="color: #ffff">
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Language</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Ingested</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Accepted</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Parsed AST</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Circuit RQCR</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Metrics & Patterns</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align: center">Qiskit</td>
+          <td style="text-align: center">6963</td>
+          <td style="text-align: center">5451</td>
+          <td style="text-align: center">5416</td>
+          <td style="text-align: center">2824</td>
+          <td style="text-align: center">537</td>
+        </tr>
+      </tbody>
+    </table>
+    <br><br>
+
+    <div class="row align-items-center;" style=" color: #A9B388;">
+        <div class="col-6">
             <h1>Patterns:</h1>
         </div>
     </div>
-    <br>
-
     <div class="row align-items-center justify-content-between">
         <div class="col-6">
-
+            <table class="table table-hover" style="width: 90%;">
+              <tr style="">
+                <th style="color: #fff; text-align: center; background-color: #A9B388;" >Qiskit</th>
+                <th style="color: #fff; text-align: center; background-color: #A9B388;">#</th>
+                <th style="color: #fff; text-align: center; background-color: #A9B388;">%</th>
+              </tr>
+              <tr>
+                <td><b>Initialization</b></td>
+                <td style="text-align: center">{{values[0]}}</td>
+                <td style="text-align: center">{{results_percentage[0]}}</td>
+              </tr>
+              <tr>
+                <td><b>Superposition</b></td>
+                <td style="text-align: center">{{values[1]}}</td>
+                <td style="text-align: center">{{results_percentage[1]}}</td>
+              </tr>
+              <tr>
+                <td><b>Oracle</b></td>
+                <td style="text-align: center">{{values[2]}}</td>
+                <td style="text-align: center">{{results_percentage[2]}}</td>
+              </tr>
+              <tr>
+                <td><b>Entanglement</b></td>
+                <td style="text-align: center">{{values[3]}}</td>
+                <td style="text-align: center">{{results_percentage[3]}}</td>
+              </tr>
+            </table>
         </div>
         <div class="col-6 text-right">
             <canvas id="patternChart"></canvas>
@@ -220,7 +288,7 @@
         </div>
     </div>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#entanglement">Entanglement</a>
+    <a href="#" id="entanglementLink" data-bs-toggle="modal" data-bs-target="#entanglement">Entanglement</a>
     <div class="modal fade" id="entanglement" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
@@ -278,7 +346,13 @@
         });
     </script>
 
-    <br />
+    <div class="row align-items-center;" style=" color: #A9B388;">
+        <div class="col-6">
+            <h1>Metrics:</h1>
+        </div>
+    </div>
+
+    <i class="bi bi-check-circle"></i>
 {% endblock %}
 
 {% block scripts %}

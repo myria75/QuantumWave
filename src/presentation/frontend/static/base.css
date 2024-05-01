@@ -126,3 +126,13 @@
 .rtable--flip td:not(:last-child) {
   border-bottom: 0;
 }
+
+.wrong-icon {
+    color: red;
+    font-size: x-large;
+}
+
+.check-icon {
+  color: #5F6F52;
+  font-size: x-large;
+}

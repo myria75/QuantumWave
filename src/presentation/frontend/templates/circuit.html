@@ -49,7 +49,17 @@
             {% for rowP in table_content_Patterns %}
             <tr>
                 {% for itemP in rowP %}
-                <td>{{ itemP }}</td>
+                    {% if loop.index0 == 0 %}
+                        <td><a href="{{ get_circuit_link(itemP) }}" target="_blank">{{ itemP }}</a></td>
+                    {% else %}
+                        {% if itemP == "True" %}
+                            <td style="text-align:center;"><i class="bi bi-check-circle check-icon"></i></td>
+                        {% elif itemP == "False" %}
+                            <td style="text-align: center;"><i class="bi bi-x-circle wrong-icon"></i></td>
+                        {% else %}
+                            <td>{{ itemP }}</td>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
@@ -75,7 +85,11 @@
             {% for rowM in table_content_Metrics %}
             <tr>
                 {% for itemM in rowM %}
-                <td>{{ itemM }}</td>
+                    {% if loop.index0 == 0 %}
+                        <td><a href="{{ get_circuit_link(itemM) }}" target="_blank">{{ itemM }}</a></td>
+                    {% else %}
+                        <td>{{ itemM }}</td>
+                    {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}

@@ -21,9 +21,7 @@ def getTerminalText():
 def handle_ingest():
     if request.method == 'POST':
         language = request.form['language']
-        extension = request.form['extension']
         print("Language:", language)
-        print("Extension:", extension)
         return "Formulario enviado exitosamente" 
     else:
         return render_template("index.html")  # O cualquier otra plantilla que desees mostrar
@@ -34,16 +32,13 @@ def home():
 
     if form.validate_on_submit():
         language = form.language.data
-        extension = form.extension.data
         from_date = form.from_date.data
         to_date = form.to_date.data
 
         form.language.data=language
-        form.extension.data=extension
         #form.from_date.data=from_date
         #form.to_date.data=to_date
         languageApp=language
-        extensionApp=extension
     return render_template("index.html", form=form)
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
@@ -60,8 +55,16 @@ def dataset_analysis():
     labels = [row[0] for row in data]
     values = [row[1] for row in data]
 
-    return render_template("dataset_analysis.html", data=data, labels=labels, values=values)
+    results_percentage = []
     
+    for statistic in pattern_statistics: 
+        percentage = round((statistic/537)* 100, 2)
+        results_percentage.append(percentage)
+
+    return render_template("dataset_analysis.html", data=data, labels=labels, values=values, results_percentage=results_percentage)
+    
+def get_circuit_link(circuit):
+    return "http://172.20.48.7:8000/"+circuit+"/"
 
 @app.route('/circuit', methods=['GET', 'POST'])
 def circuit():
@@ -78,7 +81,8 @@ def circuit():
     
     return render_template("circuit.html", form=form,
                            table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path),
-                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path))
+                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path),
+                           get_circuit_link=get_circuit_link)
 
     #all_paths = "*"
     #return render_template("circuit.html",
