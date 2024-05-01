@@ -100,7 +100,7 @@
     </div>
     <br><br>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#initialization">Initialization</a>
+    <!--<a href="#" data-bs-toggle="modal" data-bs-target="#initialization">Initialization</a>-->
     <div class="modal fade" id="initialization" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
@@ -163,7 +163,7 @@
         </div>
     </div>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#superposition">Superposition</a>
+    <!--<a href="#" data-bs-toggle="modal" data-bs-target="#superposition">Superposition</a>-->
     <div class="modal fade" id="superposition" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
@@ -230,7 +230,7 @@
         </div>
     </div>
 
-    <a href="#" data-bs-toggle="modal" data-bs-target="#oracle">Oracle</a>
+    <!--<a href="#" data-bs-toggle="modal" data-bs-target="#oracle">Oracle</a>-->
     <div class="modal fade" id="oracle" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
@@ -288,7 +288,7 @@
         </div>
     </div>
 
-    <a href="#" id="entanglementLink" data-bs-toggle="modal" data-bs-target="#entanglement">Entanglement</a>
+    <!--<a href="#" id="entanglementLink" data-bs-toggle="modal" data-bs-target="#entanglement">Entanglement</a>-->
     <div class="modal fade" id="entanglement" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
@@ -340,12 +340,6 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('path').addEventListener('change', function() {
-            document.getElementById('auto-submit-form').submit();
-        });
-    </script>
-
     <div class="row align-items-center;" style=" color: #A9B388;">
         <div class="col-6">
             <h1>Metrics:</h1>
@@ -356,38 +350,58 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var ctx = document.getElementById("patternChart").getContext("2d");
-            var labels = {{ labels | tojson }};
-            var values = {{ values | tojson }};
-
-            var patternChart = new Chart(ctx, {
-                type: "bar", 
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: labels,
-                            data: values,
-                            backgroundColor: ["rgb(75, 192, 192)", "rgb(185, 148, 112)", "rgb(95, 111, 82)", "rgb(221, 87, 70)"],
-                            borderColor: ["rgb(75, 192, 192)", "rgb(185, 148, 112)", "rgb(95, 111, 82)", "rgb(221, 87, 70)"],
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    legends: {
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById("patternChart").getContext("2d");
+        var labels = ["Initialization", "Superposition", "Oracle", "Entanglement"];
+        var values = {{ values | tojson }};
+    
+        function handleLabelClick(label) {
+            var modalId = label.toLowerCase();
+            var modalElement = document.getElementById(modalId);
+            if (modalElement) {
+                var modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            } else {
+                console.error('No se encontró el modal con ID:', modalId);
+            }
+        }
+    
+        var patternChart = new Chart(ctx, {
+            type: "bar", 
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: labels,
+                        data: values,
+                        backgroundColor: ["rgb(75, 192, 192)", "rgb(185, 148, 112)", "rgb(95, 111, 82)", "rgb(221, 87, 70)"],
+                        borderColor: ["rgb(75, 192, 192)", "rgb(185, 148, 112)", "rgb(95, 111, 82)", "rgb(221, 87, 70)"],
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
                         display: false
-                    },
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                } 
-            });
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                onClick: function(event, elements) {
+                    if (elements.length > 0) {
+                        var clickedLabel = this.data.labels[elements[0].index];
+                        handleLabelClick(clickedLabel);
+                    }
+                }
+            } 
         });
+    });
     </script>
+
 {% endblock %}
