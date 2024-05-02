@@ -114,3 +114,25 @@ def getStatistics():
     entanglement_value= entanglement_data.count("True")
 
     return [initialization_value, superposition_value, oracle_value,  entanglement_value]
+
+def getMinimum(path):
+    rows = []
+
+    with open(file_path) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=delimiter)
+        line_count = 0
+    
+    for row in csv_reader:
+            if (line_count == 0):
+                line_count += 1
+                continue
+            else:
+                if remove_first_columns_Metrics > 0:
+                    del row[:remove_first_columns_Metrics]
+                
+                if remove_last_columns_Metrics > 0:
+                    del row[-remove_last_columns_Metrics:]
+                    
+                    rows.append(row)
+                    line_count += 1
+    return rows

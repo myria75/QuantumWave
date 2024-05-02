@@ -73,22 +73,22 @@
                 <th style="color: #fff; text-align: center; background-color: #A9B388;">%</th>
               </tr>
               <tr>
-                <td><b>Initialization</b></td>
+                <td><b>Initialization </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#initialization">help</span></td>
                 <td style="text-align: center">{{values[0]}}</td>
                 <td style="text-align: center">{{results_percentage[0]}}</td>
               </tr>
               <tr>
-                <td><b>Superposition</b></td>
+                <td><b>Superposition </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#superposition">help</span></td>
                 <td style="text-align: center">{{values[1]}}</td>
                 <td style="text-align: center">{{results_percentage[1]}}</td>
               </tr>
               <tr>
-                <td><b>Oracle</b></td>
+                <td><b>Oracle </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#oracle">help</span></td>
                 <td style="text-align: center">{{values[2]}}</td>
                 <td style="text-align: center">{{results_percentage[2]}}</td>
               </tr>
               <tr>
-                <td><b>Entanglement</b></td>
+                <td><b>Entanglement </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#entanglement">help</span></td>
                 <td style="text-align: center">{{values[3]}}</td>
                 <td style="text-align: center">{{results_percentage[3]}}</td>
               </tr>
@@ -345,8 +345,162 @@
             <h1>Metrics:</h1>
         </div>
     </div>
-
-    <i class="bi bi-check-circle"></i>
+    <p>The following is an interpretation of the metrics, obtaining the lowest, highest and average values.</p>
+    <div class="overflow-auto">
+        <table class="table table-hover rtable rtable--flip">
+            <thead style="">
+                {% for headerM in table_header_Metrics %} 
+                    <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}</th>
+                {% endfor %}     
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="background-color: #A9B388; color:#ffff">Minimum</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>1.067</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>1.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                </tr>
+                <tr>
+                    <td style="background-color: #A9B388; color:#ffff">Maximum</td>
+                    <td>32.0</td>
+                    <td>33.0</td>
+                    <td>32.0</td>
+                    <td>16.0</td>
+                    <td>16.0</td>
+                    <td>3.0</td>
+                    <td>5.0</td>
+                    <td>16.0</td>
+                    <td>12.0</td>
+                    <td>1.0</td>
+                    <td>32.0</td>
+                    <td>35.0</td>
+                    <td>8.0</td>
+                    <td>0.0</td>
+                    <td>33.0</td>
+                    <td>1.0</td>
+                    <td>10.0</td>
+                    <td>22.0</td>
+                    <td>12.0</td>
+                    <td>1.0</td>
+                    <td>2.0</td>
+                    <td>5.0</td>
+                    <td>44.0</td>
+                    <td>33.0</td>
+                    <td>1.0</td>
+                    <td>10.0</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>1.0</td>
+                    <td>32.0</td>
+                    <td>1.0</td>
+                </tr>
+                <tr>
+                    <td style="background-color: #A9B388; color:#ffff">Average</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>1.51</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>1.98</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>1.35</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                </tr>
+                <tr>
+                    <td style="background-color: #A9B388; color:#ffff">Standard Deviation</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>2.79</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>2.22</td>
+                    <td>0.0</td>
+                    <td>1.71</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>8.98</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -403,5 +557,13 @@
         });
     });
     </script>
+    <script>
+        $(document).ready(function(){
+            $('.material-symbols-outlined').click(function(){
+                $('#initialization').modal('show');
+            });
+        });
+    </script>
+    
 
 {% endblock %}

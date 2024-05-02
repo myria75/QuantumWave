@@ -61,7 +61,7 @@ def dataset_analysis():
         percentage = round((statistic/537)* 100, 2)
         results_percentage.append(percentage)
 
-    return render_template("dataset_analysis.html", data=data, labels=labels, values=values, results_percentage=results_percentage)
+    return render_template("dataset_analysis.html", data=data, labels=labels, values=values, results_percentage=results_percentage, table_header_Metrics=getTableHeaderMetrics())
     
 def get_circuit_link(circuit):
     return "http://172.20.48.7:8000/"+circuit+"/"
