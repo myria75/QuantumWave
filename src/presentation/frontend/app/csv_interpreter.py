@@ -115,7 +115,7 @@ def getStatistics():
 
     return [initialization_value, superposition_value, oracle_value,  entanglement_value]
 
-def getMinimum(path):
+def getMinimum():
     rows = []
 
     with open(file_path) as csv_file:
@@ -136,3 +136,4 @@ def getMinimum(path):
                     rows.append(row)
                     line_count += 1
     return rows
+
