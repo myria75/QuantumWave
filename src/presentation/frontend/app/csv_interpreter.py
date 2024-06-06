@@ -5,7 +5,7 @@ remove_last_columns_Metrics = 4
 remove_first_columns_Patterns = 40
 circuit_position = 6
 delimiter = ";"
-file_path = "./app/dataset_openqasm_qiskit.csv"
+file_path = "./src/presentation/frontend/app/dataset_openqasm_qiskit.csv"
 path_position = 5
 all_paths = "*"
 
