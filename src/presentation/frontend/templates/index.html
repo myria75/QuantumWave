@@ -4,7 +4,7 @@
 {% block titulo %}
 <div style="text-align: center; background-color: #5F6F52;">
   <div style= "color: #FEFAE0">
-    <h1>Data ingestion</h1>
+    <h1>Data ingestion</h1><br>
   </div>
 </div>
 <br>
@@ -27,37 +27,44 @@
   <div class="col-6"> <!-- primera mitad de la pantalla -->
     <form method="post">
       {{ form.csrf_token }}
-      <div class="form-group container text-center">
-        <div class="row align-items-center justify-content-center">
-          <div class="col-auto">
-            {{ form.language.label() }}:         
-          </div>
-          <div class="col-auto">
-            {{ form.language(class="form-select", id="language") }}    
+      <div class="row justify-content-center">
+        <div class="col-auto justify-content-center">
+        <div class="form-group container">
+          <div class="col-auto text-left">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  {{ form.language.label() }}:         
+                </div>
+                <div class="col-auto">
+                  {{ form.language(class="form-select text-center", id="language") }}    
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  {{form.from_date.label()}}:
+                </div>
+                <div class="col-auto">
+                  {{ form.from_date(class="form-control datepicker text-center", id="from_date") }}        
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  {{form.to_date.label()}}:
+                </div>
+                <div class="col-auto">
+                  {{ form.to_date(class="form-control datepicker text-center", id="from_date") }}        
+                </div>
+              </div>
+              <br>
           </div>
         </div>
-        <br>
-        <div class="row align-items-center justify-content-center">
-          <div class="col-auto">
-            {{form.from_date.label()}}:
-          </div>
-          <div class="col-auto">
-            {{ form.from_date(class="form-control datepicker", id="from_date") }}        
-          </div>
         </div>
-        <br>
-        <div class="row align-items-center justify-content-center">
-          <div class="col-auto">
-            {{form.to_date.label()}}:
-          </div>
-          <div class="col-auto">
-            {{ form.to_date(class="form-control datepicker", id="from_date") }}        
-          </div>
-        </div>
-        <br>
         <div class="row">
           <div class="col text-center">
             {{ form.ingest(class="btn btn-success btn-lg") }}
+            {{ form.cancel(class="btn btn-danger btn-lg") }}
           </div>
         </div>
       </div>

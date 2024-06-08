@@ -10,6 +10,7 @@ class FormIngestParameters(FlaskForm):
     from_date = DateField("From")#, format='%d/%m/%Y')
     to_date = DateField("To")#, format='%d/%m/%Y')
     ingest = SubmitField('Ingest')
+    cancel = SubmitField('Cancel')
 
 class FormSelectPath(FlaskForm):
     choices = []
