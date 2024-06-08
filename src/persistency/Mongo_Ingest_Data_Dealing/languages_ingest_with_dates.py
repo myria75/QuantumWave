@@ -33,7 +33,7 @@ collRepo_accepted = dbGithub[db_coll_accepted]
 collRepo_discard = dbGithub[db_coll_discarded]
 
 #URL and headers
-search_repo_url = 'https://api.github.com/search/repositories?q={}+created:{}-01-01..{}-12-31&per_page=100&page={}'
+search_repo_url = 'https://api.github.com/search/repositories?q={}+created:{}-{}-{}..{}-{}-{}&per_page=100&page={}'
 search_code_url = 'https://api.github.com/search/code?q={}&per_page=100&page={}'
 content_url = 'https://api.github.com/repos/{}/contents/{}'
 limit_url = 'https://api.github.com/rate_limit'
@@ -42,6 +42,10 @@ contadorglobal = 0
 
 repo_search_in = 'in:readme+in:name+in:description+in:topics'
 max_search_pages = 10 #pagination with per_page = 100 
+default_from_day = '01'
+default_from_month = '01'
+default_to_day = '31'
+default_to_month = '12'
 year_from = 2015
 
 headers = {
@@ -184,7 +188,7 @@ def obtainContentConversion(doc) -> bool:
     else:
         return False
     
-def getCode (language, extension, filters):
+def getCode (language, extension, filters, from_date: date, to_date: date):
     global contadorglobal
     plus_extension_clause = ''
     extension_clause_plus = ''
@@ -193,11 +197,24 @@ def getCode (language, extension, filters):
         plus_extension_clause = '+'+extension
         extension_clause_plus = extension+'+'
 
-    for year in range(date.today().year, year_from-1, -1):  #iterate over years (to split search results under 1000 hits)
+    for year in range(to_date.year, from_date.year-1, -1):  #iterate over years (to split search results under 1000 hits)
         print("Year: {}, language: {}, extension:{}".format(year, language, extension))    
+        
+        query_fromDate_day = default_from_day
+        query_fromDate_month = default_from_month
+        query_toDate_day = default_to_day
+        query_toDate_month = default_to_month
+
+        if year == to_date.year:
+            query_toDate_day = str(to_date.month).zfill(2)
+            query_toDate_month = str(to_date.month).zfill(2)
+
+        if year == from_date.year:
+            query_fromDate_day = str(from_date.month).zfill(2)
+            query_fromDate_month = str(from_date.month).zfill(2)
                 
         for pagina_repo in range(1, max_search_pages+1):    #iterate over repositories by page results
-            repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, year, pagina_repo)
+            repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, query_toDate_month, query_toDate_day, year, query_fromDate_month, query_fromDate_day, pagina_repo)
             
             checkWaitRateLimit('search')
             session1 = requests.Session()
@@ -239,15 +256,15 @@ def getCode (language, extension, filters):
                             code_url = search_code_url.format('"{}"+'.format(filter)+extension_clause_plus+'+' + 'in:file+language:{}+repo:{}'.format(language,repo_full_name), pagina_codigo)                    
                             content_ingestion(code_url, language, extension, repo_full_name, repo_name, repo_owner, repo_creation_date, year, pagina_repo)
                     
-languages = config.get('languages', 'languages')
-languages = ast.literal_eval(languages)
-initial_time = time.time()
+def doIngestion(languages, from_date: date, to_date: date):
+    initial_time = time.time()
 
-for l in languages:
-    getCode(l[0], l[1], l[2])
-    
+    for l in languages:
+        lang_properties = config.get('languages', l)
+        lang_properties = ast.literal_eval(lang_properties)
+        getCode(lang_properties[0], lang_properties[1], lang_properties[2], from_date, to_date)
+        
+    final_time = time.time()
+    total_time = (final_time-initial_time)/3600
 
-final_time = time.time()
-total_time = (final_time-initial_time)/3600
-
-print("Execution time: ",total_time, "hours")
+    print("Execution time: ",total_time, "hours")

@@ -123,7 +123,7 @@
     <table class="table table-hover">
         <thead style="">
             {% for headerP in table_header_Patterns %} 
-                <th scope="col" style = "background-color: #A9B388; color:#ffff">{{ headerP }}</th>
+                <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">{{ headerP }}</th>
             {% endfor %}        
         </thead>
         <tbody>
@@ -134,7 +134,7 @@
                         <td><a href="{{ get_circuit_link(itemP) }}" target="_blank">{{ itemP }}</a></td>
                     {% else %}
                         {% if itemP == "True" %}
-                            <td style="text-align:left;"><i class="bi bi-check-circle check-icon"></i></td>
+                            <td style="text-align:center;"><i class="bi bi-check-circle check-icon"></i></td>
                         {% elif itemP == "False" %}
                             <td></td>
                             <!--<td style="text-align: center;"><i class="bi bi-x-circle wrong-icon"></i></td>-->

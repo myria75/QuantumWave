@@ -39,13 +39,19 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/" style="color: white;">Ingest</a>
+            <a class="nav-link active" aria-current="page" href="/" style="color: white;" 
+            data-bs-toggle="popover" data-bs-trigger="hover"
+            data-bs-content="On this page you can perform a data ingest, just by selecting the programming language and extension, if it's required.">Ingest</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/dataset_analysis" style="color: white;">Dataset Analysis</a>
+            <a class="nav-link" href="/dataset_analysis" style="color: white;"
+            data-bs-toggle="popover" data-bs-trigger="hover"
+            data-bs-content="On this page you can see stadistics of the codes you ingested before, across the board.">Dataset Analysis</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/circuit" style="color: white;">Circuit</a>
+            <a class="nav-link" href="/circuit" style="color: white;"
+            data-bs-toggle="popover" data-bs-trigger="hover"
+            data-bs-content="On this page you can see patterns and metrics of the circuits from the codes you ingested before..">Circuit</a>
           </li>              
         </ul>
       </div>
@@ -70,6 +76,10 @@
     <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
+    <script type="text/javascript">
+      const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+      const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    </script>
     <script type="text/javascript">
       $(document).ready(function(){
           // Inicializar el datepicker

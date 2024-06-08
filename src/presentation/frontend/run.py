@@ -1,12 +1,27 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from app.forms import FormIngestParameters, FormSelectPath
 from app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics
+import threading
+import time
+#from ...mainExecutable.mainExecutable import mainExecutable
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 languageApp=None
 extensionApp=None
+
+isIngestionRunning = False
+
+def executeIngest(language, from_date, to_date):
+    global isIngestionRunning
+    try:
+        isIngestionRunning = True
+        mainExecution(language, from_date, to_date)
+        time.sleep(10)
+    finally:
+        isIngestionRunning = False
+
 
 @app.route('/get-terminal-text', methods=["GET"])
 def getTerminalText():
@@ -35,10 +50,17 @@ def home():
         from_date = form.from_date.data
         to_date = form.to_date.data
 
+        print(type(from_date), from_date)
+
         form.language.data=language
         #form.from_date.data=from_date
         #form.to_date.data=to_date
         languageApp=language
+
+        if not isIngestionRunning:
+            thread = threading.Thread(target=executeIngest, args=(language, from_date, to_date))
+            thread.start()
+        return jsonify({'status': 'Thread started'}), 200
     return render_template("index.html", form=form)
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
@@ -92,6 +114,12 @@ def circuit():
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template("error.html", error="Not found..."), 404
+
+@app.route('/ingest-status', methods=['GET'])
+def thread_status():
+    global isIngestionRunning
+    return jsonify({'thread_running': isIngestionRunning}), 200
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

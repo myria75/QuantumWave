@@ -136,4 +136,3 @@ def getMinimum():
                     rows.append(row)
                     line_count += 1
     return rows
-
