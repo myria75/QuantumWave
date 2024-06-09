@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-from app.forms import FormIngestParameters, FormSelectPath
-from app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics
+from .app.forms import FormIngestParameters, FormSelectPath
+from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics
 import threading
 import time
-#from ...mainExecutable.mainExecutable import mainExecutable
+from . import mainIngestion
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -17,7 +17,7 @@ def executeIngest(language, from_date, to_date):
     global isIngestionRunning
     try:
         isIngestionRunning = True
-        mainExecution(language, from_date, to_date)
+        mainIngestion.mainIngestion(None, from_date, to_date) #check languages!!
         time.sleep(10)
     finally:
         isIngestionRunning = False
@@ -120,6 +120,8 @@ def thread_status():
     global isIngestionRunning
     return jsonify({'thread_running': isIngestionRunning}), 200
 
+def runFrontend(host='0.0.0.0', port=5000, debug=False):
+    app.run(host=host, port=port, debug=debug)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    runFrontend(host='0.0.0.0', port=5000, debug=True)

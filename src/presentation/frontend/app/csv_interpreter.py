@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 
 remove_first_columns_Metrics = 6
 remove_last_columns_Metrics = 4
@@ -116,23 +117,19 @@ def getStatistics():
     return [initialization_value, superposition_value, oracle_value,  entanglement_value]
 
 def getMinimum():
-    rows = []
-
-    with open(file_path) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=delimiter)
-        line_count = 0
+    metrics: list = getTableContentMetrics(all_paths)
+    metrics = [subarray[1:] for subarray in metrics]
+    metrics = [[round(float(value), 3) for value in row] for row in metrics]
     
-    for row in csv_reader:
-            if (line_count == 0):
-                line_count += 1
-                continue
-            else:
-                if remove_first_columns_Metrics > 0:
-                    del row[:remove_first_columns_Metrics]
-                
-                if remove_last_columns_Metrics > 0:
-                    del row[-remove_last_columns_Metrics:]
-                    
-                    rows.append(row)
-                    line_count += 1
-    return rows
+    metricsArray = np.array(metrics)
+
+    minimums = []
+
+    for col in range(metricsArray.shape[1]):
+        column = metricsArray[:, col]
+        print(column)
+        minimums.append(np.min(column))
+    
+    return minimums
+
+#print(getMinimum())
