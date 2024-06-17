@@ -25,7 +25,7 @@
 
 <div class="row justify-content-center">
   <div class="col-6"> <!-- primera mitad de la pantalla -->
-    <form method="post">
+    <form method="post" id="ingestForm">
       {{ form.csrf_token }}
       <div class="row justify-content-center">
         <div class="col-auto justify-content-center">
@@ -36,7 +36,13 @@
                   {{ form.language.label() }}:         
                 </div>
                 <div class="col-auto">
-                  {{ form.language(class="form-select text-center", id="language") }}    
+                  {% for subfield in form.language %}
+                  <div class="form-check">
+                      {{ subfield(class="form-check-input", type="checkbox", id="checkBox{{loop.index}}") }}
+                      <label class="form-check-label" for="checkBox{{loop.index}}">{{ subfield.label }}</label>
+                  </div>
+                  {% endfor %}
+                  <!--{{ form.language(class="form-select text-center", id="language") }}-->
                 </div>
               </div>
               <br>
@@ -63,8 +69,29 @@
         </div>
         <div class="row">
           <div class="col text-center">
-            {{ form.ingest(class="btn btn-success btn-lg") }}
-            {{ form.cancel(class="btn btn-danger btn-lg") }}
+            {{ form.start(class="btn btn-success btn-lg", id="startIngest") }}
+            {{ form.cancel(class="btn btn-danger btn-lg", id="stopIngest") }}
+            
+            <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#ingestions" id="ingestionsButton">
+              Other ingestions...
+            </button>
+          
+            <div class="modal fade" id="ingestions" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+                <div class="modal-content">
+                  <div class="modal-header" style="text-align: center;">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">Choose other ingestions</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body" style="text-align: left">
+                    <p>Here, you can select other ingestion proposed by the tool</p>
+                    {{ form.select.label() }}:                     
+                    {{ form.select(class="form-select text-center", id="select") }}    
+                    {{ form.save(class="btn btn-success btn-lg") }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -98,14 +125,42 @@
 
 {% block scripts %}
 <script>
-  function updateTerminal() {
-    fetch('/get-terminal-text')
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('dynamic-terminal').textContent = data;
-      });
+  document.getElementById('ingestForm').addEventListener('submit', function(event) {
+    const form = this;
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+    
+    event.preventDefault();
+    const formData = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.status);
+      updateStatus();
+    });
+  });
+
+  function updateStatus() {
+    fetch('/ingest-status')
+    .then(response => response.json())
+    .then(data => {
+      var startIngestBtn = document.getElementById('startIngest');
+      document.getElementById('dynamic-terminal').textContent = data.terminal_text;
+      console.log(data)
+      if (data.thread_running) {
+        startIngestBtn.disabled = true;
+      } else {
+        startIngestBtn.disabled = false;
+      }
+    });
   }
-  setInterval(updateTerminal, 1000);
+  setInterval(updateStatus, 1000);
 </script>
 {% endblock %}
 

@@ -3,6 +3,9 @@ from .app.forms import FormIngestParameters, FormSelectPath
 from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics
 import threading
 import time
+import configparser
+import os
+from pymongo import MongoClient, cursor
 from . import mainIngestion
 
 app = Flask(__name__)
@@ -13,24 +16,28 @@ extensionApp=None
 
 isIngestionRunning = False
 
-def executeIngest(language, from_date, to_date):
+configuration_file = os.path.join("resources", "config", "properties.ini")
+config = configparser.ConfigParser()
+config.read(configuration_file)
+
+db_link = eval(config.get('MongoDB', 'db_link'))
+db_name = eval(config.get('MongoDB', 'db_name'))
+db_coll = eval(config.get('MongoDB', 'db_coll_accepted'))
+
+connection = MongoClient(db_link, socketTimeoutMS=None)
+dbGithub = connection[db_name] 
+collRepo = dbGithub[db_coll]
+
+def executeIngest(languages, from_date, to_date):
     global isIngestionRunning
     try:
         isIngestionRunning = True
-        mainIngestion.mainIngestion(None, from_date, to_date) #check languages!!
+        mainIngestion.mainIngestion(languages, from_date, to_date)
         time.sleep(10)
     finally:
         isIngestionRunning = False
 
 
-@app.route('/get-terminal-text', methods=["GET"])
-def getTerminalText():
-    updated_text = "The tool isn't initialized!"
-
-    if languageApp is not None and extensionApp is not None:
-        updated_text = "You have selected ", languageApp, " and ", extensionApp
-
-    return updated_text
 
 @app.route('/ingest', methods=['GET', 'POST'])
 def handle_ingest():
@@ -50,15 +57,13 @@ def home():
         from_date = form.from_date.data
         to_date = form.to_date.data
 
-        print(type(from_date), from_date)
-
         form.language.data=language
         #form.from_date.data=from_date
         #form.to_date.data=to_date
         languageApp=language
 
         if not isIngestionRunning:
-            thread = threading.Thread(target=executeIngest, args=(language, from_date, to_date))
+            thread = threading.Thread(target=executeIngest, name="MainIngestQuanticWave", args=(language, from_date, to_date))
             thread.start()
         return jsonify({'status': 'Thread started'}), 200
     return render_template("index.html", form=form)
@@ -100,11 +105,17 @@ def circuit():
         path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py" #TODO: get first or display none
     
     form.path.data = path
+
+    query = {
+        "path":"{}".format(path)
+    }
+
+    codeDoc: cursor.Cursor = collRepo.find_one(query, no_cursor_timeout=True)
     
     return render_template("circuit.html", form=form,
                            table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path),
                            table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path),
-                           get_circuit_link=get_circuit_link)
+                           get_circuit_link=get_circuit_link, code_path=path, code_content=codeDoc["content"])
 
     #all_paths = "*"
     #return render_template("circuit.html",
@@ -118,7 +129,18 @@ def page_not_found(error):
 @app.route('/ingest-status', methods=['GET'])
 def thread_status():
     global isIngestionRunning
-    return jsonify({'thread_running': isIngestionRunning}), 200
+
+    updated_text = "The tool isn't initialized!"
+    mainIngestion.log_capture_string.flush()
+    updated_text = mainIngestion.log_capture_string.getvalue()
+
+    if languageApp is not None and extensionApp is not None:
+        updated_text = "You have selected ", languageApp, " and ", extensionApp
+
+    return jsonify({
+        'thread_running': isIngestionRunning,
+        'terminal_text': updated_text
+    }), 200
 
 def runFrontend(host='0.0.0.0', port=5000, debug=False):
     app.run(host=host, port=port, debug=debug)

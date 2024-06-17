@@ -49,9 +49,9 @@ default_to_month = '12'
 year_from = 2015
 
 headers = {
-    'Accept': "application/vnd.github+json",
-    'Authorization': "Bearer "+token,
-    'X-Github-Api-Version': "2022-11-28"
+    "Accept": "application/vnd.github+json",
+    "Authorization": f"Bearer {token}",
+    "X-Github-Api-Version": "2022-11-28"
 }
 
 def obtainConfiguration():
@@ -214,8 +214,7 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
             query_fromDate_month = str(from_date.month).zfill(2)
                 
         for pagina_repo in range(1, max_search_pages+1):    #iterate over repositories by page results
-            repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, query_toDate_month, query_toDate_day, year, query_fromDate_month, query_fromDate_day, pagina_repo)
-            
+            repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, query_fromDate_month, query_fromDate_day, year, query_toDate_month, query_toDate_day, pagina_repo)
             checkWaitRateLimit('search')
             session1 = requests.Session()
             retry1 = Retry(connect=100, backoff_factor=0.5)
@@ -225,7 +224,7 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
             r = session1.get(repo_url, headers=headers)
             #r = requests.get(repo_url, headers=headers)
 
-            search_dict = r.json()               
+            search_dict = r.json()
             repos = None    #used to later store repositories which were returned
 
             if 'total_count' in search_dict and 'items' in search_dict: #way to know if the request returned as expected       
@@ -247,13 +246,17 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
                 for pagina_codigo in range(1, max_search_pages+1):    #iterate by code page
                     if extension is not None:
                         extension_clause = '+'+extension
+                    
+                    print("TODO: "+extension+" and "+extension_clause)
 
                     if filters is None:
                         code_url = search_code_url.format(extension_clause_plus+'+' + 'in:file+language:{}+repo:{}'.format(language,repo_full_name), pagina_codigo)                    
+                        print("TODO: "+code_url)
                         content_ingestion(code_url, language, extension, repo_full_name, repo_name, repo_owner, repo_creation_date, year, pagina_repo)
                     else:
                         for filter in filters:
                             code_url = search_code_url.format('"{}"+'.format(filter)+extension_clause_plus+'+' + 'in:file+language:{}+repo:{}'.format(language,repo_full_name), pagina_codigo)                    
+                            print("TODO: "+code_url)
                             content_ingestion(code_url, language, extension, repo_full_name, repo_name, repo_owner, repo_creation_date, year, pagina_repo)
                     
 def doIngestion(languages, from_date: date, to_date: date):

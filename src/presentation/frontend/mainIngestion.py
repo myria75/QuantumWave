@@ -25,7 +25,7 @@ configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
 
-log_capture_string = io.StringIO() #variable que contiene los logs. Hay que hacer .getValue()
+log_capture_string:io.StringIO = io.StringIO() #variable que contiene los logs. Hay que hacer .getvalue()
 
 if not logging.getLogger().hasHandlers():
     logging.root.handlers=[]
@@ -38,8 +38,14 @@ if not logging.getLogger().hasHandlers():
         ],
         encoding="UTF-8"
     )
+else:
+    logger = logging.getLogger()
+    logger.handlers.extend([
+        logging.FileHandler(eval(config.get('log', 'file'))),
+        logging.StreamHandler(log_capture_string)
+    ])
 
-def mainIngestion(languages, from_date: date, to_date: date):
+def mainIngestion(languages:list, from_date: date, to_date: date):
     #Ejemplo languages: ["qiskit", "openqasm"]
     if (languages == None or len(languages) == 0): 
         return
