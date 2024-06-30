@@ -21,8 +21,6 @@ class FormIngestParameters(FlaskForm):
     to_date = DateField("To")#, format='%d/%m/%Y')
     start = SubmitField('Start')
     cancel = SubmitField('Cancel')
-    select = SelectField("Select ingestion", validators=[InputRequired("This field is required")], choices=[("Default", "Select"), ("Mongo20231504", "Mongo20231504")])
-    save = SubmitField('Save')
 
 class FormSelectPath(FlaskForm):
     choices = []
@@ -30,4 +28,6 @@ class FormSelectPath(FlaskForm):
     for item in getAllPaths():
         choices.append((item,item))
 
+    repositories = SelectField("Repositories", validators=[InputRequired("This field is required")], choices=choices)
     path = SelectField("Path", validators=[InputRequired("This field is required")], choices=choices)
+    file = SelectField("File", validators=[InputRequired("This field is required")], choices=choices)

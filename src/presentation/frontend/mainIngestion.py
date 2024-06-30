@@ -16,6 +16,7 @@ import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as co
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
 import src.business.controller.QCPDTool.views as qcpdtool
 from src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates import doIngestion
+from table_information import generateCSV
 import io
 import os
 import json
@@ -25,13 +26,16 @@ configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
 
+ingest_logger = logging.getLogger('ingest_logger')
 log_capture_string:io.StringIO = io.StringIO() #variable que contiene los logs. Hay que hacer .getvalue()
+logger_format_str = "%(asctime)s [%(levelname)s] %(message)s"
 
-if not logging.getLogger().hasHandlers():
-    logging.root.handlers=[]
-    logging.basicConfig(
+
+if not ingest_logger.hasHandlers():
+    ingest_logger.root.handlers=[]
+    ingest_logger.basicConfig(
         level=logging.DEBUG,
-        format="%(asctime)s [%(levelname)s] %(message)s",
+        format=logger_format_str,
         handlers=[
             logging.FileHandler(eval(config.get('log', 'file'))),
             logging.StreamHandler(log_capture_string)
@@ -39,31 +43,36 @@ if not logging.getLogger().hasHandlers():
         encoding="UTF-8"
     )
 else:
-    logger = logging.getLogger()
-    logger.handlers.extend([
+    stream_handler = logging.StreamHandler(log_capture_string)
+    stream_handler.setFormatter(logging.Formatter(logger_format_str))
+    ingest_logger.handlers.extend([
         logging.FileHandler(eval(config.get('log', 'file'))),
-        logging.StreamHandler(log_capture_string)
+        stream_handler
     ])
+ingestProgress = 0
+analysisProgress = 0
 
 def mainIngestion(languages:list, from_date: date, to_date: date):
     #Ejemplo languages: ["qiskit", "openqasm"]
     if (languages == None or len(languages) == 0): 
         return
 
-    logging.info("--EXCUTION STARTED")
-    logging.info("--INGEST STARTED")
+    ingest_logger.info("--EXCUTION STARTED")
+    ingest_logger.info("--INGEST STARTED")
 
     #Searches in GitHub and ingest the data
     doIngestion(languages, from_date, to_date)
 
-    logging.info("--AST, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
+    ingest_logger.info("--AST, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
     #Searches in db for codes in qiskit language
     from pymongo import MongoClient
     from pymongo import cursor
 
     db_link = eval(config.get('MongoDB', 'db_link'))
     db_name = eval(config.get('MongoDB', 'db_name'))
-    db_coll = eval(config.get('MongoDB', 'db_coll_accepted'))
+    db_coll_final = eval(config.get('MongoDB', 'db_coll_accepted'))
+    db_coll_sufix = eval(config.get('MongoDB', 'db_coll_inprogress_sufix'))
+    db_coll = (f'{db_coll_final}{db_coll_sufix}')
     connection = MongoClient(db_link, socketTimeoutMS=None)
     dbGithub = connection[db_name]
     collRepo = dbGithub[db_coll]
@@ -96,23 +105,23 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
             circuitsJsons = conversor.visitTree(tree, document["language"])
         except EmptyCircuitException as e:
             print("Empty array error because QuantumRegister isn't called")
-            logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
+            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
             errorsFoundAtParse = True
             errorMsg = "The tree couldn't be generated. Empty array error because QuantumRegister isn't called"
         except VariableNotCalculatedException as e:
             print("A variable during the QCSR circuit conversion couldn't be obtained")
-            logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} A variable during the QCSR circuit conversion couldn't be obtained")
+            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} A variable during the QCSR circuit conversion couldn't be obtained")
             errorsFoundAtParse = True
             errorMsg = f"The ast tree couldn't be generated. A variable during the QCSR circuit conversion couldn't be obtained"
         except ValueError as e:
             print("Translator can't read variables when reading gates/circuit, the code is incompatible")
-            logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
+            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
             errorsFoundAtParse = True
             errorMsg = f"The ast tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible\n{traceback.format_exc()}"
         except (AttributeError, KeyError, IndexError, TypeError, OperationNotFoundException, ZeroDivisionError, Exception) as e: 
             print("-------Throws an error----------")
             print(f"{e.__str__()} {document['path']}")
-            logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
+            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
             errorsFoundAtParse = True
             errorMsg = f"The tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
 
@@ -141,7 +150,7 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
             if "status" in metrics:
             #if status starts by 4** or 5**
                 if str(metrics["status"])[0] in ("4","5"):
-                    logging.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
+                    ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
                     circuitProperties["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
             else: 
                 circuitProperties["metrics"] = metrics
@@ -157,4 +166,8 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
             }
         })
 
+    dbGithub[db_coll].rename(db_coll_final)
+
     connection.close()
+
+    generateCSV()

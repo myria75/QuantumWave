@@ -1,19 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Dataset Analysis{% endblock %}
 
-{% block titulo %}
-<div style="text-align: center; background-color: #5F6F52;">
-  <div style= "color: #FEFAE0">
-    <h1>Analysis of dataset</h1><br>
-  </div>
-</div>
-<br>
-{% endblock %}
-
 {% block content %}
     <div class="row align-items-center;" style=" color: #A9B388;">
         <div class="col-6">
-            <h1>Dashboard:</h1>
+            <h4>Dashboard:</h4>
         </div>
     </div>
     <p>This table compiles the results of all the processes through which this tool passes. It is related to the number of circuits that go through the different steps. </p>
@@ -35,19 +26,36 @@
       <thead>
         <tr style="color: #ffff">
           <th style="color: #fff; text-align: center; background-color: #A9B388;">Language</th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;">
-            Ingested files
-            <span class="material-symbols-outlined" style="font-size: 1em">info
-              <a class="nav-link active" aria-current="page" href="/" style="color: white;" 
-                 data-bs-toggle="popover" data-bs-trigger="hover"
-                 data-bs-content="On this page you can perform a data ingest, just by selecting the programming language and extension, if it's required.">
-              </a>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;"
+            data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Files ingested with selection in page Data Ingestion">Ingested files
+            <span class="material-symbols-outlined" style="font-size: 1em">help
             </span>
           </th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;">Accepted filters</th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;">Parsed AST</th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;">RQCR Circuit</th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;">Metrics & Patterns</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;"
+            data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Files filtrered by keywords.">Accepted filters
+            <span class="material-symbols-outlined" style="font-size: 1em">help
+            </span>
+            </th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;"
+          data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+          data-bs-content="Number of circuits that are syntactic analyzed.">Parsed AST
+          <span class="material-symbols-outlined" style="font-size: 1em">help
+            </span>
+            </th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;"
+          data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+          data-bs-content="Number of circuits that are transfomed to reduced quantum circuit.">RQCR Circuit
+          <span class="material-symbols-outlined" style="font-size: 1em">help
+            </span>
+            </th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;"
+            data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Number of circuits with metrics and patterns.">Metrics & Patterns
+          <span class="material-symbols-outlined" style="font-size: 1em">help
+            </span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -65,7 +73,7 @@
 
     <div class="row align-items-center;" style=" color: #A9B388;">
         <div class="col-6">
-            <h1>Patterns:</h1>
+            <h4>Patterns:</h4>
         </div>
     </div>
     <div class="row align-items-center justify-content-between">
@@ -77,22 +85,22 @@
                 <th style="color: #fff; text-align: center; background-color: #A9B388;">%</th>
               </tr>
               <tr>
-                <td><b>Initialization </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#initialization">help</span></td>
+                <td><b>Initialization </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#initialization">help</span></td>
                 <td style="text-align: center">{{values[0]}}</td>
                 <td style="text-align: center">{{results_percentage[0]}}</td>
               </tr>
               <tr>
-                <td><b>Superposition </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#superposition">help</span></td>
+                <td><b>Superposition </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#superposition">help</span></td>
                 <td style="text-align: center">{{values[1]}}</td>
                 <td style="text-align: center">{{results_percentage[1]}}</td>
               </tr>
               <tr>
-                <td><b>Oracle </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#oracle">help</span></td>
+                <td><b>Oracle </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#oracle">help</span></td>
                 <td style="text-align: center">{{values[2]}}</td>
                 <td style="text-align: center">{{results_percentage[2]}}</td>
               </tr>
               <tr>
-                <td><b>Entanglement </b><span class="material-symbols-outlined" style="font-size: 1em" data-target="#entanglement">help</span></td>
+                <td><b>Entanglement </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#entanglement">help</span></td>
                 <td style="text-align: center">{{values[3]}}</td>
                 <td style="text-align: center">{{results_percentage[3]}}</td>
               </tr>
@@ -152,7 +160,7 @@
                             possible to load a matrix that is represented as a set of vectors <a href="https://arxiv.org/abs/1603.08675">(Kerenidis and Prakash 2016)</a>.</p>
                     </div>
                         <b>Related patterns:</b>
-                        <p>Patterns like <a href="#/patterns/0">Basis Encoding</a> or <a href="#/patterns/1">Quantum Associative Memory (QuAM)</a> further refine <a href="#/patterns/15">Initialization</a>.<br>
+                        <p>Patterns like <a  href="#/patterns/0">Basis Encoding</a> or <a href="#/patterns/1">Quantum Associative Memory (QuAM)</a> further refine <a href="#/patterns/15">Initialization</a>.<br>
                             <a href="#/patterns/16">Uniform Superposition</a> is often used as an initial state.<br>
                             An initialized register may be used to compute a <a href="#/patterns/18">Function Table</a>.</p>
                     <div>
@@ -346,7 +354,7 @@
 
     <div class="row align-items-center;" style=" color: #A9B388;">
         <div class="col-6">
-            <h1>Metrics:</h1>
+            <h4>Metrics:</h4>
         </div>
     </div>
     <p>The following is an interpretation of the metrics, obtaining the lowest, highest and average values.</p>
@@ -359,148 +367,28 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="background-color: #A9B388; color:#ffff">Average</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>1.51</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>1.98</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>1.35</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
+                    <td style="background-color: #A9B388; color:#ffff; text-align: center">Average</td>
+                    {% for averageM in table_average %}
+                        <td style="text-align:center">{{ averageM }}</td>
+                    {% endfor %}
                 </tr>
                 <tr>
-                    <td style="background-color: #A9B388; color:#ffff">Standard Deviation</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>2.79</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>2.22</td>
-                    <td>0.0</td>
-                    <td>1.71</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>8.98</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
+                    <td style="background-color: #A9B388; color:#ffff; text-align: center">Standard Deviation</td>
+                    {% for standardDeviationM in table_standard_desviation %}
+                        <td style="text-align: center">{{ standardDeviationM }}</td>
+                    {% endfor %}
                 </tr>
                 <tr>
-                    <td style="background-color: #A9B388; color:#ffff">Minimum</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>1.067</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>1.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
-                    <td>0.0</td>
+                    <td style="background-color: #A9B388; color:#ffff; text-align:center">Minimum</td>
+                    {% for minimunM in table_minimun %}
+                        <td style="text-align: center">{{ minimunM }}</td>
+                    {% endfor %}
                 </tr>
                 <tr>
-                    <td style="background-color: #A9B388; color:#ffff">Maximum</td>
-                    <td>32.0</td>
-                    <td>33.0</td>
-                    <td>32.0</td>
-                    <td>16.0</td>
-                    <td>16.0</td>
-                    <td>3.0</td>
-                    <td>5.0</td>
-                    <td>16.0</td>
-                    <td>12.0</td>
-                    <td>1.0</td>
-                    <td>32.0</td>
-                    <td>35.0</td>
-                    <td>8.0</td>
-                    <td>0.0</td>
-                    <td>33.0</td>
-                    <td>1.0</td>
-                    <td>10.0</td>
-                    <td>22.0</td>
-                    <td>12.0</td>
-                    <td>1.0</td>
-                    <td>2.0</td>
-                    <td>5.0</td>
-                    <td>44.0</td>
-                    <td>33.0</td>
-                    <td>1.0</td>
-                    <td>10.0</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>1.0</td>
-                    <td>32.0</td>
-                    <td>1.0</td>
+                    <td style="background-color: #A9B388; color:#ffff; text-align:center">Maximum</td>
+                    {% for maximunM in table_maximun %}
+                        <td style="text-align:center">{{ maximunM }}</td>
+                    {% endfor %}
                 </tr>
             </tbody>
         </table>
@@ -564,10 +452,18 @@
     <script>
         $(document).ready(function(){
             $('.material-symbols-outlined').click(function(){
-                $('#initialization').modal('show');
+                var target = $(this).data('target');
+                $(target).modal('show');
             });
         });
     </script>
-    
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+        });
+    </script>  
 {% endblock %}

@@ -1,14 +1,5 @@
 {% extends "base.html" %}
-{% block title %}QuanticWave{% endblock %}
-
-{% block titulo %}
-<div style="text-align: center; background-color: #5F6F52;">
-  <div style= "color: #FEFAE0">
-    <h1>Data ingestion</h1><br>
-  </div>
-</div>
-<br>
-{% endblock %}
+{% block title %}QuanticWave{% endblock %}}
 
 {% block content %}
 <style>
@@ -16,7 +7,7 @@
     width: auto;
   }
 </style>
-
+<br>
 {% for field, errors in form.errors.items() %}
 	<div class="alert alert-danger">
     {{ form[field].label }}: {{ ', '.join(errors) }}
@@ -25,7 +16,7 @@
 
 <div class="row justify-content-center">
   <div class="col-6"> <!-- primera mitad de la pantalla -->
-    <form method="post" id="ingestForm">
+    <form method="post" id="ingestForm" action="">
       {{ form.csrf_token }}
       <div class="row justify-content-center">
         <div class="col-auto justify-content-center">
@@ -71,27 +62,6 @@
           <div class="col text-center">
             {{ form.start(class="btn btn-success btn-lg", id="startIngest") }}
             {{ form.cancel(class="btn btn-danger btn-lg", id="stopIngest") }}
-            
-            <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#ingestions" id="ingestionsButton">
-              Other ingestions...
-            </button>
-          
-            <div class="modal fade" id="ingestions" tabindex="-1" role="dialog" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
-                <div class="modal-content">
-                  <div class="modal-header" style="text-align: center;">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">Choose other ingestions</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body" style="text-align: left">
-                    <p>Here, you can select other ingestion proposed by the tool</p>
-                    {{ form.select.label() }}:                     
-                    {{ form.select(class="form-select text-center", id="select") }}    
-                    {{ form.save(class="btn btn-success btn-lg") }}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -99,23 +69,13 @@
   </div>
   <div class="col-6"><!-- Segunda mitad de la pantalla -->
     <div class="progress" role="progressbar">
-      <div class="progress-bar" style="width: 75%">Progress: 75%</div>
+      <div class="progress-bar" style="width: 0%" id="progress-bar-ingest">Progress: 75%</div>
     </div>
     <br>
-    <p>Console:</p>
+    <p>Ingestion progress</p>
     <fieldset class="border">
-      <p id="dynamic-terminal" style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em;">
-        Lorem Ipsum is simply dummy text of the printing and 
-        typesetting industry. Lorem Ipsum has been the industry's
-        standard dummy text ever since the 1500s, when an unknown 
-        printer took a galley of type and scrambled it to make a type
-        specimen book. It has survived not only five 
-        centuries, but also the leap into electronic typesetting, 
-        remaining essentially unchanged. It was popularised 
-        in the 1960s with the release of Letraset sheets containing 
-        Lorem Ipsum passages, and more recently with desktop 
-        publishing software like Aldus PageMaker including 
-        versions of Lorem Ipsum.
+      <p id="dynamic-terminal" style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em; max-width: 700px; max-height: 330px; overflow: auto;">
+        Content
       </p>
     </fieldset>
   </div>
@@ -125,7 +85,7 @@
 
 {% block scripts %}
 <script>
-  document.getElementById('ingestForm').addEventListener('submit', function(event) {
+  /*{document.getElementById('ingestForm').addEventListener('submit', function(event) {
     const form = this;
     if (!form.checkValidity()) {
       event.preventDefault();
@@ -144,14 +104,18 @@
       console.log(data.status);
       updateStatus();
     });
-  });
+  });}*/
 
   function updateStatus() {
     fetch('/ingest-status')
     .then(response => response.json())
     .then(data => {
       var startIngestBtn = document.getElementById('startIngest');
-      document.getElementById('dynamic-terminal').textContent = data.terminal_text;
+      const formattedText = data.terminal_text.replace(/\n/g, '<br>');
+      document.getElementById('dynamic-terminal').innerHTML = formattedText;
+      var progress = data.percentage_progress_bar
+      document.getElementById('progress-bar-ingest').style = `width: ${progress}%`
+      document.getElementById('progress-bar-ingest').textContent = `Progress: ${progress}%`
       console.log(data)
       if (data.thread_running) {
         startIngestBtn.disabled = true;

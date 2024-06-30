@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 from .app.forms import FormIngestParameters, FormSelectPath
-from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics
+from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics, getMinimum, getMaximun, getAverage, getStandardDeviation
 import threading
 import time
 import configparser
+import logging
+
 import os
 from pymongo import MongoClient, cursor
+import json
 from . import mainIngestion
 
 app = Flask(__name__)
@@ -28,6 +31,16 @@ connection = MongoClient(db_link, socketTimeoutMS=None)
 dbGithub = connection[db_name] 
 collRepo = dbGithub[db_coll]
 
+defaultProgressJson = {
+    "totalRepos_ingest": None,
+	"ingestedRepos": None,
+	"totalFiles_analysis": None,
+	"analyzedFiles": None
+}
+
+jsonPath = os.path.join('progress_temp.json')
+
+
 def executeIngest(languages, from_date, to_date):
     global isIngestionRunning
     try:
@@ -36,8 +49,6 @@ def executeIngest(languages, from_date, to_date):
         time.sleep(10)
     finally:
         isIngestionRunning = False
-
-
 
 @app.route('/ingest', methods=['GET', 'POST'])
 def handle_ingest():
@@ -65,7 +76,7 @@ def home():
         if not isIngestionRunning:
             thread = threading.Thread(target=executeIngest, name="MainIngestQuanticWave", args=(language, from_date, to_date))
             thread.start()
-        return jsonify({'status': 'Thread started'}), 200
+        #return jsonify({'status': 'Thread started'}), 200
     return render_template("index.html", form=form)
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
@@ -88,7 +99,11 @@ def dataset_analysis():
         percentage = round((statistic/537)* 100, 2)
         results_percentage.append(percentage)
 
-    return render_template("dataset_analysis.html", data=data, labels=labels, values=values, results_percentage=results_percentage, table_header_Metrics=getTableHeaderMetrics())
+    table_header_Metrics=getTableHeaderMetrics()
+    table_header_Metrics[0] = "Metrics"
+
+    return render_template("dataset_analysis.html", data=data, labels=labels, values=values, results_percentage=results_percentage,
+        table_header_Metrics=table_header_Metrics, table_average=getAverage(), table_standard_desviation=getStandardDeviation(), table_minimun=getMinimum(), table_maximun=getMaximun())
     
 def get_circuit_link(circuit):
     return "http://172.20.48.7:8000/"+circuit+"/"
@@ -129,6 +144,7 @@ def page_not_found(error):
 @app.route('/ingest-status', methods=['GET'])
 def thread_status():
     global isIngestionRunning
+    percentage_progress = 0
 
     updated_text = "The tool isn't initialized!"
     mainIngestion.log_capture_string.flush()
@@ -137,12 +153,47 @@ def thread_status():
     if languageApp is not None and extensionApp is not None:
         updated_text = "You have selected ", languageApp, " and ", extensionApp
 
+    if not isIngestionRunning:
+        percentage_progress = 0
+    else:
+        firstHalf_percentage = 0
+        secondHalf_percentage = 0
+
+        jsonProgress = {}
+
+        with open(jsonPath, 'r') as file:
+            jsonProgress = json.load(file)
+
+        if jsonProgress['totalRepos_ingest'] is not None and jsonProgress['ingestedRepos'] is not None:
+            firstHalf_percentage = jsonProgress['ingestedRepos']/jsonProgress['totalRepos_ingest']
+            if firstHalf_percentage > 1:
+                firstHalf_percentage = 1
+            firstHalf_percentage = round(firstHalf_percentage, 2)
+            firstHalf_percentage = firstHalf_percentage*100
+            
+            if jsonProgress['totalFiles_analysis'] is not None and jsonProgress['analyzedFiles'] is not None:
+                secondHalf_percentage = jsonProgress['analyzedFiles']/jsonProgress['totalFiles_analysis']
+                if secondHalf_percentage > 1:
+                    secondHalf_percentage = 1
+                secondHalf_percentage = round(secondHalf_percentage, 2)
+                secondHalf_percentage = secondHalf_percentage*100
+        
+        percentage_progress = firstHalf_percentage+secondHalf_percentage
+
+    if percentage_progress > 100:
+        percentage_progress = 100
+    if percentage_progress < 0:
+        percentage_progress = 0
+
     return jsonify({
         'thread_running': isIngestionRunning,
-        'terminal_text': updated_text
+        'terminal_text': updated_text,
+        'percentage_progress_bar': percentage_progress
     }), 200
 
 def runFrontend(host='0.0.0.0', port=5000, debug=False):
+    with open(jsonPath, 'w') as file:
+        json.dump(defaultProgressJson, file, indent=4)
     app.run(host=host, port=port, debug=debug)
 
 if __name__ == "__main__":

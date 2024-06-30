@@ -127,9 +127,65 @@ def getMinimum():
 
     for col in range(metricsArray.shape[1]):
         column = metricsArray[:, col]
-        print(column)
-        minimums.append(np.min(column))
+        minimums.append(round(np.min(column)))
     
     return minimums
 
-#print(getMinimum())
+def getMaximun():
+    metrics: list = getTableContentMetrics(all_paths)
+    metrics = [subarray[1:] for subarray in metrics]
+    metrics = [[round(float(value), 3) for value in row] for row in metrics]
+    
+    metricsArray = np.array(metrics)
+
+    maximuns = []
+
+    for col in range(metricsArray.shape[1]):
+        column = metricsArray[:, col]
+        maximuns.append(round(np.max(column)))
+        
+    return maximuns
+
+def getAverage():
+    metrics: list = getTableContentMetrics(all_paths)
+    metrics = [subarray[1:] for subarray in metrics]
+    metrics = [[round(float(value), 3) for value in row] for row in metrics]
+    metricsArray = np.array(metrics)
+
+    averages = []
+
+    for col in range(metricsArray.shape[1]):
+        column = metricsArray[:, col]
+        #averages.append(round(np.mean(column), 3))
+        average = round(np.mean(column), 3)
+
+        if col == 9 or col==15 or col==19 or col==24 or col==27 or col==28 or col==32:
+            averages.append(f"{average:.3f}%")
+        else:
+            averages.append(f"{average:.3f}")
+        # averages.append(round(np.mean(column), 3))
+    
+    return averages
+
+def getStandardDeviation():
+    metrics: list = getTableContentMetrics(all_paths)
+    metrics = [subarray[1:] for subarray in metrics]
+    metrics = [[round(float(value), 3) for value in row] for row in metrics]
+    
+    metricsArray = np.array(metrics)
+
+    standardDeviations = []
+
+    for col in range(metricsArray.shape[1]):
+        column = metricsArray[:, col]
+        standardDeviation = round(np.std(column), 3)
+        
+        if col == 9 or col==15 or col==19 or col==24 or col==27 or col==28 or col==32:
+            standardDeviations.append(f"{standardDeviation:.3f}%")
+        else:
+            standardDeviations.append(f"{standardDeviation:.3f}")
+        #standardDeviations.append(round(np.std(column), 3))     
+    
+    return standardDeviations
+
+#print(getStandardDeviation())
