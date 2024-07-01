@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from .app.forms import FormIngestParameters, FormSelectPath
 from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics, getMinimum, getMaximun, getAverage, getStandardDeviation
+from .app.mongo_handler import getFilesList, getRepositoriesList
 import threading
 import time
 import configparser
@@ -18,6 +19,8 @@ languageApp=None
 extensionApp=None
 
 isIngestionRunning = False
+ingestionThread = None
+stopThread = False
 
 configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
@@ -42,13 +45,19 @@ jsonPath = os.path.join('progress_temp.json')
 
 
 def executeIngest(languages, from_date, to_date):
-    global isIngestionRunning
+    global isIngestionRunning, ingestionThread, stopThread
     try:
         isIngestionRunning = True
-        mainIngestion.mainIngestion(languages, from_date, to_date)
-        time.sleep(10)
+        stopThread = False
+        while not stopThread:
+            mainIngestion.mainIngestion(languages, from_date, to_date)
     finally:
         isIngestionRunning = False
+
+def stopIngestion():
+    global isIngestionRunning, stopThread
+    stopThread = True
+    isIngestionRunning = False
 
 @app.route('/ingest', methods=['GET', 'POST'])
 def handle_ingest():
@@ -61,6 +70,7 @@ def handle_ingest():
 
 @app.route('/', methods=["get", "post"])
 def home():
+    global isIngestionRunning, ingestionThread, languageApp
     form = FormIngestParameters(request.form)
 
     if form.validate_on_submit():
@@ -74,10 +84,18 @@ def home():
         languageApp=language
 
         if not isIngestionRunning:
-            thread = threading.Thread(target=executeIngest, name="MainIngestQuanticWave", args=(language, from_date, to_date))
-            thread.start()
+            stopIngestion()
+            ingestionThread = threading.Thread(target=executeIngest, name="MainIngestQuanticWave", args=(language, from_date, to_date))
+            ingestionThread.start()
         #return jsonify({'status': 'Thread started'}), 200
+    else:
+        isIngestionRunning = False
     return render_template("index.html", form=form)
+
+@app.route('/cancel-ingest', methods=['POST'])
+def cancelIngest():
+    stopIngestion()
+    return 'Función ejecutada exitosamente'
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
 def dataset_analysis():
@@ -194,7 +212,10 @@ def thread_status():
 def runFrontend(host='0.0.0.0', port=5000, debug=False):
     with open(jsonPath, 'w') as file:
         json.dump(defaultProgressJson, file, indent=4)
-    app.run(host=host, port=port, debug=debug)
+    try:
+        app.run(host=host, port=port, debug=debug)
+    finally:
+        stopIngestion()
 
 if __name__ == "__main__":
     runFrontend(host='0.0.0.0', port=5000, debug=True)

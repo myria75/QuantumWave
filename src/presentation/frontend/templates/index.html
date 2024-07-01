@@ -61,7 +61,7 @@
         <div class="row">
           <div class="col text-center">
             {{ form.start(class="btn btn-success btn-lg", id="startIngest") }}
-            {{ form.cancel(class="btn btn-danger btn-lg", id="stopIngest") }}
+            <button id="stopIngest" class="btn btn-danger btn-lg">Cancel</button>
           </div>
         </div>
       </div>
@@ -125,6 +125,32 @@
     });
   }
   setInterval(updateStatus, 1000);
+
+  document.getElementById('stopIngest').addEventListener('click', function(event) {
+    event.preventDefault(); 
+
+    fetch('/cancel-ingest', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({}) // Puedes enviar datos si es necesario
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Cancelación exitosa');
+      } else {
+        console.error('Error al cancelar');
+      }
+    })
+    .catch(error => {
+      console.error('Error en la solicitud:', error);
+    });
+  });
+
+  if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+  }
 </script>
 {% endblock %}
 

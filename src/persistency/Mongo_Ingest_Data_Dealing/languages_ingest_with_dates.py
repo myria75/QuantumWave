@@ -282,20 +282,20 @@ def getTotalReposCount(language, extension, from_date: date, to_date: date):
     
     if extension is not None:
         plus_extension_clause = '+'+extension
-        extension_clause_plus = extension+'+'
-
-    query_fromDate_day = default_from_day
-    query_fromDate_month = default_from_month
-    query_toDate_day = default_to_day
-    query_toDate_month = default_to_month
+        extension_clause_plus = extension+'+'    
 
     for year in range(to_date.year, from_date.year-1, -1):
+        query_fromDate_day = default_from_day
+        query_fromDate_month = default_from_month
+        query_toDate_day = default_to_day
+        query_toDate_month = default_to_month
+
         if year == to_date.year:
-            query_toDate_day = str(to_date.month).zfill(2)
+            query_toDate_day = str(to_date.day).zfill(2)
             query_toDate_month = str(to_date.month).zfill(2)
 
         if year == from_date.year:
-            query_fromDate_day = str(from_date.month).zfill(2)
+            query_fromDate_day = str(from_date.day).zfill(2)
             query_fromDate_month = str(from_date.month).zfill(2)
                 
         repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, query_fromDate_month, query_fromDate_day, year, query_toDate_month, query_toDate_day, 1)
