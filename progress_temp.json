@@ -1,6 +1,6 @@
 {
-    "totalRepos_ingest": 32,
-    "ingestedRepos": 13,
+    "totalRepos_ingest": null,
+    "ingestedRepos": null,
     "totalFiles_analysis": null,
     "analyzedFiles": null
 }

@@ -22,6 +22,7 @@ import os
 import json
 import logging
 import traceback
+jsonPath = os.path.join('progress_temp.json')
 configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
@@ -81,6 +82,17 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
     documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
     refreshTime = 600 #10 minutes
     startQueryTime = time.time()
+
+    total_documents = collRepo.count_documents(query)
+
+    with open(jsonPath, 'w+') as file:
+        jsonProgress = json.load(file)
+    
+        jsonProgress['totalFiles_analysis'] = total_documents+1 #+1 por el paso del csv que queda a parte de analizar
+
+        json.dump(jsonProgress, file, indent=4) 
+
+    progress_document = 0
 
     for document in documents:
         nowQueryTime = time.time()
@@ -165,9 +177,26 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
                 "circuits": document["circuits"]
             }
         })
+        progress_document+=1
+
+        with open(jsonPath, 'w+') as file:
+            jsonProgress = json.load(file)
+        
+            jsonProgress['analyzedFiles'] = progress_document
+
+            json.dump(jsonProgress, file, indent=4) 
 
     dbGithub[db_coll].rename(db_coll_final)
 
     connection.close()
 
     generateCSV()
+
+    progress_document+=1
+
+    with open(jsonPath, 'w+') as file:
+        jsonProgress = json.load(file)
+        
+        jsonProgress['analyzedFiles'] = progress_document
+
+        json.dump(jsonProgress, file, indent=4) 

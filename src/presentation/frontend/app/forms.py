@@ -30,4 +30,3 @@ class FormSelectPath(FlaskForm):
 
     repositories = SelectField("Repositories", validators=[InputRequired("This field is required")], choices=choices)
     path = SelectField("Path", validators=[InputRequired("This field is required")], choices=choices)
-    file = SelectField("File", validators=[InputRequired("This field is required")], choices=choices)

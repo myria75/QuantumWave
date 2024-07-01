@@ -7,10 +7,9 @@
         <div class="modal-content">
             <div class="modal-header" style="text-align: center;">
                 <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">{{code_path}}</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <pre><code class="language-python">
+                <pre class="line-numbers language-python"><code class="line-numbers language-python">
                     {{code_content}}
                 </code></pre>
             </div>
@@ -41,17 +40,12 @@
         <div class="col-auto">
             {{ form.repositories(class="form-select", id="repositories", onchange="this.form.submit()") }}        
         </div>
+        <br>
         <div class="col-auto">
             {{ form.path.label() }}:         
         </div>
         <div class="col-auto">
             {{ form.path(class="form-select", id="path", onchange="this.form.submit()") }}        
-        </div>
-        <div class="col-auto">
-            {{ form.file.label() }}:         
-        </div>
-        <div class="col-auto">
-            {{ form.file(class="form-select", id="file", onchange="this.form.submit()") }}        
         </div>
       </div>
     </div>
@@ -123,4 +117,5 @@
         document.getElementById('auto-submit-form').submit();
     });
 </script>  
+<script src="{{ url_for('static', filename='prism.js') }}"></script>
 {% endblock %}
