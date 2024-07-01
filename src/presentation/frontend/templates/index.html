@@ -85,6 +85,12 @@
 
 {% block scripts %}
 <script>
+  $(document).ready(function(){
+      $(".active").removeClass("active");
+      $("#nav-home").addClass("active");
+   });
+</script>
+<script>
   /*{document.getElementById('ingestForm').addEventListener('submit', function(event) {
     const form = this;
     if (!form.checkValidity()) {

@@ -113,6 +113,12 @@
 </div>
 
 <script>
+    $(document).ready(function(){
+        $(".active").removeClass("active");
+        $("#nav-circuit").addClass("active");
+     });
+</script>
+<script>
     document.getElementById('path').addEventListener('change', function() {
         document.getElementById('auto-submit-form').submit();
     });
