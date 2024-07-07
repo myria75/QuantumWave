@@ -12,7 +12,10 @@ DESPUÉS:
 
 2095 files
 
-
+| Analizador sintáctico | Árboles sintácticos | Circuitos RQCR | Patrones de diseño y métricas |
+| --------------------- | ------------------- | -------------- | ----------------------------- | 
+| ANTLR4                | 1717                | 907            | 80                            | 
+| AST                   | 5416                |  2824          | 612                           | 
 
 
 

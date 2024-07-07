@@ -20,7 +20,7 @@
 
 <div class="row align-items-center;" style=" color: #A9B388;">
     <div class="col-6">
-        <h4>Patterns:<span class="material-symbols-outlined" style="font-size: 1em"  data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="right"
+        <h4>Patterns:<span class="material-symbols-outlined" style="font-size: 1em"  data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
             data-bs-content="Select a repository, path and a file to see what characteristics it exhibits in patterns and metrics">help</span></h4>
     </div>
 </div>
@@ -92,8 +92,9 @@
 <div class="overflow-auto">
     <table class="table table-hover rtable rtable--flip">
         <thead style="text-align: center;">
-            {% for headerM in table_header_Metrics %} 
-                <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}</th>
+            {% for headerM, popoverM in header_popover %} 
+                <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}<span class="material-symbols-outlined" style="font-size: 1em"  data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="right"
+                    data-bs-content="{{ popoverM }}">help</span></th>
             {% endfor %}     
         </thead>
         <tbody>
@@ -103,7 +104,11 @@
                     {% if loop.index0 == 0 %}
                         <td style="text-align: center;"><a href="{{ get_circuit_link(itemM) }}" target="_blank">{{ itemM }}</a></td>
                     {% else %}
-                        <td style="text-align: center;">{{ itemM }}</td>
+                        {% if loop.index ==11 or loop.index == 17 or loop.index == 21 or loop.index == 26 or loop.index == 29 or loop.index == 30 or loop.index == 34 %}
+                            <td style="text-align: center;">{{ itemM }}%</td>
+                        {% else %}
+                            <td style="text-align: center;">{{ itemM }}</td>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </tr>

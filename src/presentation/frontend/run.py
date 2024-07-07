@@ -114,14 +114,53 @@ def dataset_analysis():
     results_percentage = []
     
     for statistic in pattern_statistics: 
-        percentage = round((statistic/537)* 100, 2)
+        percentage = round((statistic/612)* 100, 2)
         results_percentage.append(percentage)
 
     table_header_Metrics=getTableHeaderMetrics()
     table_header_Metrics[0] = "Metrics"
 
+    popover_contents = [
+        "This table shows all metric grouped according to mean, standard deviation, minimum and maximum.",
+        "Number of qubits in the circuit",
+        "Maximum number of operations in a cubit",
+        "Maximum number of simultaneous trasactions",
+        "Average number of simultaneous transactions",
+        "Pauli-X assumes a rotation of π radians around the X axis of the Bloch sphere. This gate belogns to the group of quantum gates that apply to a single qubit",
+        "Pauli-Y assumes a rotation of π radians around the Y axis of the Bloch sphere. This gate belongs to the group of quantum gates that apply to a single qubit",
+        "Pauli-Z assumes a rotation of π radians aound the Z axis of the Bloch sphere. This gate belongs to the group of quantum gates that apply to a single qubit",
+        "Pauli gates assume a rotation of pi radians around the X, Y and Z axes of the Bloch sphere. These gates belong to the group of quantum gates that apply to a single gates",
+        "Hadamard belongs to the group of quantum gates that apply to a single qubit",
+        "Superposition means that a qubit can be represented by both 0 and 1 at the same time",
+        "Simple gates include identity, Pauli, Hadamard, phase shift, rotation and mesurement gates",
+        "Simple gates include identity, Pauli, Hadamard, phase shift, rotation and mesurement gates",
+        "Controlled gates belong to the group of quantum gates that apply to several qubits",
+        "SWAP gate exchanges the values of two qubits. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "Number of quantum gates, irrespective of type",
+        "These gates belong to multi-qubit quantum gates",
+        "Presence of single qubit gates int the circuit",
+        "Reuses a calculation from a quantum algorithm",
+        "The controlled gates of the simple quantum gates group are combined with the oracle algorithm",
+        "Presence of oracles in the circuit",
+        "Presence of qubits that are affected by controlled oracles",
+        "Its application causes the qubit to collapse in its current state, its effect is not reversible",
+        "Its application causes the qubit to collapse in its current state, its effect is not reversible",
+        "Its application causes the qubit to collapse in its current state, its effect is not reversible",
+        "Presence of measured qubits in the circuit"
+    ]
+
+    header_popover = list(zip(table_header_Metrics, popover_contents))
+
     return render_template("dataset_analysis.html", data=data, labels=labels, values=values, results_percentage=results_percentage,
-        table_header_Metrics=table_header_Metrics, table_average=getAverage(), table_standard_desviation=getStandardDeviation(), table_minimun=getMinimum(), table_maximun=getMaximun())
+        table_header_Metrics=table_header_Metrics, header_popover = header_popover, table_average=getAverage(), table_standard_desviation=getStandardDeviation(), table_minimun=getMinimum(), table_maximun=getMaximun())
     
 def get_circuit_link(circuit):
     return "http://172.20.48.7:8000/"+circuit+"/"
@@ -144,8 +183,48 @@ def circuit():
     }
 
     codeDoc: cursor.Cursor = collRepo.find_one(query, no_cursor_timeout=True)
+
+    table_header_Metrics=getTableHeaderMetrics()
+    popover_contents = [
+        "This table shows all metric grouped according the ingested circuits.",
+        "Number of qubits in the circuit",
+        "Maximum number of operations in a qubit",
+        "Maximum number of simultaneous trasactions",
+        "Average number of simultaneous transactions",
+        "Pauli-X assumes a rotation of π radians around the X axis of the Bloch sphere. This gate belogns to the group of quantum gates that apply to a single qubit",
+        "Pauli-Y assumes a rotation of π radians around the Y axis of the Bloch sphere. This gate belongs to the group of quantum gates that apply to a single qubit",
+        "Pauli-Z assumes a rotation of π radians aound the Z axis of the Bloch sphere. This gate belongs to the group of quantum gates that apply to a single qubit",
+        "Pauli gates assume a rotation of pi radians around the X, Y and Z axes of the Bloch sphere. These gates belong to the group of quantum gates that apply to a single gates",
+        "Hadamard belongs to the group of quantum gates that apply to a single qubit",
+        "Superposition means that a qubit can be represented by both 0 and 1 at the same time",
+        "Simple gates include identity, Pauli, Hadamard, phase shift, rotation and mesurement gates",
+        "Simple gates include identity, Pauli, Hadamard, phase shift, rotation and mesurement gates",
+        "Controlled gates belong to the group of quantum gates that apply to several qubits",
+        "SWAP gate exchanges the values of two qubits. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "At least one of the qubits is used as a control element in the operation. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "It is evaluated whether the two controls are in the state |1⟩, while a controlled gate is applied to the remaining qubit. It belongs to multi-qubit quantum gates",
+        "Number of quantum gates, irrespective of type",
+        "These gates belong to multi-qubit quantum gates",
+        "Presence of single qubit gates int the circuit",
+        "Reuses a calculation from a quantum algorithm",
+        "The controlled gates of the simple quantum gates group are combined with the oracle algorithm",
+        "Presence of oracles in the circuit",
+        "Presence of qubits that are affected by controlled oracles",
+        "Its application causes the qubit to collapse in its current state, its effect is not reversible",
+        "Its application causes the qubit to collapse in its current state, its effect is not reversible",
+        "Its application causes the qubit to collapse in its current state, its effect is not reversible",
+        "Presence of measured qubits in the circuit"
+    ]
+
+    header_popover = list(zip(table_header_Metrics, popover_contents))
     
-    return render_template("circuit.html", form=form,
+    return render_template("circuit.html", form=form, header_popover = header_popover,
                            table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path),
                            table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path),
                            get_circuit_link=get_circuit_link, code_path=path, code_content=codeDoc["content"])

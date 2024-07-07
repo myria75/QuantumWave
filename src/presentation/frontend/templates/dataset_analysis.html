@@ -2,12 +2,13 @@
 {% block title %}Dataset Analysis{% endblock %}
 
 {% block content %}
+    <br>
     <div class="row align-items-center;" style=" color: #A9B388;">
         <div class="col-6">
-            <h4>Dashboard:</h4>
+            <h4>Dashboard:<span class="material-symbols-outlined" style="font-size: 1em"  data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="right"
+                data-bs-content="This table compiles the results of all the processes through which this tool passes. It is related to the number of circuits that go through the different steps.">help</span></h4>
         </div>
     </div>
-    <p>This table compiles the results of all the processes through which this tool passes. It is related to the number of circuits that go through the different steps. </p>
     <br>
     <style>
         table {
@@ -26,35 +27,29 @@
       <thead>
         <tr style="color: #ffff">
           <th style="color: #fff; text-align: center; background-color: #A9B388;">Language</th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;"
-            data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
-            data-bs-content="Files ingested with selection in page Data Ingestion">Ingested files
-            <span class="material-symbols-outlined" style="font-size: 1em">help
-            </span>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Ingested files
+            <span class="material-symbols-outlined" style="font-size: 1em" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Files ingested with selection in page Data Ingestion">help</span>
           </th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;"
-            data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
-            data-bs-content="Files filtrered by keywords.">Accepted filters
-            <span class="material-symbols-outlined" style="font-size: 1em">help
-            </span>
-            </th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;"
-          data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
-          data-bs-content="Number of circuits that are syntactic analyzed.">Parsed AST
-          <span class="material-symbols-outlined" style="font-size: 1em">help
-            </span>
-            </th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;"
-          data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
-          data-bs-content="Number of circuits that are transfomed to reduced quantum circuit.">RQCR Circuit
-          <span class="material-symbols-outlined" style="font-size: 1em">help
-            </span>
-            </th>
-          <th style="color: #fff; text-align: center; background-color: #A9B388;"
-            data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
-            data-bs-content="Number of circuits with metrics and patterns.">Metrics & Patterns
-          <span class="material-symbols-outlined" style="font-size: 1em">help
-            </span>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">➤</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Accepted filters
+            <span class="material-symbols-outlined" style="font-size: 1em" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Files filtrered by keywords.">help</span>
+          </th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">➤</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Parsed AST
+            <span class="material-symbols-outlined" style="font-size: 1em" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Number of circuits that are syntactic analyzed.">help</span>
+          </th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">➤</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">RQCR Circuit
+            <span class="material-symbols-outlined" style="font-size: 1em" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Number of circuits that are transfomed to reduced quantum circuit.">help</span>
+          </th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">➤</th>
+          <th style="color: #fff; text-align: center; background-color: #A9B388;">Metrics & Patterns
+            <span class="material-symbols-outlined" style="font-size: 1em" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top"
+            data-bs-content="Number of circuits with metrics and patterns.">help</span>
           </th>
         </tr>
       </thead>
@@ -62,10 +57,14 @@
         <tr>
           <td style="text-align: center">Qiskit</td>
           <td style="text-align: center">6963</td>
+          <td style="text-align: center"></td>
           <td style="text-align: center">5451</td>
+          <td style="text-align: center"></td>
           <td style="text-align: center">5416</td>
+          <td style="text-align: center"></td>
           <td style="text-align: center">2824</td>
-          <td style="text-align: center">537</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">612</td>
         </tr>
       </tbody>
     </table>
@@ -353,37 +352,45 @@
             <h4>Metrics:</h4>
         </div>
     </div>
-    <p>The following is an interpretation of the metrics, obtaining the lowest, highest and average values.</p>
     <div class="overflow-auto">
         <table class="table table-hover rtable rtable--flip">
             <thead style="">
-                {% for headerM in table_header_Metrics %} 
-                    <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}</th>
+                {% for headerM, popoverM in header_popover %} 
+                    <th scope="col" style="background-color: #A9B388; color:#ffff">{{ headerM }}<span class="material-symbols-outlined" style="font-size: 1em"  data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="right"
+                        data-bs-content="{{ popoverM }}">help</span></th>
                 {% endfor %}     
             </thead>
             <tbody>
                 <tr>
                     <td style="background-color: #A9B388; color:#ffff; text-align: center">Average</td>
                     {% for averageM in table_average %}
-                        <td style="text-align:center">{{ averageM }}</td>
+                        {% if loop.index ==10 or loop.index == 16 or loop.index == 20 or loop.index == 25 or loop.index == 28 or loop.index == 29 or loop.index == 33 %}
+                            <td style="text-align:center">{{ '%.3f'|format(averageM) }}%</td>
+                        {% else %}
+                            <td style="text-align:center">{{ '%.3f'|format(averageM) }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
                     <td style="background-color: #A9B388; color:#ffff; text-align: center">Standard Deviation</td>
                     {% for standardDeviationM in table_standard_desviation %}
-                        <td style="text-align: center">{{ standardDeviationM }}</td>
+                        {% if loop.index ==10 or loop.index == 16 or loop.index == 20 or loop.index == 25 or loop.index == 28 or loop.index == 29 or loop.index == 33 %}
+                            <td style="text-align: center">{{ '%.3f'|format(standardDeviationM) }}%</td>
+                        {% else %}
+                            <td style="text-align:center">{{ '%.3f'|format(standardDeviationM) }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
                     <td style="background-color: #A9B388; color:#ffff; text-align:center">Minimum</td>
                     {% for minimunM in table_minimun %}
-                        <td style="text-align: center">{{ minimunM }}</td>
+                        <td style="text-align: center">{{ '%.0f'|format(minimunM) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td style="background-color: #A9B388; color:#ffff; text-align:center">Maximum</td>
                     {% for maximunM in table_maximun %}
-                        <td style="text-align:center">{{ maximunM }}</td>
+                        <td style="text-align:center">{{ '%.0f'|format(maximunM) }}</td>
                     {% endfor %}
                 </tr>
             </tbody>
@@ -392,6 +399,14 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    // Initialize all popovers
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    })
+</script>
+
 <script>
     $(document).ready(function(){
         $(".active").removeClass("active");

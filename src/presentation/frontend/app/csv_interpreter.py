@@ -63,6 +63,12 @@ def getTableContentMetrics(path):
                 
                 if remove_last_columns_Metrics > 0:
                     del row[-remove_last_columns_Metrics:]
+
+                for i in range(len(row)):
+                    try:
+                        row[i]= int(float(row[i]))
+                    except ValueError:
+                        pass
                 
                 rows.append(row)
                 line_count += 1
@@ -127,7 +133,7 @@ def getMinimum():
 
     for col in range(metricsArray.shape[1]):
         column = metricsArray[:, col]
-        minimums.append(round(np.min(column)))
+        minimums.append(np.min(column))
     
     return minimums
 
@@ -142,7 +148,7 @@ def getMaximun():
 
     for col in range(metricsArray.shape[1]):
         column = metricsArray[:, col]
-        maximuns.append(round(np.max(column)))
+        maximuns.append(np.max(column))
         
     return maximuns
 
@@ -157,12 +163,8 @@ def getAverage():
     for col in range(metricsArray.shape[1]):
         column = metricsArray[:, col]
         #averages.append(round(np.mean(column), 3))
-        average = round(np.mean(column), 3)
-
-        if col == 9 or col==15 or col==19 or col==24 or col==27 or col==28 or col==32:
-            averages.append(f"{average:.3f}%")
-        else:
-            averages.append(f"{average:.3f}")
+        average = np.mean(column)
+        averages.append(average)
         # averages.append(round(np.mean(column), 3))
     
     return averages
@@ -178,12 +180,9 @@ def getStandardDeviation():
 
     for col in range(metricsArray.shape[1]):
         column = metricsArray[:, col]
-        standardDeviation = round(np.std(column), 3)
-        
-        if col == 9 or col==15 or col==19 or col==24 or col==27 or col==28 or col==32:
-            standardDeviations.append(f"{standardDeviation:.3f}%")
-        else:
-            standardDeviations.append(f"{standardDeviation:.3f}")
+        standardDeviation = np.std(column)
+
+        standardDeviations.append(standardDeviation)
         #standardDeviations.append(round(np.std(column), 3))     
     
     return standardDeviations
