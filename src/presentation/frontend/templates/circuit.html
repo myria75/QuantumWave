@@ -34,17 +34,17 @@
     <br>
     <div class="form-group container text-center">
       <div class="row align-items-center justify-content-left">
-        <div class="col-auto">
+        <div class="col-auto mb-3">
             {{ form.repositories.label() }}:         
         </div>
-        <div class="col-auto">
+        <div class="col-auto mb-3">
             {{ form.repositories(class="form-select", id="repositories", onchange="this.form.submit()") }}        
         </div>
         <br>
-        <div class="col-auto">
+        <div class="col-auto mb-3">
             {{ form.path.label() }}:         
         </div>
-        <div class="col-auto">
+        <div class="col-auto mb-3">
             {{ form.path(class="form-select", id="path", onchange="this.form.submit()") }}        
         </div>
       </div>

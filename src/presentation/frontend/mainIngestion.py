@@ -116,23 +116,23 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
             circuitsJsons = conversor.visitTree(tree, document["language"])
         except EmptyCircuitException as e:
             print("Empty array error because QuantumRegister isn't called")
-            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Empty array error because QuantumRegister isn't called")
+            ingest_logger.warning(f"The {document['path']} from {document['name']} repository of {document['author']} (in {document['language']} with {document['extension']} extension), contains an empty array error because QuantumRegister isn't called")
             errorsFoundAtParse = True
             errorMsg = "The tree couldn't be generated. Empty array error because QuantumRegister isn't called"
         except VariableNotCalculatedException as e:
             print("A variable during the QCSR circuit conversion couldn't be obtained")
-            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} A variable during the QCSR circuit conversion couldn't be obtained")
+            ingest_logger.warning(f"The {document['path']} from {document['name']} repository of {document['author']} (in {document['language']} with {document['extension']} extension), contains a variable that couldn't be obtained during the QCSR circuit conversion")
             errorsFoundAtParse = True
             errorMsg = f"The ast tree couldn't be generated. A variable during the QCSR circuit conversion couldn't be obtained"
         except ValueError as e:
             print("Translator can't read variables when reading gates/circuit, the code is incompatible")
-            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} Translator can't read variables when reading gates/circuit, the code is incompatible")
+            ingest_logger.warning(f"The translator can't read variables when reading gates or circuit in {document['path']} from {document['name']} repository of {document['author']} (in {document['language']} with {document['extension']} extension), so, the code is incompatible")
             errorsFoundAtParse = True
             errorMsg = f"The ast tree couldn't be generated. Translator can't read variables when reading gates/circuit, the code is incompatible\n{traceback.format_exc()}"
         except (AttributeError, KeyError, IndexError, TypeError, OperationNotFoundException, ZeroDivisionError, Exception) as e: 
             print("-------Throws an error----------")
             print(f"{e.__str__()} {document['path']}")
-            ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} throws an error")
+            ingest_logger.warning(f"The {document['path']} from {document['name']} repository of {document['author']} (in {document['language']} with {document['extension']} extension), throws an error")
             errorsFoundAtParse = True
             errorMsg = f"The tree couldn't be generated. The circuit isn't converted\n{traceback.format_exc()}"
 
@@ -161,7 +161,7 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
             if "status" in metrics:
             #if status starts by 4** or 5**
                 if str(metrics["status"])[0] in ("4","5"):
-                    ingest_logger.warning(f"{document['language']}.{document['extension']}, {document['author']}/{document['name']} | {document['path']} QMetrics couldn't calculate the metrics")
+                    ingest_logger.warning(f"QMetrics couldn't calculate the metrics of {document['path']} from {document['name']} repository of {document['author']} (in {document['language']} with {document['extension']} extension)")
                     circuitProperties["metrics"] = { 'error': "QMetrics couldn't calculate the metrics" }
             else: 
                 circuitProperties["metrics"] = metrics
