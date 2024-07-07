@@ -161,7 +161,7 @@ def obtainContentConversion(doc) -> bool:
     hybrid:bool = False
     coll_to_insert = None
 
-    log_msg = f"{doc['repo_language']}.{doc['repo_extension']}, {doc['repo_author']}/{doc['repo_name']} | {file_path} has been"
+    log_msg = f"The {file_path} from the {doc['repo_name']} repository belonging to {doc['repo_author']} (in {doc['repo_language']} with {doc['repo_extension']} extension) has been"
     #log_msg = f"{doc['repo_language']}.{doc['repo_extension']}, {doc['repo_author']}/{doc['repo_name']} | {file_path} has been"
 
     if search_result is None:

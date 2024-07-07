@@ -57,14 +57,13 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
     #Ejemplo languages: ["qiskit", "openqasm"]
     if (languages == None or len(languages) == 0): 
         return
-
-    ingest_logger.info("--EXCUTION STARTED")
-    ingest_logger.info("--INGEST STARTED")
+    
+    ingest_logger.info("THE INGESTION DATA HAS BEGUN!")
 
     #Searches in GitHub and ingest the data
     doIngestion(languages, from_date, to_date)
 
-    ingest_logger.info("--AST, QCSR CIRCUIT, METRICS AND PATTERNS CREATION")
+    ingest_logger.info("CREATING AST, QUANTUM CIRCUITS IN RQCR FORMAT, METRICS AND PATTERNS!")
     #Searches in db for codes in qiskit language
     from pymongo import MongoClient
     from pymongo import cursor
