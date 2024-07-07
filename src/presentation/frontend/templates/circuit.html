@@ -32,19 +32,21 @@
 <form id="auto-submit-form" method="post">
     {{ form.csrf_token }}
     <br>
-    <div class="form-group container text-center">
-      <div class="row align-items-center justify-content-left">
-        <div class="col-auto mb-3">
+    <div class="form-group container">
+      <div class="row align-items-left mb-2">
+        <div class="col-md-2 text-end">
             {{ form.repositories.label() }}:         
         </div>
-        <div class="col-auto mb-3">
+        <div class="col-md-8">
             {{ form.repositories(class="form-select", id="repositories", onchange="this.form.submit()") }}        
         </div>
-        <br>
-        <div class="col-auto mb-3">
+      </div>
+      <br>
+      <div class="row align-items-left">
+        <div class="col-md-2 text-end">
             {{ form.path.label() }}:         
         </div>
-        <div class="col-auto mb-3">
+        <div class="col-md-8">
             {{ form.path(class="form-select", id="path", onchange="this.form.submit()") }}        
         </div>
       </div>
