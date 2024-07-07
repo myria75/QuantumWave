@@ -115,7 +115,7 @@
     <div class="modal fade" id="initialization" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="text-align: center;">
+                <div class="modal-header" style="text-align: left;">
                     <img class= "pattern-icon" src="{{ url_for('static', filename='img/initialization_icon.png') }}">
                     <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold; text-align: left">Initialization aka State Preparation</h1>
                 </div>
@@ -158,9 +158,9 @@
                             possible to load a matrix that is represented as a set of vectors <a href="https://arxiv.org/abs/1603.08675">(Kerenidis and Prakash 2016)</a>.</p>
                     </div>
                         <b>Related patterns:</b>
-                        <p>Patterns like <a  href="#/patterns/0">Basis Encoding</a> or <a href="#/patterns/1">Quantum Associative Memory (QuAM)</a> further refine <a href="#/patterns/15">Initialization</a>.<br>
-                            <a href="#/patterns/16">Uniform Superposition</a> is often used as an initial state.<br>
-                            An initialized register may be used to compute a <a href="#/patterns/18">Function Table</a>.</p>
+                        <p>Patterns like <a  href="https://quantumcomputingpatterns.org/#/patterns/0">Basis Encoding</a> or <a href="https://quantumcomputingpatterns.org/#/patterns/1">Quantum Associative Memory (QuAM)</a> further refine <a href="https://quantumcomputingpatterns.org/#/patterns/15">Initialization</a>.<br>
+                            <a href="https://quantumcomputingpatterns.org/#/patterns/16">Uniform Superposition</a> is often used as an initial state.<br>
+                            An initialized register may be used to compute a <a href="https://quantumcomputingpatterns.org/#/patterns/18">Function Table</a>.</p>
                     <div>
                         <b>Source:</b>
                         <span _ngcontent-mod-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
@@ -218,15 +218,15 @@
                     </div>
                     <div>
                         <b>Result:</b>
-                        <p>A <a href="#/patterns/15">Uniform Superposition</a>
+                        <p>A <a href="https://quantumcomputingpatterns.org/#/patterns/15">Uniform Superposition</a>
                             can be achieved by performing a single parallel operation on each 
                            qubit, increasing the depth of the entire circuit by only one.</p>
                     </div>
                         <b>Related patterns:</b>
-                        <p><a href="#/patterns/16">Uniform Superposition</a> is a special case of <a href="#/patterns/15">Initialization</a>.<br>
-                            After a register is brought into uniform superposition, <a href="#/patterns/17">Creating Entanglement</a> may be used.<br>
-                            A <a href="#/patterns/18">Function Table</a> can be computed on a register in uniform superposition.<br>
-                            An <a href="#/patterns/19">Oracle</a> may require its input to be in uniform superposition.</p>
+                        <p><a href="https://quantumcomputingpatterns.org/#/patterns/16">Uniform Superposition</a> is a special case of <a href="https://quantumcomputingpatterns.org/#/patterns/15">Initialization</a>.<br>
+                            After a register is brought into uniform superposition, <a href="https://quantumcomputingpatterns.org/#/patterns/17">Creating Entanglement</a> may be used.<br>
+                            A <a href="https://quantumcomputingpatterns.org/#/patterns/18">Function Table</a> can be computed on a register in uniform superposition.<br>
+                            An <a href="https://quantumcomputingpatterns.org/#/patterns/19">Oracle</a> may require its input to be in uniform superposition.</p>
                     <div>
                         <b>Source:</b>
                         <span _ngcontent-fkv-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
@@ -276,8 +276,8 @@
                     </div>
                     <div>
                         <b>Related patterns:</b>
-                        <p>An oracle requires correct <a href="#/patterns/15">Initialization</a> of the problem-specific input.<br>
-                            Typically, an <a href="#/patterns/20">Uncompute</a> is used after an oracle was applied.</p>
+                        <p>An oracle requires correct <a href="https://quantumcomputingpatterns.org/#/patterns/15">Initialization</a> of the problem-specific input.<br>
+                            Typically, an <a href="https://quantumcomputingpatterns.org/#/patterns/20">Uncompute</a> is used after an oracle was applied.</p>
                     </div>
                     <div>
                         <b>Known Uses:</b>
@@ -313,7 +313,7 @@
                         <b>Context:</b>
                         <p>Entanglement is a unique characteristic of quantum mechanics and one of the causes for the power of quantum algorithms <a href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.83.052313">(Bruß and Macchiavello 2011)</a>.<br>
                             Although entanglement is not necessarily needed for a powerful quantum algorithm <a href="https://www.sciencedirect.com/science/article/pii/S0304397504001926">(Biham et al. 2004)</a>, it is required to achieve an exponential speedup over classical algorithms <a href="https://royalsocietypublishing.org/doi/abs/10.1098/rspa.2002.1097">(Jozsa and Linden 2003)</a>.<br>
-                            Consequently, a quantum register is often entangled for further processing after the <a href="#/patterns/15">Initialization</a>.</p>
+                            Consequently, a quantum register is often entangled for further processing after the <a href="https://quantumcomputingpatterns.org/#/patterns/15">Initialization</a>.</p>
                     </div>
                     <div>
                         <b>Solution:</b>
@@ -327,13 +327,13 @@
                     </div>
                     <div>
                         <b>Related patterns:</b>
-                        <p>A quantum register must make use of <a href="#/patterns/15">Initialization</a> before entanglement can be created.<br>
-                            Applying <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> as described above computes a <a href="#/patterns/18">Function Table</a> and makes use of <a href="#/patterns/16">Uniform Superposition</a>.</p>
+                        <p>A quantum register must make use of <a href="https://quantumcomputingpatterns.org/#/patterns/15">Initialization</a> before entanglement can be created.<br>
+                            Applying <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> as described above computes a <a href="https://quantumcomputingpatterns.org/#/patterns/18">Function Table</a> and makes use of <a href="https://quantumcomputingpatterns.org/#/patterns/16">Uniform Superposition</a>.</p>
                     </div>
                     <div>
                         <b>Known Uses:</b>
                         <p>Most algorithms use entangled states.<br>
-                            A <a href="#/patterns/18">Function Table</a> may create an entangled state, by making use of the above-defined unitary operation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> of a Boolean function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>.</p>
+                            A <a href="https://quantumcomputingpatterns.org/#/patterns/18">Function Table</a> may create an entangled state, by making use of the above-defined unitary operation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> of a Boolean function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>.</p>
                     </div>
                     <div>
                         <b>Source:</b>
@@ -400,7 +400,6 @@
 
 {% block scripts %}
 <script>
-    // Initialize all popovers
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
       return new bootstrap.Popover(popoverTriggerEl)
@@ -473,14 +472,5 @@
                 $(target).modal('show');
             });
         });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                return new bootstrap.Popover(popoverTriggerEl);
-            });
-        });
-    </script>  
+    </script> 
 {% endblock %}

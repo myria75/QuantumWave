@@ -55,9 +55,11 @@
 <div class="overflow-auto">
     <table class="table table-hover">
         <thead style="">
-            {% for headerP in table_header_Patterns %} 
-                <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">{{ headerP }}</th>
-            {% endfor %}        
+            <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">Circuit</th>    
+            <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">Initialization <span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#initialization">help</span></th>
+            <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">Superposition <span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#superposition">help</span></th>  
+            <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">Oracle <span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#oracle">help</span></th>
+            <th scope="col" style = "background-color: #A9B388; color:#ffff; text-align:center;">Entanglement <span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#entanglement">help</span></th>       
         </thead>
         <tbody>
             {% for rowP in table_content_Patterns %}
@@ -82,6 +84,238 @@
     </table>
 </div>
 <br>
+
+    <div class="modal fade" id="initialization" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center;">
+                    <img class= "pattern-icon" src="{{ url_for('static', filename='img/initialization_icon.png') }}">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold; text-align: left">Initialization aka State Preparation</h1>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <b>Intent:</b>
+                        <p>Initialize the input of a quantum register, taking into account the prerequisites of the subsequent steps of the algorithm.</p>
+                    </div>
+                    <div>
+                        <b>Alias:</b>
+                        <p>This pattern has also been referred to as State Preparation.</p>
+                    </div>
+                    <div>
+                        <b>Context:</b>
+                        <p>Usually, the underlying problem to be solved by a quantum algorithm is represented by specific parameters.<br>
+                            These parameters must be given as input data to the algorithm in order to solve the problem.<br>
+                            In most algorithms, the process of loading the input data is part of the
+                            quantum algorithm itself,  which is defined as a unitary transformation
+                            <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span></span></span></span> and measurements.<br>
+                            In this case, the overall algorithm <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><msub><mi>U</mi><mi>n</mi></msub><mo>∘</mo><mo>…</mo><mo>∘</mo><msub><mi>U</mi><mi>i</mi></msub><mo>∘</mo><msub><mi>U</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>∘</mo><mo>…</mo><mo>∘</mo><msub><mi>U</mi><mn>1</mn></msub><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">U = U_n \circ \ldots  \circ U_{i}  \circ U_{i-1} \circ \ldots  \circ U_1,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.44445em;vertical-align:0em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.891661em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.44445em;vertical-align:0em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span></span></span></span>  can be split up into two parts.<br>
+                            The operators of the first part  <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>U</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">U_1, \ldots , U_{i-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.891661em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span> encode the input data into the quantum register according to a defined encoding,  whereas the operators of the second part <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>i</mi></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>U</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">U_i, \ldots , U_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> are used to solve the problem.<br>
+                            Since <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>∘</mo><mo>…</mo><mo>∘</mo><msub><mi>U</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">U_{i-1} \circ  \ldots  \circ U_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.891661em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.44445em;vertical-align:0em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> set the register to an initial state, this step is referred to as state preparation.</p>
+                            
+                    </div>
+                        <b>Solution:</b>
+                        <p>Frequently, the unit vector <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo fence="true">∣</mo><mn>0</mn><mo>…</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><annotation encoding="application/x-tex">\left| 0 \ldots 0\right&gt;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">∣</span><span class="mord">0</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span></span></span></span> is used as initialization of a quantum register.<br>
+                            Some qubits of the register can be used as so-called ancilla bits 
+                            (working qubits) which may be used for the storage of intermediate 
+                            results or quantum error correction.<br>
+                            For example, to compute the function table of a Boolean function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>:</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mi>n</mi></msup><mo>→</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">f:\{0, 1\}^n \rightarrow \{0, 1\}^m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span></span></span></span></span></span></span>, the overall register is initialized as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo fence="true">∣</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><mrow><mo>⊗</mo><mi>n</mi></mrow></msup><msup><mrow><mo fence="true">∣</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><mrow><mo>⊗</mo><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\left| 0 \right&gt;^{\otimes n}\left| 0 \right&gt;^{\otimes m}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.161231em;vertical-align:-0.25em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">∣</span><span class="mord">0</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.911231em;"><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">⊗</span><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">∣</span><span class="mord">0</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.911231em;"><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">⊗</span><span class="mord mathnormal mtight">m</span></span></span></span></span></span></span></span></span></span></span></span> (including <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">m</span></span></span></span> ancilla bits in the second part of the register).<br>
+                            To expose membership in an indicator function-based set (e.g., in decision problems) often an initialization with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo fence="true">∣</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><mrow><mo>⊗</mo><mi>n</mi></mrow></msup><mrow><mo fence="true">∣</mo><mn>1</mn><mo fence="true">&gt;</mo></mrow></mrow><annotation encoding="application/x-tex">\left| 0 \right&gt;^{\otimes n}\left| 1 \right&gt;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.161231em;vertical-align:-0.25em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">∣</span><span class="mord">0</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.911231em;"><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">⊗</span><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">∣</span><span class="mord">1</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span></span></span></span> is chosen.<br>
+                            The membership to the set is then indicated by changing the sign of the qubits representing members of this set.</p>
+                    <div>
+                        <b>Result:</b>
+                        <p>More advanced states may be prepared which build on the previously described initialization techniques.<br>
+                            For example, in <a href="https://arxiv.org/abs/1803.01958">(Cortese and Braje 2018)</a> various algorithms for loading classical bits into a quantum register are presented.<br>
+                            Complex vectors can be loaded as described in <a href="https://doi.org/10.1119/1.1463744">(Nielsen and Chuang 2002)</a>.<br>
+                            <a href="https://arxiv.org/abs/1802.08227">(Derovic et al. 2018)</a> 
+                            describes how a real-valued vector can be loaded; therefore, it is also 
+                            possible to load a matrix that is represented as a set of vectors <a href="https://arxiv.org/abs/1603.08675">(Kerenidis and Prakash 2016)</a>.</p>
+                    </div>
+                        <b>Related patterns:</b>
+                        <p>Patterns like <a  href="#/patterns/0">Basis Encoding</a> or <a href="#/patterns/1">Quantum Associative Memory (QuAM)</a> further refine <a href="#/patterns/15">Initialization</a>.<br>
+                            <a href="#/patterns/16">Uniform Superposition</a> is often used as an initial state.<br>
+                            An initialized register may be used to compute a <a href="#/patterns/18">Function Table</a>.</p>
+                    <div>
+                        <b>Source:</b>
+                        <span _ngcontent-mod-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
+                    </div>
+                    <div>
+                        <footer _ngcontent-mod-c84="" class="centered" style="text-align: center;"> © quantumcomputingpatterns.org. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="superposition" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center;">
+                    <img class= "pattern-icon" src="{{ url_for('static', filename='img/equal_superposition_icon.png') }}">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">Uniform Superposition</h1>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <b>Intent:</b>
+                        <p>Create a uniform superposition of all possible states of a quantum register</p>
+                    </div>
+                    <div>
+                        <b>Context:</b>
+                        <p>The power of quantum algorithms 
+                            partially originates in the ability to represent multiple states at 
+                            once, the so-called quantum parallelism.<br>
+                            To realize quantum parallelism, some qubits of a quantum register must be brought into superposition.<br>
+                            Many algorithms start with obtaining an equally weighted superposition 
+                            in (a part of) a quantum register. Therefore, for every state 
+                            represented by (this part of) the quantum register, the measurement 
+                            probability is the same.</p>
+                    </div>
+                    <div>
+                        <b>Solution:</b>
+                        <p>After initializing the quantum register as the unit vector 
+                            <span class="katex">{% raw %}<span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo fence="true">∣</mo><mn>0</mn><mo>…</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><annotation encoding="application/x-tex">\left|0 \ldots 0\right&gt;</annotation></semantics></math></span>{% endraw %}</span>, a Uniform Superposition is created via the Hadamard transformation:</p>
+                        <span class="katex-display">
+                            <span class="katex">
+                                {% raw %}<span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>H</mi><mrow><mo>⊗</mo><mi>n</mi></mrow></msup><mrow><mo fence="true">(</mo><msup><mrow><mo fence="true">∣</mo><mn>0</mn><mo fence="true">&gt;</mo></mrow><mrow><mo>⊗</mo><mi>n</mi></mrow></msup><mo fence="true">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><msqrt><msup><mn>2</mn><mi>n</mi></msup></msqrt></mfrac><munderover><mo>∑</mo><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><mrow><msup><mn>2</mn><mi>n</mi></msup><mo>−</mo><mn>1</mn></mrow></munderover><mrow><mo fence="true">∣</mo><mi>x</mi><mo fence="true">&gt;</mo></mrow><annotation encoding="application/x-tex">\newcommand{\colVec}
+                                [1]{% inline column vector
+                                \bigl( \begin{smallmatrix}#1\end{smallmatrix}\bigr)
+                                }
+                                \newcommand{\bigColVec}[1]{% inline column vector
+                                \left( \begin{matrix}#1\end{matrix}\right)
+                                }
+                                \newcommand{\state}[1]{{\left| #1 \right&gt;}}H^{\otimes n} \left( 
+                                \left| 0 \right&gt;^{\otimes n} \right)= \dfrac{1}{\sqrt{2^n}} 
+                                \sum_{x=0}^{2^n-1} \left|x \right&gt;{% endraw %}
+                            </span>
+                        </span>
+                    </div>
+                    <div>
+                        <b>Result:</b>
+                        <p>A <a href="#/patterns/15">Uniform Superposition</a>
+                            can be achieved by performing a single parallel operation on each 
+                        qubit, increasing the depth of the entire circuit by only one.</p>
+                    </div>
+                        <b>Related patterns:</b>
+                        <p><a href="#/patterns/16">Uniform Superposition</a> is a special case of <a href="#/patterns/15">Initialization</a>.<br>
+                            After a register is brought into uniform superposition, <a href="#/patterns/17">Creating Entanglement</a> may be used.<br>
+                            A <a href="#/patterns/18">Function Table</a> can be computed on a register in uniform superposition.<br>
+                            An <a href="#/patterns/19">Oracle</a> may require its input to be in uniform superposition.</p>
+                    <div>
+                        <b>Source:</b>
+                        <span _ngcontent-fkv-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
+                    </div>
+                    <div>
+                        <footer _ngcontent-mod-c84="" class="centered" style="text-align: center;"> © quantumcomputingpatterns.org. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="oracle" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center;">
+                    <img class= "pattern-icon" src="{{ url_for('static', filename='img/oracle_icon.png') }}">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">Oracle</h1>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <b>Intent:</b>
+                        <p>Re-use a computation of a quantum algorithm without necessarily knowing the implementation.</p>
+                    </div>
+                    <div>
+                        <b>Alias:</b>
+                        <p>This pattern has also been referred to as Black Box.</p>
+                    </div>
+                    <div>
+                        <b>Context:</b>
+                        <p>A Divide-and-Conquer approach is a commonly used method that simplifies solving a complex problem.<br>
+                            In such an approach, an oracle can be used as an reusable part of a 
+                            quantum algorithm - a black blox with hidden internals. Multiple oracles
+                             can be used as building blocks to compose larger algorithms.</p>
+                    </div>
+                    <div>
+                        <b>Solution:</b>
+                        <p>The concrete implementation of an oracle is highly problem-specific.<br>
+                            As a consequence, there are many different types of oracles, of which several are discussed in <a href="https://epubs.siam.org/doi/abs/10.1137/1.9781611975482.87">(Gilyen et al. 2019)</a>.</p>
+                    </div>
+                    <div>
+                        <b>Result:</b>
+                        <p>Concrete implementations of oracles 
+                            add to the overall depth to the overall quantum algorithm but are often 
+                            neglected in the runtime of an oracle-based algorithm.</p>
+                    </div>
+                    <div>
+                        <b>Related patterns:</b>
+                        <p>An oracle requires correct <a href="#/patterns/15">Initialization</a> of the problem-specific input.<br>
+                            Typically, an <a href="#/patterns/20">Uncompute</a> is used after an oracle was applied.</p>
+                    </div>
+                    <div>
+                        <b>Known Uses:</b>
+                        <p>Oracles are used in the algorithms of Deutsch, Deutsch-Jozsa, Bernstein-Vazirani,  Simon,  Grover, and many others. In <a href="https://arxiv.org/abs/0808.0369">(Mosca 2008)</a>, further usages are given.</p>
+                    </div>
+                    
+                    <div>
+                        <b>Source:</b>
+                        <span _ngcontent-fkv-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
+                    </div>
+                    <div>
+                        <footer _ngcontent-mod-c84="" class="centered" style="text-align: center;"> © quantumcomputingpatterns.org. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="entanglement" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center;">
+                    <img class= "pattern-icon" src="{{ url_for('static', filename='img/entanglement_icon.png') }}">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold;">Creating Entanglement</h1>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <b>Intent:</b>
+                        <p>Enforce a strong correlation between qubits by entangling them</p>
+                    </div>
+                    <div>
+                        <b>Context:</b>
+                        <p>Entanglement is a unique characteristic of quantum mechanics and one of the causes for the power of quantum algorithms <a href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.83.052313">(Bruß and Macchiavello 2011)</a>.<br>
+                            Although entanglement is not necessarily needed for a powerful quantum algorithm <a href="https://www.sciencedirect.com/science/article/pii/S0304397504001926">(Biham et al. 2004)</a>, it is required to achieve an exponential speedup over classical algorithms <a href="https://royalsocietypublishing.org/doi/abs/10.1098/rspa.2002.1097">(Jozsa and Linden 2003)</a>.<br>
+                            Consequently, a quantum register is often entangled for further processing after the <a href="#/patterns/15">Initialization</a>.</p>
+                    </div>
+                    <div>
+                        <b>Solution:</b>
+                        <p>The concrete implementation of an oracle is highly problem-specific.<br>
+                            As a consequence, there are many different types of oracles, of which several are discussed in <a href="https://epubs.siam.org/doi/abs/10.1137/1.9781611975482.87">(Gilyen et al. 2019)</a>.</p>
+                    </div>
+                    <div>
+                        <b>Result:</b>
+                        <p>Unitary transformations that create entanglement must include multi-qubit operators such as CNOT.<br>
+                            Such operators typically have a lower gate fidelity than single qubit operators and therefore increase the overall gate error.</p>
+                    </div>
+                    <div>
+                        <b>Related patterns:</b>
+                        <p>A quantum register must make use of <a href="#/patterns/15">Initialization</a> before entanglement can be created.<br>
+                            Applying <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> as described above computes a <a href="#/patterns/18">Function Table</a> and makes use of <a href="#/patterns/16">Uniform Superposition</a>.</p>
+                    </div>
+                    <div>
+                        <b>Known Uses:</b>
+                        <p>Most algorithms use entangled states.<br>
+                            A <a href="#/patterns/18">Function Table</a> may create an entangled state, by making use of the above-defined unitary operation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>f</mi></msub></mrow><annotation encoding="application/x-tex">U_f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> of a Boolean function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span>.</p>
+                    </div>
+                    <div>
+                        <b>Source:</b>
+                        <span _ngcontent-fkv-c47="">Leymann, Frank;  <a href="https://link.springer.com/chapter/10.1007/978-3-030-14082-3_19">“Towards a Pattern Language for Quantum Algorithms.” </a> International Workshop on Quantum Technology and Optimization Problems. Springer, Cham, 2019.</span></p>
+                    </div>
+                    <div>
+                        <footer _ngcontent-mod-c84="" class="centered" style="text-align: center;"> © quantumcomputingpatterns.org. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <div class="row align-items-center;" style=" color: #A9B388;">
     <div class="col-6">
@@ -128,5 +362,13 @@
         document.getElementById('auto-submit-form').submit();
     });
 </script>  
+<script>
+    $(document).ready(function(){
+        $('.material-symbols-outlined').click(function(){
+            var target = $(this).data('target');
+            $(target).modal('show');
+        });
+    });
+</script> 
 <script src="{{ url_for('static', filename='prism.js') }}"></script>
 {% endblock %}
