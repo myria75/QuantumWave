@@ -84,7 +84,7 @@ def checkWaitRateLimit(resource):
     remaining, resetDate = rateLimit(resource)
     
     if remaining == 0:
-        ingest_logger.info("Waiting for rate limit to reset...")
+        ingest_logger.info("The rate limite has been exceeded! Waiting to resume data ingestion...")
         secondsToWait = (resetDate - datetime.now()).total_seconds()
         
         if secondsToWait < 0:
@@ -134,7 +134,8 @@ def content_ingestion(code_url, language, extension, repo_full_name, repo_name, 
             sha = str(p.json()['sha'])
 
             if obtainContentConversion(answer) == True:
-                ingest_logger.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
+                ingest_logger.info(f"In the {repo_name} repository from {repo_owner}, created on {year} (in{language} with {extension} extension, the file {answer['path']} has been ingested")
+                #ingest_logger.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
                 contadorglobal+=1   
 
 
@@ -161,6 +162,7 @@ def obtainContentConversion(doc) -> bool:
     coll_to_insert = None
 
     log_msg = f"{doc['repo_language']}.{doc['repo_extension']}, {doc['repo_author']}/{doc['repo_name']} | {file_path} has been"
+    #log_msg = f"{doc['repo_language']}.{doc['repo_extension']}, {doc['repo_author']}/{doc['repo_name']} | {file_path} has been"
 
     if search_result is None:
         #Discarded
