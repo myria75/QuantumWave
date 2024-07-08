@@ -154,4 +154,5 @@
 .navbar-nav .nav-link.active {
     background-color: #ffffff; /* Fondo blanco cuando el enlace está activo */
     color: #5F6F52; /* Color del texto en verde cuando el enlace está activo */
+    border-radius: 10px;
 }

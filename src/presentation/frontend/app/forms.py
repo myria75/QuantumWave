@@ -6,6 +6,7 @@ from wtforms.widgets import ListWidget, CheckboxInput
 
 
 from .csv_interpreter import getAllPaths
+from .mongo_handler import getRepositoriesList, getFilesList
 
 class MultiCheckboxField(SelectMultipleField):
     widget = ListWidget(prefix_label=False)
@@ -22,11 +23,15 @@ class FormIngestParameters(FlaskForm):
     start = SubmitField('Start')
     cancel = SubmitField('Cancel')
 
-class FormSelectPath(FlaskForm):
+
+class FormSelectRepo(FlaskForm):
     choices = []
 
-    for item in getAllPaths():
+    for item in getRepositoriesList():
         choices.append((item,item))
 
     repositories = SelectField("Repositories", validators=[InputRequired("This field is required")], choices=choices)
+
+class FormSelectPath(FlaskForm):
+    choices = []
     path = SelectField("Path", validators=[InputRequired("This field is required")], choices=choices)

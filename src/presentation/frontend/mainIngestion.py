@@ -29,7 +29,7 @@ config.read(configuration_file)
 
 ingest_logger = logging.getLogger('ingest_logger')
 log_capture_string:io.StringIO = io.StringIO() #variable que contiene los logs. Hay que hacer .getvalue()
-logger_format_str = "%(asctime)s [%(levelname)s] %(message)s"
+logger_format_str = "[%(levelname)s] %(message)s"
 
 
 if not ingest_logger.hasHandlers():
@@ -84,11 +84,12 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
 
     total_documents = collRepo.count_documents(query)
 
-    with open(jsonPath, 'w+') as file:
+    with open(jsonPath, 'r') as file:
         jsonProgress = json.load(file)
     
         jsonProgress['totalFiles_analysis'] = total_documents+1 #+1 por el paso del csv que queda a parte de analizar
 
+    with open(jsonPath, 'w') as file:
         json.dump(jsonProgress, file, indent=4) 
 
     progress_document = 0
@@ -178,11 +179,12 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
         })
         progress_document+=1
 
-        with open(jsonPath, 'w+') as file:
+        with open(jsonPath, 'r') as file:
             jsonProgress = json.load(file)
         
             jsonProgress['analyzedFiles'] = progress_document
-
+        
+        with open(jsonPath, 'w') as file:
             json.dump(jsonProgress, file, indent=4) 
 
     dbGithub[db_coll].rename(db_coll_final)
@@ -193,9 +195,10 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
 
     progress_document+=1
 
-    with open(jsonPath, 'w+') as file:
+    with open(jsonPath, 'r') as file:
         jsonProgress = json.load(file)
         
         jsonProgress['analyzedFiles'] = progress_document
 
+    with open(jsonPath, 'w') as file:
         json.dump(jsonProgress, file, indent=4) 

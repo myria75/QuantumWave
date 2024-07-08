@@ -269,11 +269,12 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
                             content_ingestion(code_url, language, extension, repo_full_name, repo_name, repo_owner, repo_creation_date, year, pagina_repo)
                 ingestedRepos+=1   
 
-                with open(jsonPath, 'w+') as file:
+                with open(jsonPath, 'r') as file:
                     jsonProgress = json.load(file)
 
                     jsonProgress['ingestedRepos'] = ingestedRepos
 
+                with open(jsonPath, 'w') as file:
                     json.dump(jsonProgress, file, indent=4)  
 
 def getTotalReposCount(language, extension, from_date: date, to_date: date):
@@ -325,11 +326,12 @@ def doIngestion(languages, from_date: date, to_date: date):
 
     collRepo_accepted.drop()
 
-    with open(jsonPath, 'w+') as file:
+    with open(jsonPath, 'r') as file:
         jsonProgress = json.load(file)
 
         jsonProgress['totalRepos_ingest'] = totalRepos
 
+    with open(jsonPath, 'w') as file:
         json.dump(jsonProgress, file, indent=4)
 
     #Ingest

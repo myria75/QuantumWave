@@ -29,25 +29,32 @@
     Show code
 </button>
 
-<form id="auto-submit-form" method="post">
-    {{ form.csrf_token }}
+<form id="auto-submit-form-path" method="post">
+    {{ formPath.csrf_token }}
     <br>
     <div class="form-group container">
-      <div class="row align-items-left mb-2">
-        <div class="col-md-2 text-end">
-            {{ form.repositories.label() }}:         
-        </div>
-        <div class="col-md-8">
-            {{ form.repositories(class="form-select", id="repositories", onchange="this.form.submit()") }}        
-        </div>
-      </div>
-      <br>
       <div class="row align-items-left">
         <div class="col-md-2 text-end">
-            {{ form.path.label() }}:         
+            {{ formPath.path.label() }}:         
         </div>
         <div class="col-md-8">
-            {{ form.path(class="form-select", id="path", onchange="this.form.submit()") }}        
+            {{ formPath.path(class="form-select", id="path", onchange="this.formPath.submit()") }}        
+        </div>
+      </div>
+    </div>
+</form>
+<br><br>
+
+<form id="auto-submit-form-repo" method="post">
+    {{ formRepo.csrf_token }}
+    <br>
+    <div class="form-group container">
+      <div class="row align-items-left">
+        <div class="col-md-2 text-end">
+            {{ formRepo.repositories.label() }}:         
+        </div>
+        <div class="col-md-8">
+            {{ formRepo.repositories(class="form-select", id="repositories", onchange="this.formRepo.submit()") }}        
         </div>
       </div>
     </div>
@@ -361,9 +368,14 @@
 </script>
 <script>
     document.getElementById('path').addEventListener('change', function() {
-        document.getElementById('auto-submit-form').submit();
+        document.getElementById('auto-submit-form-path').submit();
     });
 </script>  
+<script>
+    document.getElementById('repositories').addEventListener('change', function() {
+        document.getElementById('auto-submit-form-repo').submit();
+    });
+</script> 
 <script>
     $(document).ready(function(){
         $('.material-symbols-outlined').click(function(){

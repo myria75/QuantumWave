@@ -45,11 +45,9 @@ def getRepositoriesList():
 def getFilesList(repository):
     connect_to_mongodb()
     if collRepo is not None:
-        query = csv_query
-        query["$and"].append({"name": "".format(repository)})
-        results = collRepo.find(query)
-        disconnect_from_mongodb()
+        results = collRepo.find({"name": repository})
         filesList = sorted(set(doc['path'] for doc in results))
+        disconnect_from_mongodb()
         return filesList
     else:
         return []

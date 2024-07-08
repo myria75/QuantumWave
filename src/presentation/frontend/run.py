@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, jsonify
-from .app.forms import FormIngestParameters, FormSelectPath
+from types import NoneType
+from flask import Flask, render_template, request, jsonify, session
+from .app.forms import FormIngestParameters, FormSelectPath, FormSelectRepo
 from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics, getMinimum, getMaximun, getAverage, getStandardDeviation
 from .app.mongo_handler import getFilesList, getRepositoriesList
 import threading
@@ -167,22 +168,59 @@ def get_circuit_link(circuit):
 
 @app.route('/circuit', methods=['GET', 'POST'])
 def circuit():
-    path = ""
-    form = FormSelectPath(request.form)
+    formRepo = FormSelectRepo(request.form)
+    formPath = FormSelectPath(request.form)
 
-    if form.validate_on_submit():
-        path = form.path.data
-        print(path)
-    else:
-        path = "Python_qiskit_qiskit-community_qiskit-algorithms_test.test_grover.py" #TODO: get first or display none
-    
-    form.path.data = path
+    if 'path' in session:
+        print(f"TENGO SESION 1 {session['path']}")
 
-    query = {
-        "path":"{}".format(path)
+    if formRepo.validate_on_submit():
+        session['repository'] = formRepo.repositories.data
+        formPath.path.choices = []
+        for item in getFilesList(session['repository']):
+            formPath.path.choices.append((item,item))
+        session['repository'] = formRepo.repositories.data
+        
+        session['path_choices'] = formPath.path.choices
+        session['path'] = formPath.path.choices[0][0]
+        formPath.path.data = formPath.path.choices[0][0]
+
+        if 'path' in session:
+            print(f"TENGO SESION 2 {session['path']}")
+
+    if formPath.validate_on_submit():
+        print("PUES ME HE ACTUALIZADO")
+        session['path'] = formPath.path.data
+
+        if 'path' in session:
+            print(f"TENGO SESION 3 {session['path']}")
+
+    if 'repository' in session:
+        formRepo.repositories.data = session['repository']
+
+    codeDoc = {
+        "content": ""
     }
+    
+    if 'path_choices' in session:
+        formPath.path.choices = session['path_choices']
 
-    codeDoc: cursor.Cursor = collRepo.find_one(query, no_cursor_timeout=True)
+    if 'path' in session:
+        formPath.path.data = session['path']
+
+        if 'path' in session:
+            print(f"TENGO SESION 4 {session['path']}")
+
+        query = {
+            "path":"{}".format(formPath.path.data)
+        }
+        codeDoc: cursor.Cursor = collRepo.find_one(query, no_cursor_timeout=True)
+       
+
+        
+    
+    #formRepo.repositories.data = repository
+    #formPath.path.data = path
 
     table_header_Metrics=getTableHeaderMetrics()
     popover_contents = [
@@ -224,10 +262,10 @@ def circuit():
 
     header_popover = list(zip(table_header_Metrics, popover_contents))
     
-    return render_template("circuit.html", form=form, header_popover = header_popover,
-                           table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(path),
-                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(path),
-                           get_circuit_link=get_circuit_link, code_path=path, code_content=codeDoc["content"])
+    return render_template("circuit.html", formPath=formPath, formRepo=formRepo, header_popover = header_popover,
+                           table_header_Patterns=getTableHeaderPatterns(), table_content_Patterns=getTableContentPatterns(formPath.path.data),
+                           table_header_Metrics=getTableHeaderMetrics(), table_content_Metrics=getTableContentMetrics(formPath.path.data),
+                           get_circuit_link=get_circuit_link, code_path=formPath.path.data, code_content=codeDoc["content"])
 
     #all_paths = "*"
     #return render_template("circuit.html",

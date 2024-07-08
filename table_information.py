@@ -34,10 +34,11 @@ query = {
   ]
 }
 
-field = ["id", "language", "extension", "author", "name", "path", "circuit"]
-metricsN = 0
+
 
 def generateCSV():
+  field = ["id", "language", "extension", "author", "name", "path", "circuit"]
+  metricsN = 0
   initialDoc = collRepo.find(query)
   foundInitialMetrics = False
   for doc in initialDoc:
@@ -46,6 +47,7 @@ def generateCSV():
           if metricsN != 33:
               continue
           for i in range(0, metricsN):
+              print(doc["path"])
               field.append(f"m.{doc['circuits'][circ]['metrics'][i]['metric']['name']}")
           foundInitialMetrics = True
           break
