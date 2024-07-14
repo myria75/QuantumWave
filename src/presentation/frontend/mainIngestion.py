@@ -29,7 +29,7 @@ config.read(configuration_file)
 
 ingest_logger = logging.getLogger('ingest_logger')
 log_capture_string:io.StringIO = io.StringIO() #variable que contiene los logs. Hay que hacer .getvalue()
-logger_format_str = "[%(levelname)s] %(message)s"
+logger_format_str = "%(message)s"
 
 
 if not ingest_logger.hasHandlers():

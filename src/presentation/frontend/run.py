@@ -64,7 +64,7 @@ def stopIngestion():
 def handle_ingest():
     if request.method == 'POST':
         language = request.form['language']
-        print("Language:", language)
+        print("Language", language)
         return "Formulario enviado exitosamente" 
     else:
         return render_template("index.html")  # O cualquier otra plantilla que desees mostrar
@@ -102,6 +102,7 @@ def cancelIngest():
 def dataset_analysis():
     pattern_statistics = getStatistics()
 
+    total_statistics = pattern_statistics[0] + pattern_statistics[1] + pattern_statistics[2] + pattern_statistics[3]
     data = [
         ("Initialization", pattern_statistics[0]),
         ("Superposition", pattern_statistics[1]),
@@ -115,7 +116,7 @@ def dataset_analysis():
     results_percentage = []
     
     for statistic in pattern_statistics: 
-        percentage = round((statistic/612)* 100, 2)
+        percentage = round((statistic/total_statistics)* 100, 2)
         results_percentage.append(percentage)
 
     table_header_Metrics=getTableHeaderMetrics()

@@ -25,9 +25,6 @@
     </div>
 </div>
 <br>
-<button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modalCode">
-    Show code
-</button>
 
 <form id="auto-submit-form-repo" method="post">
     {{ formRepo.csrf_token }}
@@ -37,7 +34,7 @@
         <div class="col-md-2 text-end">
             {{ formRepo.repositories.label() }}:         
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7 d-flex align-items-center">
             {{ formRepo.repositories(class="form-select", id="repositories", onchange="this.formRepo.submit()") }}        
         </div>
       </div>
@@ -52,8 +49,11 @@
         <div class="col-md-2 text-end">
             {{ formPath.path.label() }}:         
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7 d-flex align-items-center">
             {{ formPath.path(class="form-select", id="path", onchange="this.formPath.submit()") }}        
+        </div>
+        <div class="col-md-3 text-end" style="margin-left: -90px;">
+            <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modalCode">Show code</button>
         </div>
       </div>
     </div>

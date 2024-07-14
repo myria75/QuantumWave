@@ -134,7 +134,7 @@ def content_ingestion(code_url, language, extension, repo_full_name, repo_name, 
             sha = str(p.json()['sha'])
 
             if obtainContentConversion(answer) == True:
-                ingest_logger.info(f"In the {repo_name} repository from {repo_owner}, created on {year} (in{language} with {extension} extension, the file {answer['path']} has been ingested")
+                ingest_logger.info(f"In the {repo_name} repository from {repo_owner}, created on {year} (in {language} with {extension} extension, the file {answer['path']} has been ingested")
                 #ingest_logger.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
                 contadorglobal+=1   
 
