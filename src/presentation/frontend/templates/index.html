@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}QuantumWave{% endblock %}}
+
+{% block content %}
+<style>
+  .form-inline .form-control {
+    width: auto;
+  }
+</style>
+<br>
+{% for field, errors in form.errors.items() %}
+	<div class="alert alert-danger">
+    {{ form[field].label }}: {{ ', '.join(errors) }}
+	</div>
+{% endfor %}
+
+<div class="row justify-content-center">
+  <div class="col-6"> <!-- primera mitad de la pantalla -->
+    <form method="post" id="ingestForm" action="">
+      {{ form.csrf_token }}
+      <div class="row justify-content-center">
+        <div class="col-auto justify-content-center">
+        <div class="form-group container">
+          <div class="col-auto text-left">
+              <div class="row align-items-left">
+                <div class="col-md-4 text-end">
+                  {{ form.language.label() }}         
+                </div>
+                <div class="col-md-4">
+                  {% for subfield in form.language %}
+                  <div class="form-check">
+                      {{ subfield(class="form-check-input", type="checkbox", id="checkBox{{loop.index}}") }}
+                      <label class="form-check-label" for="checkBox{{loop.index}}">{{ subfield.label }}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-md-2 text-end">
+                  {{form.from_date.label()}}
+                </div>
+                <div class="col-auto text-end pe-3">
+                  {{ form.from_date(class="form-control datepicker text-center", id="from_date") }}        
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  {{form.to_date.label()}}:
+                </div>
+                <div class="col-auto">
+                  {{ form.to_date(class="form-control datepicker text-center", id="from_date") }}        
+                </div>
+              </div>
+              <br>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            {{ form.start(class="btn btn-success btn-lg", id="startIngest") }}
+            <button id="stopIngest" class="btn btn-danger btn-lg">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-6"><!-- Segunda mitad de la pantalla -->
+    <div class="progress" role="progressbar">
+      <div class="progress-bar" style="width: 0%" id="progress-bar-ingest">Progress: 75%</div>
+    </div>
+    <br>
+    <p>Ingestion progress</p>
+    <fieldset class="border">
+      <p id="dynamic-terminal" style="font-family: 'Reddit Mono', monospace; font-optical-sizing: auto; font-weight: 400; font-style: normal; font-size: 0.75em; max-width: 700px; max-height: 330px; overflow: auto;">
+        Content
+      </p>
+    </fieldset>
+  </div>
+</div>
+<br><br><br>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function(){
+      $(".active").removeClass("active");
+      $("#nav-home").addClass("active");
+   });
+</script>
+<script>
+  /*{document.getElementById('ingestForm').addEventListener('submit', function(event) {
+    const form = this;
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+    
+    event.preventDefault();
+    const formData = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.status);
+      updateStatus();
+    });
+  });}*/
+
+  function updateStatus() {
+    fetch('/ingest-status')
+    .then(response => response.json())
+    .then(data => {
+      var startIngestBtn = document.getElementById('startIngest');
+      const formattedText = data.terminal_text.replace(/\n/g, '<br>');
+      document.getElementById('dynamic-terminal').innerHTML = formattedText;
+      var progress = data.percentage_progress_bar
+      document.getElementById('progress-bar-ingest').style = `width: ${progress}%`
+      document.getElementById('progress-bar-ingest').textContent = `Progress: ${progress}%`
+      console.log(data)
+      if (data.thread_running) {
+        startIngestBtn.disabled = true;
+      } else {
+        startIngestBtn.disabled = false;
+      }
+    });
+  }
+  setInterval(updateStatus, 1000);
+
+  document.getElementById('stopIngest').addEventListener('click', function(event) {
+    event.preventDefault(); 
+
+    fetch('/cancel-ingest', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({}) // Puedes enviar datos si es necesario
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Cancelación exitosa');
+      } else {
+        console.error('Error al cancelar');
+      }
+    })
+    .catch(error => {
+      console.error('Error en la solicitud:', error);
+    });
+  });
+
+  if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+  }
+</script>
+{% endblock %}
+
+{% block pie %}
+<div id="footer" style="background-color: #7b644d; color: #ffff;">
+  <div class="row align-items-center">
+    <div class="col text-center">
+      <img src="/static/img/image.png" alt="alarcos" width="250" height="90" class="d-inline-block align-text-center" style="margin-center: 6px;">
+    </div>
+    <div class="col align-items-center text-left" style="font-size: small;">
+        <p>Miriam Fernández Osuna</p>
+        <p>Degree in computer engineering</p>
+        <p>Facultad de Ciencias Sociales y Tecnologías de la Información</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

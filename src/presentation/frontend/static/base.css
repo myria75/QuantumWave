@@ -1,0 +1,158 @@
+/* .navbar {
+    background-color: #ff0000;
+}
+
+.form-select {
+    width: 160px;
+}
+
+.reddit-mono-console {
+  font-family: "Reddit Mono", monospace !important;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+} */
+.pattern-icon {
+  height: 4em;
+  margin-right: 15px;
+}
+
+/*!
+// CSS only Responsive Tables
+// http://dbushell.com/2016/03/04/css-only-responsive-tables/
+// by David Bushell
+*/
+
+.rtable {
+  /*!
+  // IE needs inline-block to position scrolling shadows otherwise use:
+  // display: block;
+  // max-width: min-content;
+  */
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+  
+  overflow-x: auto;
+  
+  // optional - looks better for small cell values
+  white-space: nowrap;
+
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.rtable,
+.rtable--flip tbody {
+  // optional - enable iOS momentum scrolling
+  -webkit-overflow-scrolling: touch;
+  
+  // scrolling shadows
+  background: radial-gradient(left, ellipse, rgba(0,0,0, .2) 0%, rgba(0,0,0, 0) 75%) 0 center,
+              radial-gradient(right, ellipse, rgba(0,0,0, .2) 0%, rgba(0,0,0, 0) 75%) 100% center;
+  background-size: 10px 100%, 10px 100%;
+  background-attachment: scroll, scroll;
+  background-repeat: no-repeat;
+}
+
+// change these gradients from white to your background colour if it differs
+// gradient on the first cells to hide the left shadow
+.rtable td:first-child,
+.rtable--flip tbody tr:first-child {
+  background-image: linear-gradient(to right, rgba(255,255,255, 1) 50%, rgba(255,255,255, 0) 100%);
+  background-repeat: no-repeat;
+  background-size: 20px 100%;
+}
+
+// gradient on the last cells to hide the right shadow
+.rtable td:last-child,
+.rtable--flip tbody tr:last-child {
+  background-image: linear-gradient(to left, rgba(255,255,255, 1) 50%, rgba(255,255,255, 0) 100%);
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-size: 20px 100%;
+}
+
+.rtable th {
+  text-align: left;
+  background: #f2f0e6;
+}
+
+.rtable th,
+.rtable td {
+  padding: 6px 12px;
+  border: 1px solid #d9d7ce;
+}
+
+.rtable--flip {
+  display: flex;
+  overflow: hidden;
+  background: none;
+}
+
+.rtable--flip thead {
+  display: flex;
+  flex-shrink: 0;
+  min-width: min-content;
+}
+
+.rtable--flip tbody {
+  display: flex;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.rtable--flip tr {
+  display: flex;
+  flex-direction: column;
+  min-width: min-content;
+  flex-shrink: 0;
+}
+
+.rtable--flip td,
+.rtable--flip th {
+  display: block;
+}
+
+.rtable--flip td {
+  background-image: none !important;
+  // border-collapse is no longer active
+  border-left: 0;
+}
+
+// border-collapse is no longer active
+.rtable--flip th:not(:last-child),
+.rtable--flip td:not(:last-child) {
+  border-bottom: 0;
+}
+
+.wrong-icon {
+    color: red;
+    font-size: x-large;
+}
+
+.check-icon {
+  color: #5F6F52;
+  font-size: x-large;
+}
+
+.navbar-nav .nav-link {
+  color: #ffffff; /* Color del texto normal */
+  padding: 0.5rem 1rem; /* Ajusta el padding según tu diseño */
+  transition: color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+.navbar-nav .nav-link:hover {
+  color: #9df196; /* Color cuando el enlace está en hover */
+}
+
+.navbar-nav .nav-link:focus {
+  color: #9df196; /* Color cuando el enlace está enfocado */
+}
+
+.navbar-nav .nav-link.active {
+    background-color: #ffffff; /* Fondo blanco cuando el enlace está activo */
+    color: #5F6F52; /* Color del texto en verde cuando el enlace está activo */
+    border-radius: 10px;
+}
