@@ -8,3 +8,5 @@
 Grado en Ingeniería Informática - Facultad de Ciencias Sociales y Tecnologías de la Información - Universidad de Castilla-La Mancha
 
 El objetivo de QuantumWave es diseñar y construir una herramienta para la identificación y análisis del empleo de patrones de diseño y métricas en el software cuántico en proyectos existentes en repositorios de código. 
+
+Para la ejecución del proyecto, es importante tener las versiones de las dependencias que hay en requirements.txt de la herramienta instaladas (pip install -r -requierements.txt), posteriormente ejecutar el archivo runApp.py 
