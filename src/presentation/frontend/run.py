@@ -1,7 +1,7 @@
 from types import NoneType
 from flask import Flask, render_template, request, jsonify, session
 from .app.forms import FormIngestParameters, FormSelectPath, FormSelectRepo
-from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatistics, getMinimum, getMaximun, getAverage, getStandardDeviation
+from .app.csv_interpreter import getTableContentMetrics, getTableContentPatterns, getTableHeaderMetrics, getTableHeaderPatterns, getStatisticsQiskit, getMinimum, getMaximun, getAverage, getStandardDeviation
 from .app.mongo_handler import getFilesList, getRepositoriesList
 import threading
 import time
@@ -100,7 +100,7 @@ def cancelIngest():
 
 @app.route('/dataset_analysis', methods=['GET', 'POST'])
 def dataset_analysis():
-    pattern_statistics = getStatistics()
+    pattern_statistics = getStatisticsQiskit()
 
     total_statistics = pattern_statistics[0] + pattern_statistics[1] + pattern_statistics[2] + pattern_statistics[3]
     data = [

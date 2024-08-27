@@ -108,7 +108,7 @@ def getAllPaths():
     
     return list(set(all_paths))
 
-def getStatistics():
+def getStatisticsQiskit():
     pattern_data = getTableContentPatterns(all_paths)
     initialization_data = [row[1] for row in pattern_data]
     superposition_data = [row[2] for row in pattern_data]
@@ -169,6 +169,8 @@ def getAverage():
     
     return averages
 
+
+
 def getStandardDeviation():
     metrics: list = getTableContentMetrics(all_paths)
     metrics = [subarray[1:] for subarray in metrics]
@@ -187,4 +189,4 @@ def getStandardDeviation():
     
     return standardDeviations
 
-#print(getStandardDeviation())
+#print(getAverage())

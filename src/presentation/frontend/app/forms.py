@@ -17,8 +17,8 @@ def at_least_one_checkbox(form, field):
         raise ValidationError('At least one option must be selected.')
 
 class FormIngestParameters(FlaskForm):
-    language = MultiCheckboxField("Language:", validators=[at_least_one_checkbox], choices=[("Qiskit", "Qiskit"), ("OpenQASM", "OpenQASM")])
-    from_date = DateField("From: ")#, format='%d/%m/%Y')
+    language = MultiCheckboxField("Language", validators=[at_least_one_checkbox], choices=[("Qiskit", "Qiskit"), ("OpenQASM", "OpenQASM")])
+    from_date = DateField("From ")#, format='%d/%m/%Y')
     to_date = DateField("To")#, format='%d/%m/%Y')
     start = SubmitField('Start')
     cancel = SubmitField('Cancel')

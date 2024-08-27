@@ -56,16 +56,29 @@
       <tbody>
         <tr>
           <td style="text-align: center">Qiskit</td>
-          <td style="text-align: center">6963</td>
+          <td style="text-align: center">13.555</td>
           <td style="text-align: center"></td>
-          <td style="text-align: center">5451</td>
+          <td style="text-align: center">11.295</td>
           <td style="text-align: center"></td>
-          <td style="text-align: center">5416</td>
+          <td style="text-align: center">11.230</td>
           <td style="text-align: center"></td>
-          <td style="text-align: center">2824</td>
+          <td style="text-align: center">5.973</td>
           <td style="text-align: center"></td>
-          <td style="text-align: center">612</td>
+          <td style="text-align: center">2.252</td>
         </tr>
+        <tr>
+          <td style="text-align: center">OpenQASM</td>
+          <td style="text-align: center">14.942</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">14.292</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">101</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">101</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">63</td>
+          </tr>
+        
       </tbody>
     </table>
     <br><br>
@@ -79,31 +92,62 @@
         <div class="col-6">
             <table class="table table-hover" style="width: 90%;">
               <tr style="">
-                <th style="color: #fff; text-align: center; background-color: #A9B388;" >Qiskit</th>
+                <th style="color: #fff; text-align: center; background-color: #A9B388;" >OpenQASM</th>
                 <th style="color: #fff; text-align: center; background-color: #A9B388;">#</th>
                 <th style="color: #fff; text-align: center; background-color: #A9B388;">%</th>
               </tr>
               <tr>
                 <td><b>Initialization </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#initialization">help</span></td>
-                <td style="text-align: center">{{values[0]}}</td>
-                <td style="text-align: center">{{results_percentage[0]}}</td>
+                <td style="text-align: center">10</td>
+                <td style="text-align: center">28.57</td>
               </tr>
               <tr>
                 <td><b>Superposition </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#superposition">help</span></td>
-                <td style="text-align: center">{{values[1]}}</td>
-                <td style="text-align: center">{{results_percentage[1]}}</td>
+                <td style="text-align: center">25</td>
+                <td style="text-align: center">71.43</td>
               </tr>
               <tr>
                 <td><b>Oracle </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#oracle">help</span></td>
-                <td style="text-align: center">{{values[2]}}</td>
-                <td style="text-align: center">{{results_percentage[2]}}</td>
+                <td style="text-align: center">0</td>
+                <td style="text-align: center">0.0</td>
               </tr>
               <tr>
                 <td><b>Entanglement </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#entanglement">help</span></td>
-                <td style="text-align: center">{{values[3]}}</td>
-                <td style="text-align: center">{{results_percentage[3]}}</td>
+                <td style="text-align: center">0</td>
+                <td style="text-align: center">0.0</td>
               </tr>
             </table>
+        </div>
+
+        <div class="row align-items-center justify-content-between">
+            <div class="col-6">
+                <table class="table table-hover" style="width: 90%;">
+                  <tr style="">
+                    <th style="color: #fff; text-align: center; background-color: #A9B388;" >Qiskit</th>
+                    <th style="color: #fff; text-align: center; background-color: #A9B388;">#</th>
+                    <th style="color: #fff; text-align: center; background-color: #A9B388;">%</th>
+                  </tr>
+                  <tr>
+                    <td><b>Initialization </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#initialization">help</span></td>
+                    <td style="text-align: center">{{values[0]}}</td>
+                    <td style="text-align: center">{{results_percentage[0]}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>Superposition </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#superposition">help</span></td>
+                    <td style="text-align: center">{{values[1]}}</td>
+                    <td style="text-align: center">{{results_percentage[1]}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>Oracle </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#oracle">help</span></td>
+                    <td style="text-align: center">{{values[2]}}</td>
+                    <td style="text-align: center">{{results_percentage[2]}}</td>
+                  </tr>
+                  <tr>
+                    <td><b>Entanglement </b><span class="material-symbols-outlined" style="font-size: 1em" data-toggle= "modal" data-target="#entanglement">help</span></td>
+                    <td style="text-align: center">{{values[3]}}</td>
+                    <td style="text-align: center">{{results_percentage[3]}}</td>
+                  </tr>
+                </table>
         </div>
         <div class="col-6 text-right">
             <canvas id="patternChart"></canvas>

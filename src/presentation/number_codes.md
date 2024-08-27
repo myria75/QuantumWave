@@ -12,21 +12,25 @@ DESPUÉS:
 
 2095 files
 
+INGESTA AGOSTO 2024:
+| Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics & Patterns |
+| ------------- | -------- | ------- | ---------- | ---------------- |--------------------|
+|Python - Qiskit| 13.555   | 11.295  | 11.230     | 5973             |   2.252            |
+
+4146 files
+Duración de la ingesta: 9 días 1h 39 minutos
+Cantidad de ingestados TOTALES: 28.297
+
+| Language  | Ingested files | Quantum Programs| Parsed ANTLR4|RQCR     |Number of files|
+|-----------|----------------|-----------------|--------------|---------|---------------|
+| OpenQASM  | 14.942         | 14.942          |  101         | 101     | 63            |
+
+
+
 | Analizador sintáctico | Árboles sintácticos | Circuitos RQCR | Patrones de diseño y métricas |
 | --------------------- | ------------------- | -------------- | ----------------------------- | 
 | ANTLR4                | 1717                | 907            | 80                            | 
 | AST                   | 5416                |  2824          | 612                           | 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
