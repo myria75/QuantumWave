@@ -31,7 +31,7 @@ connection = MongoClient(db_link, socketTimeoutMS=None)
 dbGithub = connection[db_name]
 collRepo = dbGithub[db_coll]
 
-query = {"language": "openqasm"}
+query = {"language": "Python"}
 documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
 refreshTime = 600 #10 minutes
 startQueryTime = time.time()
