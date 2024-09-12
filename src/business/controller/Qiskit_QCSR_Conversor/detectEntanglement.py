@@ -1,41 +1,26 @@
 
-
 def detectEntanglement(converted_circuits: dict):
-        hasEntaglement = False
+        returnCircuits = {}  
         HGate = {}  
         XGate = {} 
-        ControlGate = {}
+        controlGate = {}
 
         #añadir indices a los diccionarios, sabiendo en que posición se encuentra cada cubit
-        for qubit, gates in converted_circuits.items():
-            for idgate, gate in enumerate(gates):
-                if gate == "H":
-                    if qubit not in HGate:
-                        HGate[qubit] = []
-                    HGate[qubit].append(idgate)
-                elif gate == "X":
-                    if qubit not in XGate:
-                        XGate[qubit] = []
-                    XGate[qubit].append(idgate)
-                elif gate == "Control":
-                    if qubit not in ControlGate:
-                        ControlGate[qubit] = []
-                    ControlGate[qubit].append(idgate)
+        for name, qubits in converted_circuits.items():
+            hasEntaglement = False
+            for idqubit, qubitContent in enumerate(qubits):
+                if 'H' in qubitContent:
+                    allHpositions = [i for i, gate in enumerate(qubitContent) if gate == 'H']
+                    for posH in allHpositions:
+                        if posH+1 != len(qubitContent) and isinstance(qubitContent[posH+1], dict):
+                            posControl = posH + 1
+                            controlDict = next(iter(qubitContent[posControl].items()))
+                            if controlDict[0] == "CONTROL":
+                                idqubitControlled = controlDict[1]
+                                if qubits[idqubitControlled][posControl] == "X":
+                                    beforeX = qubits[idqubitControlled][0:posControl]
+                                    hasEntaglement = all(gateBeforeX == "_" for gateBeforeX in beforeX)
 
-        #las condiciones de excel
-        for qubitH, h_positions in HGate.items():
-            for h_idgate in h_positions:  
-                for qubitX, x_positions in XGate.items():
-                    if qubitX != qubitH: 
-                        for x_idgate in x_positions:
-                            if x_idgate == h_idgate + 1:
-                                print(f"Entrelazamiento")
-                                hasEntaglement = True
+            returnCircuits[name] = hasEntaglement
 
-                if qubitH in ControlGate:
-                    for control_idgate in ControlGate[qubitH]:
-                        if control_idgate == h_idgate + 1:  # Control está inmediatamente después de H
-                            print(f"Entrelazamiento")
-                            hasEntaglement = True
-
-        return hasEntaglement
+        return returnCircuits

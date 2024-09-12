@@ -7,14 +7,8 @@ from src.business.controller.Qiskit_QCSR_Conversor.Circuit_creation import Circu
 from _ast import If
 
 converted_circuits = {
-    "qc": [[{"CONTROL":2},{"CONTROL":3},{"CONTROL":4}],[],["X"],["_","X"],["_","_","X"]],
-    "qc": [[{"CONTROL":4}],["_",{"CONTROL":4}],["_","_",{"CONTROL":4}],[],["X","X","X"]],
-    "qc": [[{"CONTROL":1}], ["X"], ["H"], []],
+    "noentanglement": [[{"CONTROL":2},{"CONTROL":3},{"CONTROL":4}],[],["X"],["_","X"],["_","_","X"]],
+    "sientanglement": [["H",{"CONTROL":1}],["_","X"]],
+    "pregunto": [["H",{"CONTROL":1},"Y"],["_","X","Z"]]
 }
-
 print(detectEntanglement(converted_circuits))
-
-{
-    "c1": True,
-    
-}
