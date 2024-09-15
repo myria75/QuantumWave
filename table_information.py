@@ -99,7 +99,7 @@ def generateCSV():
           if len(document["circuits"][circuit_index]["patterns"]["oracle"]) > 0:
             oracle = True
           if len(document["circuits"][circuit_index]["patterns"]["entanglement"]) > 0:
-            entaglement = True
+            entanglement = True
       
           rowToInsert = [id, language, extension, author, name, path, circuit]
           rowToInsert += metrics 

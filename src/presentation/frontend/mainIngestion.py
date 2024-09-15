@@ -16,6 +16,7 @@ import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as co
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
 import src.business.controller.QCPDTool.views as qcpdtool
 from src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates import doIngestion
+from src.business.controller.Qiskit_QCSR_Conversor.detectEntanglement import detectEntanglement
 from table_information import generateCSV
 import io
 import os
@@ -168,6 +169,9 @@ def mainIngestion(languages:list, from_date: date, to_date: date):
                 circuitProperties["metrics"] = metrics
                 
             circuitProperties["patterns"] = qcpdtool.generate_pattern(circuit)
+            if detectEntanglement(circuit) == True:
+                circuitProperties["patterns"]["entanglement"] = [True]
+
             document["circuits"].append(circuitProperties)
         
         #Update entry in MongoDB  
