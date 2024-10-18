@@ -15,6 +15,7 @@ from src.business.controller.Qiskit_QCSR_Conversor.OperationNotFoundException im
 import src.business.controller.Qiskit_QCSR_Conversor.Qiskit_QCSR_Conversor as conversor
 import src.business.controller.QmetricsAPI.qmetrics_functions as qmetrics
 import src.business.controller.QCPDTool.views as qcpdtool
+from src.business.controller.Qiskit_QCSR_Conversor.detectEntanglement import detectEntanglement
 from src.persistency.Mongo_Ingest_Data_Dealing.languages_ingest_with_dates import doIngestion
 from table_information import generateCSV
 import io
@@ -66,7 +67,7 @@ def metricsPrueba():
     dbGithub = connection[db_name]
     collRepo = dbGithub[db_coll]
 
-    query = {}
+    query = {"path":"Python_qiskit_Qiskit_qiskit_test.python.transpiler.test_unitary_synthesis.py"}
     documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
     refreshTime = 600 #10 minutes
     startQueryTime = time.time()
@@ -145,6 +146,10 @@ def metricsPrueba():
                 circuitProperties["metrics"] = metrics
                 
             circuitProperties["patterns"] = qcpdtool.generate_pattern(circuit)
+
+            if detectEntanglement(circuit) == True:
+                circuitProperties["patterns"]["entanglement"] = [True]
+            
             document["circuits"].append(circuitProperties)
         
         #Update entry in MongoDB  
