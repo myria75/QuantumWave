@@ -37,7 +37,7 @@ TABLE 3: DATA INGESTION SEPTEMBER 2024:
 |Python - Qiskit | 13.555   | 11.295   | 11.230     | 5.973 and 4.146 files |   2.252            |
 | OpenQASM       | 14.942   | 14.942   |  101       | 101                   |   63               |
 | TOTAL          | 28.297   | 26.237   | 11.331     | 6.074                 |   2315             |
-Duration of data ingestion: 9 días 1h 39 minutos
+Duration of data ingestion: 3 días 20h 35 minutos
 
 
 
@@ -46,3 +46,9 @@ TABLE 4: Static analysis comparator
 | --------------- | ----- | ------------ | ------------------ | 
 | ANTLR4          | 1.717 | 907          | 80                 | 
 | AST             | 5.416 |  2.824       | 612                | 
+
+TABLE 5: DATA INGESTION OCTOBER 2024:
+| Language       | Ingested | Accepted | Parsed AST | RQCR Circuit          | Metrics | Patterns |
+| -------------- | -------- | -------- | ---------- | --------------------- |---------|----------|
+|Python - Qiskit | 8.673    | 6.578    | 6.563      | 3.395 and 2.346 files |   2.373 |   924    |
+Duration of data ingestion: 3 días 14h 30 minutos
