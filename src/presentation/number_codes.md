@@ -1,79 +1,54 @@
-ANTES:
-| Language      | Ingested | Acepted | Parsed ANTLR4 | Circuit RQCR  | Metrics & Patterns |
-| ------------- | -------- | ------- | ------------- | ------------- |--------------------|
-|Python - Qiskit| 13462    | 5004    | 1616          | 806           | 30                 |
-|OpenQASM       | 75800    |  15320  | 101           | 101           | 50                 |
+ 
+TABLE 1: Data collected using the ANTLR4 library
+| Language       | Ingested | Accepted | Parsed ANTLR4 | RQCR Circuit  | Metrics & Patterns |
+| -------------- | -------- | -------- | ------------- | ------------- |--------------------|
+|Python - Qiskit | 13.462   | 5.004    | 1.616         | 806           | 30                 |
+|OpenQASM        | 75.800   |  15.320  | 101           | 101           | 50                 |
+(no valid, it has duplicated files)
 
 
-DESPUÉS:
-| Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics & Patterns |
-| ------------- | -------- | ------- | ---------- | ---------------- |--------------------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 2824             |   1860 ANTES 1945  |
+TABLE 2: Data collected using the ast library:
+| Language       | Ingested | Accepted | Parsed AST | RQCR Circuit          | Metrics & Patterns |
+| -------------- | -------- | -------- | ---------- | --------------------- |--------------------|
+|Python - Qiskit | 6.963    | 5.451    | 5.416      | 2.824 and 2.095 files |    1.945           |
+(Ingestion used for TFG)
 
-2095 files
-
-INGESTA AGOSTO 2024:
-| Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics & Patterns |
-| ------------- | -------- | ------- | ---------- | ---------------- |--------------------|
-|Python - Qiskit| 13.555   | 11.295  | 11.230     | 5973             |   2.252            |
-
-4146 files
-Duración de la ingesta: 9 días 1h 39 minutos
-Cantidad de ingestados TOTALES: 28.297
-
-| Language  | Ingested files | Quantum Programs| Parsed ANTLR4|RQCR     |Number of files|
-|-----------|----------------|-----------------|--------------|---------|---------------|
-| OpenQASM  | 14.942         | 14.942          |  101         | 101     | 63            |
-
-
-
-| Analizador sintáctico | Árboles sintácticos | Circuitos RQCR | Patrones de diseño y métricas |
-| --------------------- | ------------------- | -------------- | ----------------------------- | 
-| ANTLR4                | 1717                | 907            | 80                            | 
-| AST                   | 5416                |  2824          | 612                           | 
-
-
-
-
-DESPUÉS CON MÉTRICAS Y PATRONES SEPARADOS:
-| Language      | Ingested | Acepted | Parsed AST | Circuit RQCR     | Metrics | Patterns |
-| ------------- | -------- | ------- | ---------- | ---------------- |-------- |----------|
-|Python - Qiskit| 6963     | 5451    | 5416       | 2824             |   1860  |  537     |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+TABLE 3: Separate metrics and pattenrs:
+| Language       | Ingested  | Acepted  | Parsed AST  | Circuit RQCR | Metrics | Patterns |
+| -------------- | --------- | -------- | ----------- | ------------ |-------- |----------|
+|Python - Qiskit | 6.963     | 5.451    | 5.416       | 2.824        | 1.860   |  537     |
 
 
 
 TEST FILES:
-TOTAL: 600
-CIRCUITOS CON 1 PUERTA: 257
-| Circuit RQCR     | Metrics | Patterns |
-| ---------------- |---------|----------|
-| 2567			   |   257	 |	60	    |
+|Number of gates | Number of gates with 1 gate | Circuit RQCR     | Metrics | Patterns |
+|----------------| --------------------------- |------------------|---------|----------|
+| 1              |  257                        |  2.567		      |   257   |	60	   |
+| 2              |  287                        |  2.537		      |   287   |	69	   |
+| 3              |  102                        |  2.722		      |   102   |	25	   |
+| 4              |  56                         |  2.768		      |   56    |	12	   |
+| TOTAL          |  600                        |        	      |         |   	   |
 
-CIRCUITOS CON 2 PUERTA: 287
-| Circuit RQCR     | Metrics | Patterns |
-| ---------------- |---------|----------|
-| 2537			   |   287	 |	 69   	|
 
-CIRCUITOS CON 3 PUERTA: 102
-| Circuit RQCR     | Metrics | Patterns |
-| ---------------- |---------|----------|
-| 2722			   |   102	 |	 25 	|
 
-CIRCUITOS CON 4 PUERTA: 56
-| Circuit RQCR     | Metrics | Patterns |
-| ---------------- |---------|----------|
-| 2768			   |   56	 |	 12  	|
+TABLE 3: DATA INGESTION SEPTEMBER 2024:
+| Language       | Ingested | Accepted | Parsed AST | RQCR Circuit          | Metrics & Patterns |
+| -------------- | -------- | -------- | ---------- | --------------------- |--------------------|
+|Python - Qiskit | 13.555   | 11.295   | 11.230     | 5.973 and 4.146 files |   2.252            |
+| OpenQASM       | 14.942   | 14.942   |  101       | 101                   |   63               |
+| TOTAL          | 28.297   | 26.237   | 11.331     | 6.074                 |   2315             |
+Duration of data ingestion: 3 días 20h 35 minutos
+
+
+
+TABLE 4: Static analysis comparator
+| Static analyzer | AST   | RQCR Circuit | Metrics & Patterns |
+| --------------- | ----- | ------------ | ------------------ | 
+| ANTLR4          | 1.717 | 907          | 80                 | 
+| AST             | 5.416 |  2.824       | 612                | 
+
+TABLE 5: DATA INGESTION OCTOBER 2024:
+| Language       | Ingested | Accepted | Parsed AST | RQCR Circuit          | Metrics | Patterns |
+| -------------- | -------- | -------- | ---------- | --------------------- |---------|----------|
+|Python - Qiskit | 8.673    | 6.578    | 6.563      | 3.395 and 2.346 files |   2.373 |   924    |
+Duration of data ingestion: 3 días 14h 30 minutos

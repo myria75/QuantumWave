@@ -37,7 +37,7 @@ query = {
 
 
 def generateCSV():
-  field = ["id", "language", "extension", "author", "name", "path", "circuit"]
+  field = ["id", "language", "extension", "author", "name", "creation_date", "path", "circuit"]
   metricsN = 0
   initialDoc = collRepo.find(query)
   foundInitialMetrics = False
@@ -81,6 +81,7 @@ def generateCSV():
           extension = document["extension"] 
           author = document["author"]
           name = document["name"]
+          creation_date = document["repo_creation_date"][:4]
           path = document["path"]
           circuit = document["circuits"][circuit_index]["circuit"]
           metrics = []
@@ -101,7 +102,7 @@ def generateCSV():
           if len(document["circuits"][circuit_index]["patterns"]["entanglement"]) > 0:
             entanglement = True
       
-          rowToInsert = [id, language, extension, author, name, path, circuit]
+          rowToInsert = [id, language, extension, author, name, creation_date, path, circuit]
           rowToInsert += metrics 
           rowToInsert += [initialization, superposition, oracle, entanglement]
       

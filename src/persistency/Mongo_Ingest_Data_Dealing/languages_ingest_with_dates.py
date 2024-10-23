@@ -44,7 +44,7 @@ search_repo_url = 'https://api.github.com/search/repositories?q={}+created:{}-{}
 search_code_url = 'https://api.github.com/search/code?q={}&per_page=100&page={}'
 content_url = 'https://api.github.com/repos/{}/contents/{}'
 limit_url = 'https://api.github.com/rate_limit'
-
+date_commit_file_url = 'https://api.github.com/repos/{}/{}/commits?path={}'
 contadorglobal = 0
 totalRepos=0
 
@@ -84,7 +84,8 @@ def checkWaitRateLimit(resource):
     remaining, resetDate = rateLimit(resource)
     
     if remaining == 0:
-        ingest_logger.info("The rate limite has been exceeded! Waiting to resume data ingestion...")
+        ingest_logger.info("The rate limit has been exceeded! Waiting to resume data ingestion...")
+        ingest_logger.info("   Rate limit type: ("+resource+")")
         secondsToWait = (resetDate - datetime.now()).total_seconds()
         
         if secondsToWait < 0:
@@ -114,7 +115,7 @@ def content_ingestion(code_url, language, extension, repo_full_name, repo_name, 
         for code in codefiles:  #iterate over every code result
             code_path = quote(code['path']) #convert code path to URL-friendly
             content_deep_url = content_url.format(repo_full_name, code_path)
-                            
+            
             checkWaitRateLimit('core')
             session3 = requests.Session()
             retry3 = Retry(connect=100, backoff_factor=0.5)
@@ -131,17 +132,32 @@ def content_ingestion(code_url, language, extension, repo_full_name, repo_name, 
             answer['repo_creation_date'] = repo_creation_date
             answer['repo_language'] = language
             answer['repo_extension'] = extension
-            sha = str(p.json()['sha'])
+            answer['last_commit_date'] = get_file_date(repo_owner, repo_name, answer['path'])
 
             if obtainContentConversion(answer) == True:
                 ingest_logger.info(f"In the {repo_name} repository from {repo_owner}, created on {year} (in {language} with {extension} extension, the file {answer['path']} has been ingested")
                 #ingest_logger.info(f"{datetime.now()} {language}.{extension}, {year} - page:{pagina_repo}, {repo_owner}/{repo_name} | {answer['path']} has been ingested")
-                contadorglobal+=1   
+                contadorglobal+=1  
 
+def get_file_date(author, repo, path):
+    checkWaitRateLimit('core')
+    url = date_commit_file_url.format(author, repo, path)
+    session = requests.Session()
+    retry = Retry(connect=100, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    response = session.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        repo_info = response.json()
+        return repo_info[0]['commit']['committer']['date'][:10]
+    else:
+        return "-1" #si llega aquí, el repo no se encontró (posible motivo: autor lo borró o privatizó) 
 
 def obtainContentConversion(doc) -> bool:    
-    file_path:str = "{}_{}_{}_{}_{}".format(doc['repo_language'], doc['repo_extension'], doc['repo_author'], doc['repo_name'], doc['path'])
-    file_path = file_path.replace("/",".")
+    file_path:str = "{}/{}/{}".format( doc['repo_author'], doc['repo_name'], doc['path'])
+    #file_path = file_path.replace("/",".")
 
     #convert content to base64
     content_b64 = doc['content']
@@ -184,6 +200,8 @@ def obtainContentConversion(doc) -> bool:
         "sha": doc['sha'],
         "language": doc['repo_language'],
         "extension": doc['repo_extension'],
+        "repo_creation_date": doc['repo_creation_date'],
+        "last_commit_date": doc['last_commit_date'],
         "author": doc['repo_author'],
         "name": doc['repo_name'],
         "path": file_path, 
@@ -228,6 +246,9 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
                 
         for pagina_repo in range(1, max_search_pages+1):    #iterate over repositories by page results
             repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, query_fromDate_month, query_fromDate_day, year, query_toDate_month, query_toDate_day, pagina_repo)
+            
+            print(repo_url) #DEBUG !!!!!!!!!!
+            
             checkWaitRateLimit('search')
             session1 = requests.Session()
             retry1 = Retry(connect=100, backoff_factor=0.5)
@@ -253,7 +274,7 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
                 repo_full_name = repo['full_name']
                 repo_name = repo['name']
                 repo_owner = repo['owner']['login']
-                repo_creation_date = repo['created_at']
+                repo_creation_date = repo['created_at'][:10]
                 print("Actual repository: ",repo_full_name," Page repository: ",pagina_repo)
 
                 for pagina_codigo in range(1, max_search_pages+1):    #iterate by code page
