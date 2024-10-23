@@ -67,7 +67,7 @@ def metricsPrueba():
     dbGithub = connection[db_name]
     collRepo = dbGithub[db_coll]
 
-    query = {"path":"Python_qiskit_Qiskit_qiskit_test.python.transpiler.test_unitary_synthesis.py"}
+    query = {}
     documents: cursor.Cursor = collRepo.find(query, no_cursor_timeout=True)
     refreshTime = 600 #10 minutes
     startQueryTime = time.time()

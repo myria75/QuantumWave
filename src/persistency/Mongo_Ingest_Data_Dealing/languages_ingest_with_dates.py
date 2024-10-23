@@ -84,7 +84,8 @@ def checkWaitRateLimit(resource):
     remaining, resetDate = rateLimit(resource)
     
     if remaining == 0:
-        ingest_logger.info("The rate limite has been exceeded! Waiting to resume data ingestion...")
+        ingest_logger.info("The rate limit has been exceeded! Waiting to resume data ingestion...")
+        ingest_logger.info("   Rate limit type: ("+resource+")")
         secondsToWait = (resetDate - datetime.now()).total_seconds()
         
         if secondsToWait < 0:
@@ -245,6 +246,9 @@ def getCode (language, extension, filters, from_date: date, to_date: date):
                 
         for pagina_repo in range(1, max_search_pages+1):    #iterate over repositories by page results
             repo_url = search_repo_url.format(repo_search_in + plus_extension_clause +'+language:'+language, year, query_fromDate_month, query_fromDate_day, year, query_toDate_month, query_toDate_day, pagina_repo)
+            
+            print(repo_url) #DEBUG !!!!!!!!!!
+            
             checkWaitRateLimit('search')
             session1 = requests.Session()
             retry1 = Retry(connect=100, backoff_factor=0.5)
