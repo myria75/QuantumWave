@@ -15,7 +15,7 @@ configuration_file = os.path.join("resources", "config", "properties.ini")
 config = configparser.ConfigParser()
 config.read(configuration_file)
 
-file_name = os.path.join('src', 'presentation', 'frontend', 'app', 'dataset_openqasm_qiskit.csv')
+file_name = os.path.join('src', 'presentation', 'frontend', 'app', 'design_patterns_qiskit.csv')
 
 db_link = eval(config.get('MongoDB', 'db_link'))
 db_name = eval(config.get('MongoDB', 'db_name'))
