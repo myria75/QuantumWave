@@ -1,6 +1,6 @@
 # QuantumWave: Estudio Exploratorio del Uso de Patrones de Diseño en Software Cuántico
 
-## Alumna: [Miriam Fernández Osuna](https://orcid.org/my-orcid?orcid=0009-0006-8697-3816)
+## Alumna: [Miriam Fernández Osuna](https://orcid.org/0009-0006-8697-3816)
 
 Máster Universitario en Dirección Estratégica en Tecnologías de la Información - Facultad de Ciencias Sociales y Tecnologías de la Información - Universidad de Castilla-La Mancha
 
